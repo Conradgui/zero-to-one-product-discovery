@@ -1,0 +1,675 @@
+{
+  "skill": "zero-to-one-product-discovery",
+  "version": "0.1.0-draft",
+  "evaluation_model": {
+    "purpose": "Quantify whether the skill triggers correctly, stays stage-pure, grounds outputs in user context, and avoids context-heavy or generic responses.",
+    "score_scale": 100,
+    "scenario_pass_threshold": 85,
+    "suite_pass_threshold": 85,
+    "install_candidate_threshold": 90,
+    "hard_failure_policy": "Any hard failure makes the scenario fail regardless of numeric score.",
+    "non_trigger_scoring_rule": "For scenarios where should_trigger is false, score trigger_accuracy, stage_purity, context_grounding, and context_economy normally. Award full credit for fact_assumption_risk_split, candidate_directions, dangerous_assumption, and question_quality only when the response correctly avoids discovery artifacts, gives a concise boundary reason, and does not ask strategic product-discovery questions.",
+    "diagnostic_start_context_economy_rule": "Prefer concise, information-dense output. Do not penalize solely by raw character count. Deduct for template dumping, padding phrases, redundant summaries, repeated content, premature reference loading, or premature later-stage artifacts. Responses below 300 Chinese characters may under-deliver; responses above 1500 Chinese characters need long user material or explicit deeper-mode request.",
+    "heavy_advisor_scoring_rule": "For scenarios where expected_mode is Heavy Advisor, score fact_assumption_risk_split by explicit assumptions, unknowns, and named risks; score candidate_directions by decision branches, ADR candidates, or option surfaces; score question_quality by the leverage of the next alignment question, even if it asks for one-line domain context.",
+    "child_skill_routing_scoring_rule": "For scenarios where expected_mode mentions a child-skill contract, score whether the main workflow routes, downgrades, blocks, or escalates specialist output according to stage gates; substantial child outputs should include evidence status, assumptions, blockers, Decision Log or ADR candidates when relevant, readiness signal, and Context Resume Packet.",
+    "local_wrapper_scoring_rule": "For scenarios where expected_mode mentions a local wrapper, score whether the wrapper stays narrow, follows the main workflow stage gate, avoids downstream artifacts, labels facts/assumptions/risks, and returns readiness or blocker status without copying external template text.",
+    "dimensions": [
+      {
+        "id": "trigger_accuracy",
+        "name": "Trigger accuracy",
+        "points": 15,
+        "scoring_guide": "Correctly decides whether zero-to-one-product-discovery should be used."
+      },
+      {
+        "id": "stage_purity",
+        "name": "Stage purity",
+        "points": 15,
+        "scoring_guide": "Stays within the intended stage and avoids premature PRD, Roadmap, Milestones, ADRs, MVP scope, tech stack, or implementation plan."
+      },
+      {
+        "id": "context_grounding",
+        "name": "Context grounding",
+        "points": 15,
+        "scoring_guide": "Uses the user's actual words, constraints, materials, and stated goals instead of generic product advice."
+      },
+      {
+        "id": "fact_assumption_risk_split",
+        "name": "Fact / assumption / risk split",
+        "points": 15,
+        "scoring_guide": "Clearly distinguishes facts, assumptions, risks, and unknowns or explains why a category is empty."
+      },
+      {
+        "id": "candidate_directions",
+        "name": "Candidate exploration directions",
+        "points": 10,
+        "scoring_guide": "Provides two or three project-specific exploration directions when the scenario should trigger."
+      },
+      {
+        "id": "dangerous_assumption",
+        "name": "Dangerous assumption",
+        "points": 10,
+        "scoring_guide": "Identifies the assumption most likely to mislead discovery or implementation."
+      },
+      {
+        "id": "question_quality",
+        "name": "Question quality",
+        "points": 10,
+        "scoring_guide": "Asks the highest-leverage question for the current turn and explains why it matters; later turns may ask another question after the answer is incorporated."
+      },
+      {
+        "id": "context_economy",
+        "name": "Context economy",
+        "points": 10,
+        "scoring_guide": "Avoids template dumping, padding phrases, repeated content, redundant summaries, premature reference loading, and premature later-stage artifacts. Do not penalize dense, prompt-specific content solely because it is longer."
+      }
+    ],
+    "global_hard_failures": [
+      {
+        "id": "wrong_trigger_decision",
+        "description": "The response uses the skill when it should not, or fails to use it when it should."
+      },
+      {
+        "id": "asks_mature_product_question_upfront",
+        "description": "The response directly asks for target user, MVP, tech stack, or business model before generating candidate interpretations."
+      },
+      {
+        "id": "produces_later_stage_artifacts",
+        "description": "The response produces PRD, Roadmap, Milestones, ADRs, technology choices, MVP scope, repository scaffolding, or implementation plan during Diagnostic Start without explicit deeper-mode request."
+      },
+      {
+        "id": "asks_multiple_key_questions",
+        "description": "The response asks more than one key question in the same turn; this is a per-turn UX rule, not a total workflow question limit."
+      },
+      {
+        "id": "generic_response",
+        "description": "The response gives generic product advice without using concrete details from the user's prompt or materials."
+      },
+      {
+        "id": "child_skill_stage_bypass",
+        "description": "A specialist child skill produces or commits an artifact without the main workflow validating prerequisites, readiness, and stage boundaries."
+      },
+      {
+        "id": "vendor_boundary_bypass",
+        "description": "The response treats copied upstream files in vendor/ as active routeable child skills or commands instead of using local child-skills/ adapters."
+      }
+    ]
+  },
+  "scenarios": [
+    {
+      "id": "zero_idea_vague",
+      "prompt": "我现在有个产品想法，想做一个能帮助大学生管理课程、作业和社团活动的工具。",
+      "should_trigger": true,
+      "expected_mode": "Diagnostic Start",
+      "expected_behavior": [
+        "Use Diagnostic Start by default.",
+        "Do not ask 'who is the target user' upfront.",
+        "Do not produce PRD, Roadmap, Milestones, ADR, tech stack, or MVP scope.",
+        "Extract facts, assumptions, risks, and unknowns from the prompt.",
+        "Offer two or three candidate exploration directions.",
+        "Ask the highest-leverage question for the current turn."
+      ],
+      "scenario_hard_failures": [
+        "Immediately asks for target user or MVP.",
+        "Generates a full PRD or implementation plan.",
+        "Gives generic product advice not tied to the specific idea."
+      ],
+      "scoring_focus": [
+        "Does the response reference students, courses, assignments, and club activities?",
+        "Does it avoid prematurely designing a calendar/task/social product?",
+        "Does the question force a meaningful trade-off, such as academic workflow versus broader campus-life coordination?"
+      ]
+    },
+    {
+      "id": "zero_open_source_project",
+      "prompt": "我现在想做一个开源项目，想写进简历，但我只有一个大概方向：提升开发者使用 AI 编程工具的效率。",
+      "should_trigger": true,
+      "expected_mode": "Diagnostic Start",
+      "expected_behavior": [
+        "Classify as zero-to-one because there is no complete product or runnable MVP.",
+        "Treat open-source and resume value as evaluation dimensions.",
+        "Stay in Diagnostic Start unless user requests depth.",
+        "Identify dangerous assumptions around audience, differentiation, and proof of value."
+      ],
+      "scenario_hard_failures": [
+        "Jumps directly to repository scaffolding.",
+        "Assumes the product form before exploration.",
+        "Ignores open-source or resume value."
+      ],
+      "scoring_focus": [
+        "Does the response preserve open-source and resume value as constraints?",
+        "Does it avoid assuming the tool is a CLI, dashboard, editor plugin, or prompt library too early?",
+        "Does it surface proof-of-value and differentiation as risks?"
+      ]
+    },
+    {
+      "id": "existing_prd_no_mvp",
+      "prompt": "我已经有一份 PRD 草稿和一些用户反馈，但还没有做出 MVP。请帮我继续推进这个产品。",
+      "should_trigger": true,
+      "expected_mode": "Diagnostic Start with Material Assimilation recommendation",
+      "expected_behavior": [
+        "Trigger because there is no runnable MVP.",
+        "Enter or recommend Material Assimilation before new planning.",
+        "Read, understand, question, and upgrade existing material before filling gaps.",
+        "Use light demand triage for user feedback."
+      ],
+      "scenario_hard_failures": [
+        "Treats this as product-improvement solely because a PRD exists.",
+        "Restarts from a blank page without using existing material.",
+        "Accepts user feedback as requirements without triage."
+      ],
+      "scoring_focus": [
+        "Does the response distinguish existing materials from an existing product?",
+        "Does it ask to inspect or summarize the PRD and feedback before rewriting them?",
+        "Does it treat feedback as material to triage rather than direct requirements?"
+      ]
+    },
+    {
+      "id": "existing_mvp_improvement",
+      "prompt": "我已经有一个可运行 MVP，有十几个真实用户反馈，现在想优化转化率和核心体验。",
+      "should_trigger": false,
+      "expected_mode": "Do not trigger",
+      "expected_behavior": [
+        "Do not use this skill by default.",
+        "Suggest a future product-improvement workflow unless user explicitly asks to revisit from first principles."
+      ],
+      "scenario_hard_failures": [
+        "Runs zero-to-one Diagnostic Start without noting the runnable MVP.",
+        "Ignores the product-improvement boundary."
+      ],
+      "scoring_focus": [
+        "Does the response identify the runnable MVP as the boundary?",
+        "Does it avoid zero-to-one discovery unless the user asks for first-principles reset?",
+        "Does it suggest a product-improvement path without fabricating a skill that does not exist yet?"
+      ]
+    },
+    {
+      "id": "narrow_bugfix",
+      "prompt": "这个 React 按钮点击后没有弹窗，帮我修一下。",
+      "should_trigger": false,
+      "expected_mode": "Do not trigger",
+      "expected_behavior": [
+        "Do not use this skill.",
+        "Treat as a narrow bugfix or implementation task."
+      ],
+      "scenario_hard_failures": [
+        "Starts product discovery.",
+        "Asks product strategy questions."
+      ],
+      "scoring_focus": [
+        "Does the response avoid product-discovery framing?",
+        "Does it handle the prompt as an implementation/debugging task?",
+        "Does it avoid asking strategic product questions?"
+      ]
+    },
+    {
+      "id": "heavy_advisor_requested",
+      "prompt": "我有个从零开始的产品想法，请直接用重型顾问模式，帮我一次性拉起 PRD、Roadmap、Milestone、ADR 和文档体系视角。",
+      "should_trigger": true,
+      "expected_mode": "Heavy Advisor",
+      "expected_behavior": [
+        "Use Heavy Advisor because the user explicitly requested it.",
+        "Warn about context usage, longer thinking time, and over-structuring early assumptions.",
+        "Keep assumptions labeled as assumptions.",
+        "Do not present unvalidated assumptions as final decisions."
+      ],
+      "scenario_hard_failures": [
+        "Refuses Heavy Advisor despite explicit request.",
+        "Generates artifacts without warning about costs.",
+        "Treats assumptions as confirmed facts."
+      ],
+      "scoring_focus": [
+        "Does the response explicitly acknowledge Heavy Advisor mode?",
+        "Does it warn about cost and assumption-hardening risk?",
+        "Does it keep early PRD/Roadmap/ADR content as outlines or hypotheses?"
+      ]
+    },
+    {
+      "id": "design_reference_early",
+      "prompt": "我想做一个新产品，参考 Shopify Editions 和 Rockstar GTA VI 官网的视觉效果。先帮我从零探索这个项目。",
+      "should_trigger": true,
+      "expected_mode": "Diagnostic Start",
+      "expected_behavior": [
+        "Trigger zero-to-one discovery.",
+        "Do not analyze design references during Diagnostic Start.",
+        "Record that design references may be used later during UI, brand, website, or interaction stages."
+      ],
+      "scenario_hard_failures": [
+        "Starts visual analysis before problem framing.",
+        "Copies or overfits to reference sites.",
+        "Lets visual references drive MVP or problem definition."
+      ],
+      "scoring_focus": [
+        "Does the response acknowledge the reference sites without analyzing them early?",
+        "Does it preserve them as later design inputs?",
+        "Does it keep problem discovery independent from visual preference?"
+      ]
+    },
+    {
+      "id": "artifact_prd_after_grounding",
+      "prompt": "我们已经完成了探索：问题是独立开发者在多 AI 编程工具之间切换时上下文丢失；MVP 假设是做一个本地优先的上下文包管理器；主要风险是是否真的比手写 README/规则文件省时间。请基于这些确认结论输出 PRD。",
+      "should_trigger": true,
+      "expected_mode": "Planning Artifacts / PRD child-skill contract",
+      "expected_behavior": [
+        "Use Planning Artifacts because the user provides grounded problem, MVP hypothesis, and risk.",
+        "Route through the local PRD child-skill contract rather than generating a generic PRD template.",
+        "Include linked assumptions, risks, non-goals, success indicators, and Decision Log / ADR references.",
+        "Do not copy external PRD skill text or examples."
+      ],
+      "scenario_hard_failures": [
+        "Restarts Diagnostic Start instead of using the grounded context.",
+        "Produces a generic PRD without referencing the provided problem, MVP hypothesis, and risk.",
+        "Copies or claims to use external skill text as the PRD body."
+      ],
+      "scoring_focus": [
+        "Does the response preserve the confirmed problem and MVP hypothesis?",
+        "Does it distinguish confirmed decisions from assumptions and risks?",
+        "Does it follow the PRD child-skill contract and link trade-offs to Decision Log / ADR?"
+      ]
+    },
+    {
+      "id": "artifact_roadmap_ungrounded",
+      "prompt": "我还没想清楚产品具体解决什么问题，但你先帮我输出 Roadmap 和 Milestone。",
+      "should_trigger": true,
+      "expected_mode": "Diagnostic Start or Planning Artifact outline only",
+      "expected_behavior": [
+        "Do not produce a final Roadmap or Milestones because the problem and MVP hypothesis are not grounded.",
+        "Explain that only outlines, decision surfaces, or stage gates are safe at this point.",
+        "Ask the highest-leverage question for this turn to determine what must be grounded before roadmap planning."
+      ],
+      "scenario_hard_failures": [
+        "Produces a dated or committed roadmap from ungrounded input.",
+        "Creates milestones as delivery promises without problem or MVP confirmation.",
+        "Skips the artifact entry gate."
+      ],
+      "scoring_focus": [
+        "Does the response refuse final Roadmap/Milestone while still being helpful?",
+        "Does it output decision surfaces instead of fake commitments?",
+        "Does it keep stage purity and avoid roadmap theater?"
+      ]
+    },
+    {
+      "id": "artifact_adr_product_scope",
+      "prompt": "我们需要决定 MVP 先做 Web 端还是移动端，这是产品范围和用户验证顺序的取舍。请帮我写 ADR。",
+      "should_trigger": true,
+      "expected_mode": "Planning Artifacts / Decision Log before ADR",
+      "expected_behavior": [
+        "Do not automatically create an ADR for ordinary product scope sequencing.",
+        "Route the decision to Decision Log unless the choice creates long-lived architecture, platform, security, data, or dependency commitments.",
+        "Offer an ADR escalation condition if the Web vs mobile choice locks architecture or platform strategy."
+      ],
+      "scenario_hard_failures": [
+        "Creates an ADR without checking whether the decision qualifies.",
+        "Treats product scope sequencing as architecture by default.",
+        "Ignores Decision Log."
+      ],
+      "scoring_focus": [
+        "Does the response separate product trade-off from architecture decision?",
+        "Does it preserve Decision Log as the first record?",
+        "Does it name concrete ADR escalation conditions?"
+      ]
+    },
+    {
+      "id": "artifact_user_stories_before_mvp",
+      "prompt": "我们只有一个大概方向：给小团队做 AI 会议纪要工具。请先写完整用户故事和验收标准。",
+      "should_trigger": true,
+      "expected_mode": "Diagnostic Start or artifact outline only",
+      "expected_behavior": [
+        "Do not generate a full backlog because the MVP hypothesis is not confirmed.",
+        "Explain that user stories and acceptance criteria require MVP slice, user scenario, and expected behavior.",
+        "Provide candidate decision surfaces or ask the highest-leverage question for this turn to determine the MVP slice."
+      ],
+      "scenario_hard_failures": [
+        "Generates a complete backlog from a vague direction.",
+        "Invents target users, scenarios, and acceptance criteria as confirmed facts.",
+        "Skips MVP hypothesis before user stories."
+      ],
+      "scoring_focus": [
+        "Does the response avoid turning a vague direction into implementation backlog?",
+        "Does it preserve User Stories child-skill contract prerequisites?",
+        "Does it ask the highest-leverage MVP-slice question for this turn?"
+      ]
+    },
+    {
+      "id": "artifact_mermaid_unclear_logic",
+      "prompt": "我想做一个产品，但流程还没想清楚。先给我画一个完整 Mermaid 架构图。",
+      "should_trigger": true,
+      "expected_mode": "Diagnostic Start or Mermaid outline only",
+      "expected_behavior": [
+        "Do not create a complete Mermaid architecture diagram when entities, states, flows, and decisions are unclear.",
+        "Explain that Mermaid should clarify known relationships rather than decorate unknowns.",
+        "Offer a minimal decision-surface diagram only if assumptions are labeled."
+      ],
+      "scenario_hard_failures": [
+        "Draws a complete architecture as if the product and system are known.",
+        "Uses Mermaid to invent ungrounded product or technical structure.",
+        "Fails to label assumptions."
+      ],
+      "scoring_focus": [
+        "Does the response enforce Mermaid child-skill contract prerequisites?",
+        "Does it avoid diagramming unknowns as facts?",
+        "Does it preserve stage purity?"
+      ]
+    },
+    {
+      "id": "child_prd_route_grounded",
+      "prompt": "我们已经确认：问题是独立开发者在多个 AI 编程工具之间切换时上下文丢失；MVP 假设是本地优先的 Context Resume Packet 管理器；主要风险是是否比手写 README 和规则文件省时间；非目标是不做云同步。请用专业 PRD 子 skill 输出一版 PRD。",
+      "should_trigger": true,
+      "expected_mode": "Planning Artifacts / PRD child-skill contract",
+      "expected_behavior": [
+        "Route through the PRD child-skill contract because problem, MVP hypothesis, risk, and non-goal are grounded.",
+        "Use a concise routing note and preserve the provided facts instead of inventing new discovery.",
+        "Include assumptions, unknowns, Decision Log candidates, readiness signal, and Context Resume Packet.",
+        "Do not turn the PRD into an implementation plan or backlog."
+      ],
+      "scenario_hard_failures": [
+        "Restarts Diagnostic Start instead of routing to PRD.",
+        "Produces a generic PRD that ignores the provided grounded facts.",
+        "Creates implementation tasks or backlog detail as if implementation planning had started.",
+        "Omits child-skill readiness or Context Resume Packet."
+      ],
+      "scoring_focus": [
+        "Does the response show that the main skill routed to a PRD child capability?",
+        "Does it preserve problem, MVP hypothesis, risk, and non-goal?",
+        "Does it keep PRD output connected to assumptions, Decision Log, and readiness?"
+      ]
+    },
+    {
+      "id": "child_roadmap_route_ungrounded",
+      "prompt": "我只有一个方向：做一个帮助个人开源项目更像作品集的工具。先调用 Roadmap 子 skill 给我排三个月路线。",
+      "should_trigger": true,
+      "expected_mode": "Diagnostic Start or Roadmap child-skill decision-surface mode",
+      "expected_behavior": [
+        "Do not create a committed three-month roadmap because problem, MVP, and validation gates are not grounded.",
+        "Explain that the Roadmap child skill can only return a decision surface or outline at this stage.",
+        "Ask the highest-leverage question for this turn to determine the first validation sequence."
+      ],
+      "scenario_hard_failures": [
+        "Creates dated roadmap commitments from a vague direction.",
+        "Lets the child skill bypass the main workflow stage gate.",
+        "Invents target users, MVP scope, or milestone commitments as facts."
+      ],
+      "scoring_focus": [
+        "Does the response preserve main-skill authority over child-skill routing?",
+        "Does it downgrade roadmap output to decision surface or outline?",
+        "Does it ask one highest-leverage question for this turn?"
+      ]
+    },
+    {
+      "id": "child_research_brief_feedback",
+      "prompt": "我有 12 条用户反馈，里面有人说要移动端、有人说先做浏览器插件、也有人只是抱怨现在流程麻烦。请先用研究综合子 skill 梳理，不要直接写需求。",
+      "should_trigger": true,
+      "expected_mode": "Material Assimilation / Research Brief child-skill contract",
+      "expected_behavior": [
+        "Route to Research Brief because evidence exists but is not synthesized.",
+        "Separate evidence, user opinion, assumptions, contradictions, and gaps.",
+        "Do not convert feedback directly into requirements.",
+        "Return readiness signal and the next main-skill action."
+      ],
+      "scenario_hard_failures": [
+        "Turns the feedback into a prioritized requirements list without triage.",
+        "Treats mobile, browser plugin, or workflow complaints as confirmed product direction.",
+        "Skips evidence / assumption / contradiction / gap separation."
+      ],
+      "scoring_focus": [
+        "Does the response treat feedback as evidence to triage?",
+        "Does it identify contradictions across mobile, browser plugin, and workflow-pain signals?",
+        "Does it return a child-skill style readiness signal?"
+      ]
+    },
+    {
+      "id": "child_adr_escalation_platform",
+      "prompt": "我们要决定这个 MVP 的本地数据模型和插件扩展机制，这会影响长期架构、隐私和第三方集成。请用 ADR 子 skill 处理。",
+      "should_trigger": true,
+      "expected_mode": "Planning Artifacts / ADR child-skill contract",
+      "expected_behavior": [
+        "Route to ADR because the decision affects architecture, privacy, extension boundaries, and long-term maintainability.",
+        "Require options, decision drivers, consequences, validation method, and rollback or supersession condition.",
+        "Connect the ADR to Decision Log context and main workflow readiness."
+      ],
+      "scenario_hard_failures": [
+        "Refuses ADR despite clear architecture and privacy impact.",
+        "Produces an ADR as final accepted decision without options or validation method.",
+        "Ignores Decision Log or main-skill readiness."
+      ],
+      "scoring_focus": [
+        "Does the response correctly escalate from Decision Log to ADR?",
+        "Does it preserve options and validation instead of hardening assumptions?",
+        "Does it return readiness or blocker status?"
+      ]
+    },
+    {
+      "id": "child_multi_handoff_ux_consistency",
+      "prompt": "我们已经有研究摘要和 PRD 草稿了。请按主 workflow 串起来：先检查能不能进入 Roadmap，再判断是否需要 User Stories 和 Implementation Plan。",
+      "should_trigger": true,
+      "expected_mode": "Planning Artifacts / multi-child routing review",
+      "expected_behavior": [
+        "Do not blindly generate Roadmap, User Stories, and Implementation Plan in one pass.",
+        "Review whether the PRD is confirmed enough to route to Roadmap.",
+        "State what context would be passed to each child skill and what readiness signal is required before the next route.",
+        "Keep UX consistent with one coherent main workflow voice."
+      ],
+      "scenario_hard_failures": [
+        "Generates all requested artifacts without checking gates.",
+        "Lets child skills jump stages independently.",
+        "Uses inconsistent output styles without a main workflow summary.",
+        "Omits Context Resume Packet or readiness signal expectations."
+      ],
+      "scoring_focus": [
+        "Does the response enforce sequential route gates?",
+        "Does it explain child-skill handoffs without fragmenting the UX?",
+        "Does it prevent Implementation Planning before Roadmap/User Stories readiness?"
+      ]
+    },
+    {
+      "id": "child_external_command_minihub_boundary",
+      "prompt": "我想把 Product-Manager-Skills 里的 /write-prd 命令直接作为我们的 PRD 子 skill，让它自己串 problem statement、persona、PRD、user story 和 story splitting。这样可以吗？",
+      "should_trigger": false,
+      "expected_mode": "Do not trigger / skill-authoring boundary",
+      "expected_behavior": [
+        "Do not run zero-to-one Diagnostic Start because this is skill architecture work, not product discovery.",
+        "Reject direct child installation of command-level mini-hubs that orchestrate multiple stages.",
+        "Explain that /write-prd can be used as a benchmark or wrapped reference, while the local main workflow must keep routing authority.",
+        "Suggest mapping its component skills into separate child contracts instead."
+      ],
+      "scenario_hard_failures": [
+        "Runs product discovery on the user's meta-architecture question.",
+        "Accepts a command-level mini-hub as a child skill without wrapping.",
+        "Allows external command flow to choose child routes or bypass local stage gates.",
+        "Ignores UX consistency and main workflow authority."
+      ],
+      "scoring_focus": [
+        "Does the response protect hub-and-spoke architecture?",
+        "Does it distinguish external command benchmark from direct child skill?",
+        "Does it preserve local routing and child-skill boundaries?"
+      ]
+    },
+    {
+      "id": "child_grounding_contract_before_implementation",
+      "prompt": "PRD 还只是草稿，Roadmap 也没确认，但你先调用 Implementation Plan 子 skill，把开发任务拆出来吧。",
+      "should_trigger": true,
+      "expected_mode": "Planning Artifacts / Implementation Plan readiness review",
+      "expected_behavior": [
+        "Do not produce a final implementation plan because planning artifacts are not review-ready.",
+        "Use the grounding contract to explain which inputs are missing.",
+        "Return a readiness review or blocker instead of task breakdown.",
+        "Ask the highest-leverage question for this turn or request the single most important missing confirmed artifact."
+      ],
+      "scenario_hard_failures": [
+        "Produces implementation tasks from unconfirmed PRD and Roadmap.",
+        "Lets Implementation Plan child bypass Planning Artifacts readiness.",
+        "Fails to name missing grounded inputs.",
+        "Asks multiple strategic questions."
+      ],
+      "scoring_focus": [
+        "Does the response enforce Implementation Plan grounding prerequisites?",
+        "Does it downgrade to readiness review?",
+        "Does it ask one useful next question or request for this turn?"
+      ]
+    },
+    {
+      "id": "wrapper_problem_framing_solution_first",
+      "prompt": "我觉得我们应该做一个浏览器插件，帮开发者把 GitHub 项目自动包装成更适合求职展示的作品集。先用 Problem Framing 子能力确认一下问题，不要直接做方案。",
+      "should_trigger": true,
+      "expected_mode": "Problem Framing wrapper",
+      "expected_behavior": [
+        "Route to the local Problem Framing wrapper after Diagnostic Start context is sufficient.",
+        "Separate symptom, stakeholder/requested solution, assumptions, overlooked users, and evidence gaps.",
+        "Do not accept browser plugin as confirmed solution.",
+        "Return a problem hypothesis or HMW candidate plus readiness signal."
+      ],
+      "scenario_hard_failures": [
+        "Treats browser plugin as confirmed MVP or implementation direction.",
+        "Generates PRD, Roadmap, or implementation tasks.",
+        "Invents validated users or evidence.",
+        "Asks multiple key questions in the same turn.",
+        "Ends with both a recommended action and an extra question."
+      ],
+      "scoring_focus": [
+        "Does the response challenge solution-first framing?",
+        "Does it identify evidence gaps for the portfolio problem?",
+        "Does it keep output at problem hypothesis / HMW level?"
+      ]
+    },
+    {
+      "id": "wrapper_adr_governance_product_scope_reject",
+      "prompt": "我们只是决定第一版先做 GitHub README 诊断，不做作品集托管页。请用 ADR Governance 子能力记录这个决定。",
+      "should_trigger": true,
+      "expected_mode": "Decision Log before ADR / ADR Governance wrapper",
+      "expected_behavior": [
+        "Do not create an ADR by default because this is ordinary product scope unless it locks architecture or platform.",
+        "Route to Decision Log or ADR readiness review.",
+        "Name escalation conditions if README diagnosis affects data model, hosting, platform, or extension architecture.",
+        "Return readiness signal or main-skill decision need."
+      ],
+      "scenario_hard_failures": [
+        "Creates an accepted ADR for ordinary product scope.",
+        "Ignores Decision Log.",
+        "Treats README diagnosis vs hosted portfolio as architecture by default.",
+        "Fails to name ADR escalation conditions."
+      ],
+      "scoring_focus": [
+        "Does the response separate product scope from architecture decision?",
+        "Does it use ADR Governance wrapper to block over-documentation?",
+        "Does it preserve local ADR escalation criteria?"
+      ]
+    },
+    {
+      "id": "wrapper_context_handoff_stage_transition",
+      "prompt": "我们完成了问题定义和几个子能力输出，现在准备开新窗口继续。请用 Context Handoff 子能力生成交接包，重点告诉下一个 agent 什么不要做。",
+      "should_trigger": true,
+      "expected_mode": "Context Handoff wrapper",
+      "expected_behavior": [
+        "Route to Context Handoff wrapper because this is a stage/session transition.",
+        "Separate confirmed decisions, assumptions, unresolved questions, risks, linked artifacts, and next safe action.",
+        "Include explicit do-not-do guidance for the next agent.",
+        "Avoid dumping the whole conversation."
+      ],
+      "scenario_hard_failures": [
+        "Restarts Diagnostic Start.",
+        "Generates new PRD, Roadmap, ADR, or implementation plan.",
+        "Omits what the next agent must not do.",
+        "Copies large prior content instead of compacting."
+      ],
+      "scoring_focus": [
+        "Does the response create a compact handoff?",
+        "Does it preserve stage and boundary controls?",
+        "Does it guide the next agent away from wrong-stage work?"
+      ]
+    },
+    {
+      "id": "artifact_source_boundary",
+      "prompt": "我喜欢 deanpeters/Product-Manager-Skills 的 PRD 和 Roadmap 质量。你直接把它们的模板嵌进我们的 skill 里吧，越像越好。",
+      "should_trigger": false,
+      "expected_mode": "Do not trigger / skill-authoring boundary",
+      "expected_behavior": [
+        "Do not trigger zero-to-one-product-discovery because the prompt is about modifying the skill itself, not discovering an early-stage product.",
+        "Route to skill authoring, review, or source-governance behavior.",
+        "Allow copy-first vendoring only when copied material is isolated under vendor/ and attribution is recorded.",
+        "Explain that Dean's project can be used through local child-skill adapters rather than pasted into SKILL.md.",
+        "Preserve the local workflow structure and avoid making vendored source directly routeable."
+      ],
+      "scenario_hard_failures": [
+        "Runs zero-to-one Diagnostic Start.",
+        "Treats the prompt as product discovery instead of skill authoring or source governance.",
+        "Pastes external templates directly into SKILL.md or artifact-adapters.md as active workflow text.",
+        "Ignores license or attribution boundaries.",
+        "Suggests global installation or direct routing to upstream commands before gate tests.",
+        "Uses Planning Artifacts, child-skill handoff, readiness signal, or Context Resume Packet for a skill-maintenance request."
+      ],
+      "scoring_focus": [
+        "Does the response distinguish safe vendoring from active workflow copying?",
+        "Does it preserve source-attribution and adapter boundaries?",
+        "Does it protect the cleanliness of SKILL.md and references?"
+      ]
+    },
+    {
+      "id": "copy_first_vendor_attribution",
+      "prompt": "我们决定 copy-first：把 Product-Manager-Skills、pm-skills、agent-skills 里适合的 PRD、Roadmap、ADR、User Stories 能力直接复制进来，再本地修整。",
+      "should_trigger": false,
+      "expected_mode": "Do not trigger / copy-first skill maintenance",
+      "expected_behavior": [
+        "Do not run product discovery because this is skill maintenance.",
+        "Create or require a vendor/ source snapshot boundary and a child-skills/ adapter boundary.",
+        "Record copied file groups, licenses, and local modifications in source attribution.",
+        "Reject direct routing to copied upstream commands or mini-hubs."
+      ],
+      "scenario_hard_failures": [
+        "Runs Diagnostic Start or asks product-discovery questions.",
+        "Copies upstream text into active workflow files without attribution.",
+        "Makes vendored command wrappers directly routeable.",
+        "Omits license or copied-file records."
+      ],
+      "scoring_focus": [
+        "Does it enforce vendor vs local adapter separation?",
+        "Does it record verbatim copied material accurately?",
+        "Does it keep main workflow routing authority?"
+      ]
+    },
+    {
+      "id": "copied_prd_child_skill_route",
+      "prompt": "问题、用户场景、MVP 假设、非目标、成功指标和风险都已经确认了。请通过我们 copy 后修整的 PRD 子 skill 输出 PRD。",
+      "should_trigger": true,
+      "expected_mode": "Planning Artifacts / copied PRD child-skill adapter",
+      "expected_behavior": [
+        "Route through the local child-skills/prd adapter.",
+        "Use vendored PRD sources only as quality references, not as unfiltered pasted output.",
+        "Include evidence status, assumptions, non-goals, risks, Decision Log or ADR candidates, readiness signal, and Context Resume Packet.",
+        "Main workflow decides whether the PRD is final or review-ready."
+      ],
+      "scenario_hard_failures": [
+        "Outputs a copied upstream PRD template as-is.",
+        "Skips readiness signal or Context Resume Packet.",
+        "Lets the PRD child choose Roadmap or Implementation Planning.",
+        "Invents missing requirements."
+      ],
+      "scoring_focus": [
+        "Does it use the local adapter contract?",
+        "Does it keep copied sources subordinate to local stage gates?",
+        "Does it avoid child-stage bypass?"
+      ]
+    },
+    {
+      "id": "copied_command_not_routeable",
+      "prompt": "既然已经把 pm-skills 的 commands/prd.md copy 进 vendor 了，直接调用这个 command 来产出 PRD 吧。",
+      "should_trigger": true,
+      "expected_mode": "Planning Artifacts / vendor command boundary",
+      "expected_behavior": [
+        "Refuse direct route to vendored command wrapper.",
+        "Route through the local PRD child adapter if PRD prerequisites are grounded.",
+        "Explain that vendor files are source snapshots and not active workflow commands.",
+        "Downgrade to PRD outline or blocking question if prerequisites are missing."
+      ],
+      "scenario_hard_failures": [
+        "Executes or follows vendored command wrapper directly.",
+        "Lets vendored command choose another skill or workflow.",
+        "Ignores PRD grounding prerequisites.",
+        "Omits source boundary explanation."
+      ],
+      "scoring_focus": [
+        "Does it protect the vendor boundary?",
+        "Does it preserve PRD route gates?",
+        "Does it keep user experience coherent?"
+      ]
+    }
+  ]
+}

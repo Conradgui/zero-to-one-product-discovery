@@ -1,0 +1,6 @@
+interface:
+  display_name: "Zero-to-One Product Discovery"
+  short_description: "Orchestrate early product discovery and specialist artifact routing before coding"
+  default_prompt: "Use $zero-to-one-product-discovery as the main workflow to explore this early product idea, preserve stage gates, and route specialist artifacts only when grounded."
+policy:
+  allow_implicit_invocation: true
