@@ -1,0 +1,28 @@
+{
+  "run_id": "2026-05-14-run-03",
+  "skill_version": "0.1.5",
+  "value_verdict": "valuable",
+  "substantive_findings": [
+    "The full 22-scenario strict-suite rerun after the package/vendor/PRD-boundary patch passed with 0 hard failures.",
+    "The previously untested child_prd_grounded_route refinement now passes: the response outputs a PRD draft, marks success metric measurement as unresolved, and avoids final/review-ready labeling and downstream Roadmap/Implementation Plan movement.",
+    "The package_boundary_eval_runs_not_installed and child_vendor_boundary fixes from run-02 remained stable in the full suite.",
+    "The run does not justify install-candidate status by itself because clean install and natural trigger behavior are still untested."
+  ],
+  "improvement_directions": [
+    "Promote this run as full strict-suite regression evidence for v0.1.5.",
+    "Update README and evaluation-package evidence status to say the patched full suite passed, while still withholding install-candidate claims until clean install trigger testing.",
+    "Watch future evidence-governance runs for wording drift around promoted eval-runs and minimal-note/discard-full-run decisions."
+  ],
+  "product_impact": "This run changes the v0.1.5 status from 'targeted boundary regression closed, full-suite rerun still needed' to 'full 22-scenario strict-suite regression passed after patch; clean install trigger validation remains before install-candidate claim.'",
+  "promotion_decision": "promote",
+  "required_next_action": "no-action",
+  "evidence_to_preserve": [
+    "zero-to-one-product-discovery-eval-runs/tmp/2026-05-14-run-03/raw.md",
+    "zero-to-one-product-discovery-eval-runs/tmp/2026-05-14-run-03/scored-report.json",
+    "zero-to-one-product-discovery-eval-runs/tmp/2026-05-14-run-03/value-review.json",
+    "zero-to-one-product-discovery-eval-runs/tmp/2026-05-14-run-03/promotion-decision.md",
+    "zero-to-one-product-discovery-eval-runs/tmp/2026-05-14-run-03/scenarios-lite.json",
+    "zero-to-one-product-discovery-eval-runs/tmp/2026-05-14-run-03/raw-generation-prompt.md"
+  ],
+  "rationale": "The run closes a previously named release question: whether the patched v0.1.5 skill can pass the complete strict suite after the run-01 findings were fixed. It should be promoted as project evidence, but not used as a substitute for clean install trigger validation or baseline comparison."
+}

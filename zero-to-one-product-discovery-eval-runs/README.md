@@ -79,6 +79,6 @@ If a run uses manual scoring instead of JSON output, preserve the same sections 
 
 ## Current Evidence Policy
 
-For `v0.1.5`, `current/v0.1.5/2026-05-12-run-01/` is the first fresh strict-suite run and `current/v0.1.5/2026-05-14-run-02/` is a targeted boundary rerun that closes the package/vendor findings from that run.
+For `v0.1.5`, `current/v0.1.5/2026-05-12-run-01/` is the first fresh strict-suite run, `current/v0.1.5/2026-05-14-run-02/` is a targeted boundary rerun that closes the package/vendor findings from that run, and `current/v0.1.5/2026-05-14-run-03/` is the patched full strict-suite rerun.
 
-These records are valuable GitHub project evidence, but they are not release-grade proof by themselves. A full strict-suite rerun after the boundary patch, baseline-vs-skill comparison, and global-install trigger testing are still needed before stronger install-candidate claims.
+These records are valuable GitHub project evidence, but they are not release-grade proof by themselves. The patched full suite has passed, but clean global-install trigger testing and baseline-vs-skill comparison are still needed before stronger public claims.

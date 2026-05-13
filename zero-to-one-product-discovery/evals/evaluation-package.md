@@ -80,6 +80,7 @@ No-actionable-finding runs must not be presented as strong evidence. They can be
 | Multi-agent workflow protocol | Structural design documented in `design-records/v0.1.5/` | Architecture is documented and has initial strict-suite pressure evidence. |
 | `v0.1.5` strict suite | `current/v0.1.5/2026-05-12-run-01/` | Fresh run found one failed package-boundary scenario and two improvement points; it is valuable evidence but not install-candidate proof. |
 | Targeted boundary rerun | `current/v0.1.5/2026-05-14-run-02/` | Five adjacent scenarios passed after patch; closes the package/vendor boundary regression, but does not replace a full-suite rerun. |
+| Patched full strict-suite rerun | `current/v0.1.5/2026-05-14-run-03/` | 22 scenarios passed with 0 hard failures and lowest score 90; supports core regression confidence, but not clean install trigger reliability. |
 
 ## Allowed Claims
 
@@ -88,8 +89,8 @@ The current evidence supports these claims:
 - The skill has a reusable, strict scenario-based evaluation harness.
 - The harness defines deterministic checks, rubric checks, hard failures, and a post-test value gate.
 - Historical runs helped shape the current architecture, but they are not release-grade validation for `v0.1.5`.
-- The `v0.1.5` multi-agent architecture is structurally documented and ready for fresh pressure testing.
-- The first fresh strict-suite run produced actionable findings, and the targeted boundary rerun confirms the package/vendor boundary patch.
+- The `v0.1.5` multi-agent architecture is structurally documented and has passed a patched full strict-suite rerun.
+- The first fresh strict-suite run produced actionable findings, the targeted boundary rerun confirmed the package/vendor boundary patch, and the patched full rerun confirmed no hard failures across the 22 core scenarios.
 
 ## Unsupported Claims
 
@@ -105,7 +106,6 @@ Do not claim:
 
 Before stronger release or installation claims, run and value-review:
 
-1. Full 22-scenario strict-suite rerun after the boundary patch if v0.1.5 should become an install candidate.
+1. Clean global-install trigger test in Codex and Claude Code using the v0.1.5 zip.
 2. Multi-turn discovery simulation through Research Brief -> PRD -> Roadmap -> Implementation Plan readiness.
 3. Baseline-vs-skill A/B run on the updated scenario set.
-4. Global-install trigger test in Codex and Claude Code.

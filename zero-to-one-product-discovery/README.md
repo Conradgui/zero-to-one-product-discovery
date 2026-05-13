@@ -220,6 +220,7 @@ See also:
 - multi-agent workflow protocol 已完成结构化设计和 strict suite 扩展。
 - `current/v0.1.5/2026-05-12-run-01/` 是首轮 fresh pressure evidence：它发现了 package/eval boundary 表达不清、vendor-boundary 回复轻微漂移、PRD draft/final 规格不够细的问题，因此不能单独作为 install-candidate 证据。
 - `current/v0.1.5/2026-05-14-run-02/` 是 targeted rerun evidence：它验证 package/eval boundary 和 vendor-boundary drift 已被补丁关闭，但仍不是 full-suite install-candidate 证据。
+- `current/v0.1.5/2026-05-14-run-03/` 是补丁后的 full strict-suite rerun：22 个场景全部通过，0 hard failure，最低分 90；它证明补丁后的核心场景回归通过，但仍不是干净安装触发证据。
 - 任何新测试只有通过 Value Gate，才会作为 GitHub 项目证据沉淀；用户安装 skill zip 时不会下载这些 run artifacts。
 
 当前不能声明：
@@ -228,7 +229,7 @@ See also:
 - 全局安装后的自然触发可靠性。
 - 完整多轮 workflow 质量。
 - copy-first child adapter 相对旧 artifact adapter 的系统性 A/B 优势。
-- multi-agent workflow 在真实模型运行中的稳定性。
+- clean install 环境中的 multi-agent workflow 稳定性。
 
 ## Versioning
 

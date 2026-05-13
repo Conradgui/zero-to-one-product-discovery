@@ -1,0 +1,920 @@
+{
+  "run_id": "2026-05-14-run-03",
+  "skill_version": "0.1.5",
+  "evaluation_file": "zero-to-one-product-discovery/evals/evals.json",
+  "environment": {
+    "agent": "Codex worker subagent raw generator, scored by Codex controller",
+    "model": "not exposed by subagent",
+    "date": "2026-05-14",
+    "working_directory": "/Users/conrad/Desktop/archive/AI学习/OmniWed",
+    "git_root": "/Users/conrad/Desktop/archive/AI学习/OmniWed",
+    "git_status": "clean at run start after checkpoint df1a919; tmp run files created during evaluation",
+    "limitations": [
+      "Raw generation was performed by a Codex worker subagent, not external Claude CLI.",
+      "This is a full 22-scenario strict-suite rerun after the package/vendor/PRD-boundary patch, but it is not a clean global-install trigger test.",
+      "Scoring was manual but structured against evals.json and eval-rubric-template.md.",
+      "No baseline-vs-skill comparison was run."
+    ]
+  },
+  "scenario_results": [
+    {
+      "id": "trigger_explicit_zero_idea",
+      "category": "trigger_boundary",
+      "risk_level": "medium",
+      "score": 96,
+      "verdict": "pass",
+      "hard_failures": [],
+      "deterministic_checks": [
+        {
+          "id": "single_question",
+          "pass": true,
+          "evidence": "Asks one primary question about the concrete scenario that triggered the idea."
+        },
+        {
+          "id": "no_later_artifact",
+          "pass": true,
+          "evidence": "Uses Diagnostic Start and does not create PRD, Roadmap, ADR, tech stack, MVP scope, or implementation plan."
+        }
+      ],
+      "rubric_checks": [
+        {
+          "id": "trigger_boundary_correctness",
+          "score": 15,
+          "evidence": "Correctly identifies this as early zero-to-one product discovery."
+        },
+        {
+          "id": "stage_gate_control",
+          "score": 15,
+          "evidence": "Keeps the response in Diagnostic Start."
+        },
+        {
+          "id": "evidence_grounding",
+          "score": 15,
+          "evidence": "Grounds facts, assumptions, risks, and unknowns in courses, assignments, and club activities."
+        },
+        {
+          "id": "user_value_question_quality",
+          "score": 10,
+          "evidence": "Question asks for the concrete repeated trouble that determines the first exploration branch."
+        }
+      ],
+      "evidence_links": [
+        "zero-to-one-product-discovery-eval-runs/tmp/2026-05-14-run-03/raw.md#trigger_explicit_zero_idea"
+      ],
+      "required_patches": []
+    },
+    {
+      "id": "trigger_implicit_open_source_resume",
+      "category": "trigger_boundary",
+      "risk_level": "medium",
+      "score": 95,
+      "verdict": "pass",
+      "hard_failures": [],
+      "deterministic_checks": [
+        {
+          "id": "implicit_trigger",
+          "pass": true,
+          "evidence": "Treats the open-source AI coding tool idea as early product discovery without explicit skill mention."
+        },
+        {
+          "id": "no_scaffold",
+          "pass": true,
+          "evidence": "Avoids repo structure, package choices, and implementation tasks."
+        }
+      ],
+      "rubric_checks": [
+        {
+          "id": "trigger_boundary_correctness",
+          "score": 15,
+          "evidence": "Correctly triggers for an early open-source product idea."
+        },
+        {
+          "id": "evidence_grounding",
+          "score": 15,
+          "evidence": "Preserves open-source and resume value as constraints."
+        },
+        {
+          "id": "user_value_question_quality",
+          "score": 10,
+          "evidence": "Asks which resume signal matters most before choosing a product slice."
+        },
+        {
+          "id": "context_economy",
+          "score": 9,
+          "evidence": "Concise but includes enough risk framing."
+        }
+      ],
+      "evidence_links": [
+        "zero-to-one-product-discovery-eval-runs/tmp/2026-05-14-run-03/raw.md#trigger_implicit_open_source_resume"
+      ],
+      "required_patches": []
+    },
+    {
+      "id": "negative_existing_mvp_small_change",
+      "category": "negative_control",
+      "risk_level": "high",
+      "score": 94,
+      "verdict": "pass",
+      "hard_failures": [],
+      "deterministic_checks": [
+        {
+          "id": "no_discovery_sections",
+          "pass": true,
+          "evidence": "Response explicitly says not to start zero-to-one discovery and handles it as a narrow UI change."
+        }
+      ],
+      "rubric_checks": [
+        {
+          "id": "trigger_boundary_correctness",
+          "score": 15,
+          "evidence": "Correctly rejects skill activation for a runnable MVP small UI task."
+        },
+        {
+          "id": "context_economy",
+          "score": 10,
+          "evidence": "Short boundary response."
+        },
+        {
+          "id": "recovery_next_action",
+          "score": 10,
+          "evidence": "Suggests locating the relevant component and style files."
+        }
+      ],
+      "evidence_links": [
+        "zero-to-one-product-discovery-eval-runs/tmp/2026-05-14-run-03/raw.md#negative_existing_mvp_small_change"
+      ],
+      "required_patches": []
+    },
+    {
+      "id": "negative_skill_maintenance_boundary",
+      "category": "negative_control",
+      "risk_level": "high",
+      "score": 91,
+      "verdict": "pass",
+      "hard_failures": [],
+      "deterministic_checks": [
+        {
+          "id": "maintenance_mode",
+          "pass": true,
+          "evidence": "Response explicitly treats the request as skill maintenance and eval-system adjustment."
+        }
+      ],
+      "rubric_checks": [
+        {
+          "id": "trigger_boundary_correctness",
+          "score": 15,
+          "evidence": "Does not enter product discovery."
+        },
+        {
+          "id": "context_economy",
+          "score": 8,
+          "evidence": "Concise, though it ends with a maintenance-scope question."
+        },
+        {
+          "id": "recovery_next_action",
+          "score": 9,
+          "evidence": "Lists concrete maintenance steps for eval structure and runner/rubric review."
+        }
+      ],
+      "evidence_links": [
+        "zero-to-one-product-discovery-eval-runs/tmp/2026-05-14-run-03/raw.md#negative_skill_maintenance_boundary"
+      ],
+      "required_patches": []
+    },
+    {
+      "id": "stage_gate_user_demands_full_artifacts",
+      "category": "stage_gate",
+      "risk_level": "critical",
+      "score": 96,
+      "verdict": "pass",
+      "hard_failures": [],
+      "deterministic_checks": [
+        {
+          "id": "blocks_full_artifacts",
+          "pass": true,
+          "evidence": "Explicitly downgrades the request and refuses full PRD/Roadmap/Implementation Plan/tech stack from one sentence."
+        },
+        {
+          "id": "single_question",
+          "pass": true,
+          "evidence": "Asks one primary question about the specific freelancer type and costly customer-management scenario."
+        }
+      ],
+      "rubric_checks": [
+        {
+          "id": "stage_gate_control",
+          "score": 15,
+          "evidence": "Strongly blocks premature artifacts."
+        },
+        {
+          "id": "evidence_grounding",
+          "score": 15,
+          "evidence": "Labels current facts, assumptions, risks, and unknowns."
+        },
+        {
+          "id": "recovery_next_action",
+          "score": 10,
+          "evidence": "Safe downgrade to Diagnostic Start and decision surface."
+        }
+      ],
+      "evidence_links": [
+        "zero-to-one-product-discovery-eval-runs/tmp/2026-05-14-run-03/raw.md#stage_gate_user_demands_full_artifacts"
+      ],
+      "required_patches": []
+    },
+    {
+      "id": "stage_gate_prd_to_implementation_too_early",
+      "category": "stage_gate",
+      "risk_level": "critical",
+      "score": 94,
+      "verdict": "pass",
+      "hard_failures": [],
+      "deterministic_checks": [
+        {
+          "id": "implementation_blocked",
+          "pass": true,
+          "evidence": "Response says Implementation Plan cannot proceed and downgrades to PRD readiness repair."
+        },
+        {
+          "id": "missing_fields_named",
+          "pass": true,
+          "evidence": "Names missing success metrics, user evidence, and non-goals as blockers."
+        }
+      ],
+      "rubric_checks": [
+        {
+          "id": "stage_gate_control",
+          "score": 15,
+          "evidence": "Blocks implementation from an ungrounded PRD draft."
+        },
+        {
+          "id": "evidence_grounding",
+          "score": 14,
+          "evidence": "Uses the prompt's missing fields as explicit blockers."
+        },
+        {
+          "id": "recovery_next_action",
+          "score": 9,
+          "evidence": "Requests PRD draft or key fields to perform a gap review."
+        }
+      ],
+      "evidence_links": [
+        "zero-to-one-product-discovery-eval-runs/tmp/2026-05-14-run-03/raw.md#stage_gate_prd_to_implementation_too_early"
+      ],
+      "required_patches": []
+    },
+    {
+      "id": "evidence_existing_prd_contradictions",
+      "category": "evidence_grounding",
+      "risk_level": "high",
+      "score": 95,
+      "verdict": "pass",
+      "hard_failures": [],
+      "deterministic_checks": [
+        {
+          "id": "contradictions_flagged",
+          "pass": true,
+          "evidence": "Flags contradictions between university students, B2B sales teams, lead management, and social check-in."
+        },
+        {
+          "id": "no_final_prd",
+          "pass": true,
+          "evidence": "Explicitly refuses to organize the material into a final PRD."
+        }
+      ],
+      "rubric_checks": [
+        {
+          "id": "evidence_grounding",
+          "score": 15,
+          "evidence": "Separates material facts, contradictions, missing success criteria, and candidate directions."
+        },
+        {
+          "id": "stage_gate_control",
+          "score": 15,
+          "evidence": "Keeps output in Material Assimilation / PRD repair."
+        },
+        {
+          "id": "user_value_question_quality",
+          "score": 10,
+          "evidence": "Asks the user to choose one primary line before PRD progression."
+        }
+      ],
+      "evidence_links": [
+        "zero-to-one-product-discovery-eval-runs/tmp/2026-05-14-run-03/raw.md#evidence_existing_prd_contradictions"
+      ],
+      "required_patches": []
+    },
+    {
+      "id": "evidence_user_claims_without_proof",
+      "category": "evidence_grounding",
+      "risk_level": "high",
+      "score": 94,
+      "verdict": "pass",
+      "hard_failures": [],
+      "deterministic_checks": [
+        {
+          "id": "claim_marked_assumption",
+          "pass": true,
+          "evidence": "Response says the universal demand claim can only be treated as a hypothesis or assumption."
+        }
+      ],
+      "rubric_checks": [
+        {
+          "id": "evidence_grounding",
+          "score": 15,
+          "evidence": "Separates hypothesis, unknowns, and risks."
+        },
+        {
+          "id": "stage_gate_control",
+          "score": 14,
+          "evidence": "Does not turn the claim into requirements."
+        },
+        {
+          "id": "user_value_question_quality",
+          "score": 10,
+          "evidence": "Asks for concrete examples of independent developers with the same problem."
+        }
+      ],
+      "evidence_links": [
+        "zero-to-one-product-discovery-eval-runs/tmp/2026-05-14-run-03/raw.md#evidence_user_claims_without_proof"
+      ],
+      "required_patches": []
+    },
+    {
+      "id": "child_prd_grounded_route",
+      "category": "child_skill_routing",
+      "risk_level": "medium",
+      "score": 93,
+      "verdict": "pass",
+      "hard_failures": [],
+      "deterministic_checks": [
+        {
+          "id": "prd_route_named",
+          "pass": true,
+          "evidence": "Response names PRD Producer Handoff and Planning Artifacts / PRD."
+        },
+        {
+          "id": "no_downstream_artifacts",
+          "pass": true,
+          "evidence": "Response does not create Roadmap or Implementation Plan."
+        },
+        {
+          "id": "prd_not_final",
+          "pass": true,
+          "evidence": "Response labels output as PRD draft and says it needs measurement definition before downstream planning."
+        },
+        {
+          "id": "metric_measurement_dependency",
+          "pass": true,
+          "evidence": "Response says reduced missed follow-ups needs a measurement method such as self-report, completion rate, or before/after events."
+        }
+      ],
+      "rubric_checks": [
+        {
+          "id": "protocol_artifact_integrity",
+          "score": 14,
+          "evidence": "Uses a bounded PRD producer handoff and readiness signal."
+        },
+        {
+          "id": "evidence_grounding",
+          "score": 14,
+          "evidence": "Uses provided target user, problem, MVP, non-goals, and metric without inventing new target users."
+        },
+        {
+          "id": "stage_gate_control",
+          "score": 14,
+          "evidence": "Keeps output as draft and blocks Roadmap/Implementation Plan until metric measurement is confirmed."
+        }
+      ],
+      "evidence_links": [
+        "zero-to-one-product-discovery-eval-runs/tmp/2026-05-14-run-03/raw.md#child_prd_grounded_route"
+      ],
+      "required_patches": []
+    },
+    {
+      "id": "child_roadmap_ungrounded_downgrade",
+      "category": "child_skill_routing",
+      "risk_level": "high",
+      "score": 94,
+      "verdict": "pass",
+      "hard_failures": [],
+      "deterministic_checks": [
+        {
+          "id": "roadmap_downgraded",
+          "pass": true,
+          "evidence": "Response says the Now/Next/Later content is not a roadmap commitment and is only an exploration order."
+        }
+      ],
+      "rubric_checks": [
+        {
+          "id": "stage_gate_control",
+          "score": 15,
+          "evidence": "Refuses a committed roadmap without user and success metric."
+        },
+        {
+          "id": "protocol_artifact_integrity",
+          "score": 14,
+          "evidence": "Downgrades to Roadmap readiness outline."
+        },
+        {
+          "id": "user_value_question_quality",
+          "score": 10,
+          "evidence": "Asks for the first user segment."
+        }
+      ],
+      "evidence_links": [
+        "zero-to-one-product-discovery-eval-runs/tmp/2026-05-14-run-03/raw.md#child_roadmap_ungrounded_downgrade"
+      ],
+      "required_patches": []
+    },
+    {
+      "id": "child_vendor_boundary",
+      "category": "child_skill_routing",
+      "risk_level": "high",
+      "score": 92,
+      "verdict": "pass",
+      "hard_failures": [],
+      "deterministic_checks": [
+        {
+          "id": "vendor_not_routeable",
+          "pass": true,
+          "evidence": "Response says vendor is an upstream source snapshot and not a runtime routing target."
+        },
+        {
+          "id": "no_product_followup",
+          "pass": true,
+          "evidence": "The closing question is about vendor template reuse versus adapter capability, not PRD readiness or product discovery."
+        }
+      ],
+      "rubric_checks": [
+        {
+          "id": "trigger_boundary_correctness",
+          "score": 15,
+          "evidence": "Correctly treats this as skill architecture and routing boundary work."
+        },
+        {
+          "id": "protocol_artifact_integrity",
+          "score": 14,
+          "evidence": "Preserves local child-skills adapter as the routeable surface."
+        },
+        {
+          "id": "context_economy",
+          "score": 8,
+          "evidence": "Concise but still asks a maintenance follow-up; acceptable but not minimal."
+        }
+      ],
+      "evidence_links": [
+        "zero-to-one-product-discovery-eval-runs/tmp/2026-05-14-run-03/raw.md#child_vendor_boundary"
+      ],
+      "required_patches": []
+    },
+    {
+      "id": "multi_agent_controller_audit_pass_not_acceptance",
+      "category": "multi_agent_orchestration",
+      "risk_level": "critical",
+      "score": 95,
+      "verdict": "pass",
+      "hard_failures": [],
+      "deterministic_checks": [
+        {
+          "id": "audit_not_acceptance",
+          "pass": true,
+          "evidence": "Response explicitly says audit pass is not product decision or final user acceptance."
+        },
+        {
+          "id": "roadmap_blocked",
+          "pass": true,
+          "evidence": "Response says Roadmap producer should not start until user confirmation."
+        }
+      ],
+      "rubric_checks": [
+        {
+          "id": "protocol_artifact_integrity",
+          "score": 15,
+          "evidence": "Maintains Auditor, Controller, and user-gate separation."
+        },
+        {
+          "id": "stage_gate_control",
+          "score": 15,
+          "evidence": "Keeps PRD at review-ready rather than final."
+        },
+        {
+          "id": "recovery_next_action",
+          "score": 10,
+          "evidence": "Asks for explicit user confirmation before Roadmap."
+        }
+      ],
+      "evidence_links": [
+        "zero-to-one-product-discovery-eval-runs/tmp/2026-05-14-run-03/raw.md#multi_agent_controller_audit_pass_not_acceptance"
+      ],
+      "required_patches": []
+    },
+    {
+      "id": "multi_agent_producer_metric_invention",
+      "category": "multi_agent_orchestration",
+      "risk_level": "critical",
+      "score": 94,
+      "verdict": "pass",
+      "hard_failures": [],
+      "deterministic_checks": [
+        {
+          "id": "producer_to_producer_blocked",
+          "pass": true,
+          "evidence": "Response blocks PRD producer from calling Roadmap producer."
+        },
+        {
+          "id": "metric_as_blocker",
+          "pass": true,
+          "evidence": "Response treats missing success metric as a blocker / needs-user-input condition."
+        }
+      ],
+      "rubric_checks": [
+        {
+          "id": "protocol_artifact_integrity",
+          "score": 15,
+          "evidence": "Preserves producer boundary and Controller routing."
+        },
+        {
+          "id": "evidence_grounding",
+          "score": 14,
+          "evidence": "Labels candidate metrics as candidates rather than facts."
+        },
+        {
+          "id": "user_value_question_quality",
+          "score": 10,
+          "evidence": "Asks one question about the most important success outcome."
+        }
+      ],
+      "evidence_links": [
+        "zero-to-one-product-discovery-eval-runs/tmp/2026-05-14-run-03/raw.md#multi_agent_producer_metric_invention"
+      ],
+      "required_patches": []
+    },
+    {
+      "id": "multi_agent_workbench_full_history",
+      "category": "multi_agent_orchestration",
+      "risk_level": "critical",
+      "score": 94,
+      "verdict": "pass",
+      "hard_failures": [],
+      "deterministic_checks": [
+        {
+          "id": "workbench_current_state_only",
+          "pass": true,
+          "evidence": "Response says Runtime Workbench stores current decision state only."
+        },
+        {
+          "id": "trace_outside_runtime",
+          "pass": true,
+          "evidence": "Response routes complete PRD, Roadmap, and audit reports to independent artifacts rather than Runtime Workbench."
+        }
+      ],
+      "rubric_checks": [
+        {
+          "id": "trigger_boundary_correctness",
+          "score": 14,
+          "evidence": "Treats this as architecture/workbench boundary guidance."
+        },
+        {
+          "id": "protocol_artifact_integrity",
+          "score": 15,
+          "evidence": "Rejects full transcript and full artifact storage in runtime state."
+        },
+        {
+          "id": "context_economy",
+          "score": 10,
+          "evidence": "Explains current-state contents without overloading."
+        }
+      ],
+      "evidence_links": [
+        "zero-to-one-product-discovery-eval-runs/tmp/2026-05-14-run-03/raw.md#multi_agent_workbench_full_history"
+      ],
+      "required_patches": []
+    },
+    {
+      "id": "audit_user_gate_skip_to_implementation",
+      "category": "audit_user_gate",
+      "risk_level": "critical",
+      "score": 95,
+      "verdict": "pass",
+      "hard_failures": [],
+      "deterministic_checks": [
+        {
+          "id": "user_gate_required",
+          "pass": true,
+          "evidence": "Response requires explicit confirmation before entering Implementation Plan."
+        }
+      ],
+      "rubric_checks": [
+        {
+          "id": "stage_gate_control",
+          "score": 15,
+          "evidence": "Keeps Implementation Plan blocked until confirmation."
+        },
+        {
+          "id": "protocol_artifact_integrity",
+          "score": 15,
+          "evidence": "Distinguishes review-ready from accepted implementation input."
+        },
+        {
+          "id": "recovery_next_action",
+          "score": 10,
+          "evidence": "Asks the user to confirm PRD and Roadmap as implementation inputs."
+        }
+      ],
+      "evidence_links": [
+        "zero-to-one-product-discovery-eval-runs/tmp/2026-05-14-run-03/raw.md#audit_user_gate_skip_to_implementation"
+      ],
+      "required_patches": []
+    },
+    {
+      "id": "audit_adr_condition_gate",
+      "category": "audit_user_gate",
+      "risk_level": "high",
+      "score": 93,
+      "verdict": "pass",
+      "hard_failures": [],
+      "deterministic_checks": [
+        {
+          "id": "adr_qualification_check",
+          "pass": true,
+          "evidence": "Response checks ADR qualification and outputs ADR candidate, not accepted ADR."
+        }
+      ],
+      "rubric_checks": [
+        {
+          "id": "stage_gate_control",
+          "score": 14,
+          "evidence": "Does not create accepted ADR immediately."
+        },
+        {
+          "id": "protocol_artifact_integrity",
+          "score": 14,
+          "evidence": "Preserves ADR gate and lists decision context, options, risks, and missing confirmation."
+        },
+        {
+          "id": "evidence_grounding",
+          "score": 14,
+          "evidence": "Links the ADR candidate to local import vs cloud sync trade-offs."
+        }
+      ],
+      "evidence_links": [
+        "zero-to-one-product-discovery-eval-runs/tmp/2026-05-14-run-03/raw.md#audit_adr_condition_gate"
+      ],
+      "required_patches": []
+    },
+    {
+      "id": "multi_turn_conflicting_facts",
+      "category": "multi_turn_continuity",
+      "risk_level": "high",
+      "score": 95,
+      "verdict": "pass",
+      "hard_failures": [],
+      "deterministic_checks": [
+        {
+          "id": "conflict_detected",
+          "pass": true,
+          "evidence": "Response identifies the conflict between freelance designers and small law firm assistants."
+        },
+        {
+          "id": "prd_blocked_or_downgraded",
+          "pass": true,
+          "evidence": "Response says PRD cannot continue without resolving the target-user conflict."
+        }
+      ],
+      "rubric_checks": [
+        {
+          "id": "evidence_grounding",
+          "score": 15,
+          "evidence": "Updates the evidence snapshot and separates old fact, new input, and conflict."
+        },
+        {
+          "id": "stage_gate_control",
+          "score": 15,
+          "evidence": "Blocks PRD progression and returns to Problem Framing / Material Assimilation."
+        },
+        {
+          "id": "user_value_question_quality",
+          "score": 10,
+          "evidence": "Asks one decision question about whether to change the primary target user."
+        }
+      ],
+      "evidence_links": [
+        "zero-to-one-product-discovery-eval-runs/tmp/2026-05-14-run-03/raw.md#multi_turn_conflicting_facts"
+      ],
+      "required_patches": []
+    },
+    {
+      "id": "context_economy_no_template_dump",
+      "category": "context_economy",
+      "risk_level": "medium",
+      "score": 96,
+      "verdict": "pass",
+      "hard_failures": [],
+      "deterministic_checks": [
+        {
+          "id": "no_template_dump",
+          "pass": true,
+          "evidence": "Response does not include PRD, roadmap, backlog, or checklist templates."
+        },
+        {
+          "id": "single_question",
+          "pass": true,
+          "evidence": "Asks one primary question about whether the core problem is clarity of action items or follow-through."
+        }
+      ],
+      "rubric_checks": [
+        {
+          "id": "context_economy",
+          "score": 10,
+          "evidence": "Concise Diagnostic Start."
+        },
+        {
+          "id": "evidence_grounding",
+          "score": 14,
+          "evidence": "Grounds risk in existing meeting-summary tools and differentiates execution follow-through."
+        },
+        {
+          "id": "user_value_question_quality",
+          "score": 10,
+          "evidence": "Asks a high-leverage problem split question."
+        }
+      ],
+      "evidence_links": [
+        "zero-to-one-product-discovery-eval-runs/tmp/2026-05-14-run-03/raw.md#context_economy_no_template_dump"
+      ],
+      "required_patches": []
+    },
+    {
+      "id": "negative_narrow_bugfix",
+      "category": "negative_control",
+      "risk_level": "high",
+      "score": 94,
+      "verdict": "pass",
+      "hard_failures": [],
+      "deterministic_checks": [
+        {
+          "id": "bugfix_boundary",
+          "pass": true,
+          "evidence": "Response handles ButtonProps disabled as a TypeScript bugfix and does not start discovery."
+        }
+      ],
+      "rubric_checks": [
+        {
+          "id": "trigger_boundary_correctness",
+          "score": 15,
+          "evidence": "Correct negative-control behavior."
+        },
+        {
+          "id": "context_economy",
+          "score": 9,
+          "evidence": "Short technical boundary response with a relevant search command."
+        }
+      ],
+      "evidence_links": [
+        "zero-to-one-product-discovery-eval-runs/tmp/2026-05-14-run-03/raw.md#negative_narrow_bugfix"
+      ],
+      "required_patches": []
+    },
+    {
+      "id": "package_boundary_eval_runs_not_installed",
+      "category": "negative_control",
+      "risk_level": "medium",
+      "score": 91,
+      "verdict": "pass",
+      "hard_failures": [],
+      "deterministic_checks": [
+        {
+          "id": "eval_runs_outside_zip",
+          "pass": true,
+          "evidence": "Response says eval-runs should not enter the skill zip or runtime context."
+        },
+        {
+          "id": "github_evidence_allowed",
+          "pass": true,
+          "evidence": "Response says selected/current-version eval records can be committed to GitHub as public validation evidence; wording is slightly less precise than 'valuable promoted eval-runs'."
+        }
+      ],
+      "rubric_checks": [
+        {
+          "id": "trigger_boundary_correctness",
+          "score": 15,
+          "evidence": "Treats this as packaging and release boundary work."
+        },
+        {
+          "id": "context_economy",
+          "score": 9,
+          "evidence": "Explains the install/runtime context risk concisely."
+        },
+        {
+          "id": "recovery_next_action",
+          "score": 8,
+          "evidence": "Asks whether the goal is install-time summary or maintainer traceability; acceptable but less direct than giving only the packaging action."
+        }
+      ],
+      "evidence_links": [
+        "zero-to-one-product-discovery-eval-runs/tmp/2026-05-14-run-03/raw.md#package_boundary_eval_runs_not_installed"
+      ],
+      "required_patches": []
+    },
+    {
+      "id": "eval_value_gate_no_findings",
+      "category": "context_economy",
+      "risk_level": "medium",
+      "score": 90,
+      "verdict": "pass",
+      "hard_failures": [],
+      "deterministic_checks": [
+        {
+          "id": "no_full_promotion_without_value",
+          "pass": true,
+          "evidence": "Response says a no-finding run should not be packaged as important historical evidence and should only keep minimal traceability unless it supports a concrete decision."
+        }
+      ],
+      "rubric_checks": [
+        {
+          "id": "trigger_boundary_correctness",
+          "score": 14,
+          "evidence": "Treats this as eval evidence governance."
+        },
+        {
+          "id": "context_economy",
+          "score": 9,
+          "evidence": "Rejects promoting full raw/report as strong evidence when no value signal exists."
+        },
+        {
+          "id": "recovery_next_action",
+          "score": 8,
+          "evidence": "Asks what decision the run supports; this is useful but less explicit than naming minimal-note/discard-full-run."
+        }
+      ],
+      "evidence_links": [
+        "zero-to-one-product-discovery-eval-runs/tmp/2026-05-14-run-03/raw.md#eval_value_gate_no_findings"
+      ],
+      "required_patches": []
+    },
+    {
+      "id": "baseline_comparison_required_before_superiority_claim",
+      "category": "negative_control",
+      "risk_level": "medium",
+      "score": 91,
+      "verdict": "pass",
+      "hard_failures": [],
+      "deterministic_checks": [
+        {
+          "id": "baseline_required",
+          "pass": true,
+          "evidence": "Response states that superiority claims require same-scenario baseline output and scoring."
+        }
+      ],
+      "rubric_checks": [
+        {
+          "id": "trigger_boundary_correctness",
+          "score": 14,
+          "evidence": "Treats this as README evidence-claim governance."
+        },
+        {
+          "id": "evidence_grounding",
+          "score": 15,
+          "evidence": "Separates supported internal-test claims from unsupported superiority claims."
+        },
+        {
+          "id": "recovery_next_action",
+          "score": 9,
+          "evidence": "Recommends baseline comparison before superiority language."
+        }
+      ],
+      "evidence_links": [
+        "zero-to-one-product-discovery-eval-runs/tmp/2026-05-14-run-03/raw.md#baseline_comparison_required_before_superiority_claim"
+      ],
+      "required_patches": []
+    }
+  ],
+  "aggregate": {
+    "average_score": 93.73,
+    "median_score": 94,
+    "lowest_score": 90,
+    "hard_failure_count": 0,
+    "suite_pass": true,
+    "install_candidate": false
+  },
+  "findings": {
+    "substantive_issues": [],
+    "improvement_directions": [
+      "The full 22-scenario strict-suite rerun passes after the package/vendor/PRD-boundary patch.",
+      "The PRD draft/final refinement is now covered: child_prd_grounded_route outputs a PRD draft, marks metric measurement as unresolved, and does not move to Roadmap or Implementation Plan.",
+      "Package and vendor boundary behavior remains stable after the full-suite rerun.",
+      "Install-candidate status still requires clean install / natural trigger validation because this run used a Codex worker subagent, not an installed-skill environment."
+    ],
+    "regression_risks": [
+      "Some evidence-governance answers are correct but less precise than the policy language; future runs should watch for drift around 'promoted' and 'minimal-note/discard-full-run'.",
+      "Global install trigger reliability remains untested in a clean environment.",
+      "Baseline-vs-skill superiority remains unsupported."
+    ],
+    "required_reruns": [
+      "Clean install trigger test before install-candidate claim.",
+      "Baseline-vs-skill A/B run before any superiority claim."
+    ]
+  },
+  "promotion_recommendation": "promote"
+}

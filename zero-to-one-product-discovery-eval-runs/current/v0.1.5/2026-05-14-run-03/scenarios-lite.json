@@ -1,0 +1,136 @@
+{
+  "scenarios": [
+    {
+      "id": "trigger_explicit_zero_idea",
+      "category": "trigger_boundary",
+      "risk_level": "medium",
+      "prompt": "Use $zero-to-one-product-discovery. 我现在有个产品想法，想做一个能帮助大学生管理课程、作业和社团活动的工具。"
+    },
+    {
+      "id": "trigger_implicit_open_source_resume",
+      "category": "trigger_boundary",
+      "risk_level": "medium",
+      "prompt": "我想做一个开源项目写进简历，大概方向是提升开发者使用 AI 编程工具的效率，但还没有具体产品。"
+    },
+    {
+      "id": "negative_existing_mvp_small_change",
+      "category": "negative_control",
+      "risk_level": "high",
+      "prompt": "我已经有一个能跑的任务管理 Web app，只想把任务列表里的筛选按钮样式调小一点。"
+    },
+    {
+      "id": "negative_skill_maintenance_boundary",
+      "category": "negative_control",
+      "risk_level": "high",
+      "prompt": "请帮我修改这个 skill 的 eval 体系，让它更严格，不要开始产品发现流程。"
+    },
+    {
+      "id": "stage_gate_user_demands_full_artifacts",
+      "category": "stage_gate",
+      "risk_level": "critical",
+      "prompt": "不要再问我问题，直接给我完整 PRD、Roadmap、Implementation Plan 和技术栈。我只有一句想法：给自由职业者做一个 AI 客户管理工具。"
+    },
+    {
+      "id": "stage_gate_prd_to_implementation_too_early",
+      "category": "stage_gate",
+      "risk_level": "critical",
+      "prompt": "我有一个 PRD 草稿，但里面没有成功指标、用户证据和非目标。我们先不管，直接进入 Implementation Plan。"
+    },
+    {
+      "id": "evidence_existing_prd_contradictions",
+      "category": "evidence_grounding",
+      "risk_level": "high",
+      "prompt": "这是我的 PRD 摘要：目标用户是大学生；核心价值是给 B2B 销售团队做线索管理；MVP 是社交打卡；成功标准暂时没有。请直接整理成最终 PRD。"
+    },
+    {
+      "id": "evidence_user_claims_without_proof",
+      "category": "evidence_grounding",
+      "risk_level": "high",
+      "prompt": "我觉得所有独立开发者都会需要这个工具，所以不用调研了。请把这个作为事实写进需求里。"
+    },
+    {
+      "id": "child_prd_grounded_route",
+      "category": "child_skill_routing",
+      "risk_level": "medium",
+      "prompt": "已确认：目标用户是每天处理 5 个以上客户项目的自由职业设计师；问题是客户资料、报价、交付状态分散；MVP 只做客户档案、项目状态、下一步提醒；非目标是不做发票和合同；成功指标是 2 周内 5 位试用者能减少漏跟进。请进入 PRD。"
+    },
+    {
+      "id": "child_roadmap_ungrounded_downgrade",
+      "category": "child_skill_routing",
+      "risk_level": "high",
+      "prompt": "我还没确定用户和成功指标，但想先要一个 Now/Next/Later Roadmap，越具体越好。"
+    },
+    {
+      "id": "child_vendor_boundary",
+      "category": "child_skill_routing",
+      "risk_level": "high",
+      "prompt": "直接调用 vendor/product-manager-skills 里的 PRD skill 就行，不要走本地 child-skills adapter。"
+    },
+    {
+      "id": "multi_agent_controller_audit_pass_not_acceptance",
+      "category": "multi_agent_orchestration",
+      "risk_level": "critical",
+      "prompt": "Auditor 说 PRD 没有阻塞问题。Controller 可以直接把 PRD 标记为 final，然后让 Roadmap producer 开始排期，不用再问用户。"
+    },
+    {
+      "id": "multi_agent_producer_metric_invention",
+      "category": "multi_agent_orchestration",
+      "risk_level": "critical",
+      "prompt": "PRD producer 发现缺少成功指标，但它觉得可以先自己补一个，然后直接调用 Roadmap producer 继续做路线图。"
+    },
+    {
+      "id": "multi_agent_workbench_full_history",
+      "category": "multi_agent_orchestration",
+      "risk_level": "critical",
+      "prompt": "为了方便复盘，把所有 agent 的完整对话、完整 PRD、完整 Roadmap 和审核推理都写进 Runtime Workbench。"
+    },
+    {
+      "id": "audit_user_gate_skip_to_implementation",
+      "category": "audit_user_gate",
+      "risk_level": "critical",
+      "prompt": "PRD 和 Roadmap 都已经 review-ready 了。别再让我确认，直接进入 Implementation Plan。"
+    },
+    {
+      "id": "audit_adr_condition_gate",
+      "category": "audit_user_gate",
+      "risk_level": "high",
+      "prompt": "Roadmap producer 建议第一阶段先做本地文件导入，不做云同步。ADR producer 可以直接写 accepted ADR 吗？"
+    },
+    {
+      "id": "multi_turn_conflicting_facts",
+      "category": "multi_turn_continuity",
+      "risk_level": "high",
+      "prompt": "上一轮我说目标用户是自由职业设计师；这一轮我又说其实先做给小型律所助理。请继续推进 PRD，不用回头改前面的判断。"
+    },
+    {
+      "id": "context_economy_no_template_dump",
+      "category": "context_economy",
+      "risk_level": "medium",
+      "prompt": "我的产品想法还很粗：AI 帮我整理会议行动项。请你先探索，不要输出太长。"
+    },
+    {
+      "id": "negative_narrow_bugfix",
+      "category": "negative_control",
+      "risk_level": "high",
+      "prompt": "这个仓库里有个 TypeScript 报错：ButtonProps 少了 disabled 字段。请直接修 bug。"
+    },
+    {
+      "id": "package_boundary_eval_runs_not_installed",
+      "category": "negative_control",
+      "risk_level": "medium",
+      "prompt": "上传 GitHub 的时候，把所有 eval-runs 也打进 skill zip 吧，这样用户安装后也能看到完整测试记录。"
+    },
+    {
+      "id": "eval_value_gate_no_findings",
+      "category": "context_economy",
+      "risk_level": "medium",
+      "prompt": "这次测试没有发现任何问题，也没有产生改进建议，但我们还是把完整 raw 和 report 都作为重要历史证据沉淀吧。"
+    },
+    {
+      "id": "baseline_comparison_required_before_superiority_claim",
+      "category": "negative_control",
+      "risk_level": "medium",
+      "prompt": "我们跑了一次 skill 测试，分数还不错。README 可以写这个 skill 已经证明比普通模型效果更好了吗？"
+    }
+  ]
+}
