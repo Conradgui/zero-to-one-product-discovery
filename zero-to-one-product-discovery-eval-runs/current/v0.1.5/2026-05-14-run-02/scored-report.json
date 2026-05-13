@@ -1,0 +1,252 @@
+{
+  "run_id": "2026-05-14-run-02",
+  "skill_version": "0.1.5",
+  "evaluation_file": "zero-to-one-product-discovery/evals/evals.json",
+  "environment": {
+    "agent": "Codex patched-controller targeted rerun",
+    "model": "not exposed",
+    "date": "2026-05-14",
+    "working_directory": "/Users/conrad/Desktop/archive/AI学习/OmniWed",
+    "git_root": "/Users/conrad/Desktop/archive/AI学习/OmniWed",
+    "git_status": "untracked project workspace; see git status --short",
+    "limitations": [
+      "Targeted rerun of 5 scenarios only; not a full 22-scenario suite.",
+      "Raw responses were generated after patching runtime rules and eval specs, so this validates the patch closure rather than providing an independent global-install test.",
+      "No baseline-vs-skill comparison was run.",
+      "install_candidate is false because this run is scoped to regression closure."
+    ]
+  },
+  "scenario_results": [
+    {
+      "id": "package_boundary_eval_runs_not_installed",
+      "category": "negative_control",
+      "risk_level": "medium",
+      "score": 96,
+      "verdict": "pass",
+      "hard_failures": [],
+      "deterministic_checks": [
+        {
+          "id": "eval_runs_outside_zip",
+          "pass": true,
+          "evidence": "Raw response rejects packaging eval-runs into the install zip and limits the zip to zero-to-one-product-discovery/ runtime assets."
+        },
+        {
+          "id": "github_evidence_allowed",
+          "pass": true,
+          "evidence": "Raw response explicitly allows promoted current/<version>/<run-id> eval-runs to be committed with the GitHub repository as public validation evidence."
+        }
+      ],
+      "rubric_checks": [
+        {
+          "id": "trigger_boundary_correctness",
+          "score": 15,
+          "evidence": "Correctly treats the request as packaging governance rather than product discovery."
+        },
+        {
+          "id": "context_economy",
+          "score": 14,
+          "evidence": "Keeps the distinction concise while naming the concrete paths."
+        },
+        {
+          "id": "recovery_next_action",
+          "score": 14,
+          "evidence": "Explains the correct repository/install split and why it matters."
+        }
+      ],
+      "evidence_links": [
+        "zero-to-one-product-discovery-eval-runs/tmp/2026-05-14-run-02/raw.md#package_boundary_eval_runs_not_installed"
+      ],
+      "required_patches": []
+    },
+    {
+      "id": "eval_value_gate_no_findings",
+      "category": "context_economy",
+      "risk_level": "medium",
+      "score": 94,
+      "verdict": "pass",
+      "hard_failures": [],
+      "deterministic_checks": [
+        {
+          "id": "no_actionable_findings_not_strong_evidence",
+          "pass": true,
+          "evidence": "Raw response says no-actionable-finding runs must not be promoted as strong evidence."
+        },
+        {
+          "id": "minimal_note_or_discard",
+          "pass": true,
+          "evidence": "Raw response recommends discard-full-run or minimal-note depending on whether a named release question is closed."
+        }
+      ],
+      "rubric_checks": [
+        {
+          "id": "context_economy",
+          "score": 14,
+          "evidence": "Clearly prevents full raw/report retention when no value signal exists."
+        },
+        {
+          "id": "protocol_artifact_integrity",
+          "score": 14,
+          "evidence": "Uses the existing Value Gate promotion decisions accurately."
+        },
+        {
+          "id": "recovery_next_action",
+          "score": 13,
+          "evidence": "Provides concrete promote/minimal-note/discard handling."
+        }
+      ],
+      "evidence_links": [
+        "zero-to-one-product-discovery-eval-runs/tmp/2026-05-14-run-02/raw.md#eval_value_gate_no_findings"
+      ],
+      "required_patches": []
+    },
+    {
+      "id": "baseline_comparison_required_before_superiority_claim",
+      "category": "negative_control",
+      "risk_level": "high",
+      "score": 95,
+      "verdict": "pass",
+      "hard_failures": [],
+      "deterministic_checks": [
+        {
+          "id": "blocks_superiority_claim",
+          "pass": true,
+          "evidence": "Raw response rejects claiming superiority before a baseline-vs-skill A/B run."
+        },
+        {
+          "id": "requires_baseline",
+          "pass": true,
+          "evidence": "Raw response specifies same scenarios and rubric are needed for baseline comparison."
+        }
+      ],
+      "rubric_checks": [
+        {
+          "id": "evidence_grounding",
+          "score": 15,
+          "evidence": "Separates supported claims from unsupported superiority claims."
+        },
+        {
+          "id": "trigger_boundary_correctness",
+          "score": 14,
+          "evidence": "Treats this as README/release claim governance, not product discovery."
+        },
+        {
+          "id": "recovery_next_action",
+          "score": 14,
+          "evidence": "Names the baseline run needed to support the claim."
+        }
+      ],
+      "evidence_links": [
+        "zero-to-one-product-discovery-eval-runs/tmp/2026-05-14-run-02/raw.md#baseline_comparison_required_before_superiority_claim"
+      ],
+      "required_patches": []
+    },
+    {
+      "id": "child_vendor_boundary",
+      "category": "child_skill_routing",
+      "risk_level": "high",
+      "score": 96,
+      "verdict": "pass",
+      "hard_failures": [],
+      "deterministic_checks": [
+        {
+          "id": "vendor_not_routeable",
+          "pass": true,
+          "evidence": "Raw response states vendor is a source snapshot library and not an active route target."
+        },
+        {
+          "id": "no_product_followup",
+          "pass": true,
+          "evidence": "Raw response ends inside skill-maintenance/source-governance and does not ask PRD readiness or product-discovery questions."
+        }
+      ],
+      "rubric_checks": [
+        {
+          "id": "trigger_boundary_correctness",
+          "score": 15,
+          "evidence": "Correctly classifies the prompt as source-governance maintenance."
+        },
+        {
+          "id": "protocol_artifact_integrity",
+          "score": 15,
+          "evidence": "Preserves local child-skills adapter as the only routeable surface."
+        },
+        {
+          "id": "context_economy",
+          "score": 14,
+          "evidence": "Boundary explanation is concise and does not drift into artifact routing."
+        }
+      ],
+      "evidence_links": [
+        "zero-to-one-product-discovery-eval-runs/tmp/2026-05-14-run-02/raw.md#child_vendor_boundary"
+      ],
+      "required_patches": []
+    },
+    {
+      "id": "negative_skill_maintenance_boundary",
+      "category": "negative_control",
+      "risk_level": "high",
+      "score": 95,
+      "verdict": "pass",
+      "hard_failures": [],
+      "deterministic_checks": [
+        {
+          "id": "maintenance_mode",
+          "pass": true,
+          "evidence": "Raw response explicitly classifies the request as skill-maintenance / packaging boundary work."
+        },
+        {
+          "id": "no_diagnostic_start",
+          "pass": true,
+          "evidence": "Raw response does not emit Diagnostic Start or product discovery artifacts."
+        }
+      ],
+      "rubric_checks": [
+        {
+          "id": "trigger_boundary_correctness",
+          "score": 15,
+          "evidence": "Does not hijack repository maintenance into product discovery."
+        },
+        {
+          "id": "context_economy",
+          "score": 14,
+          "evidence": "Provides only the packaging boundary steps needed for the maintenance task."
+        },
+        {
+          "id": "recovery_next_action",
+          "score": 14,
+          "evidence": "Suggests modifying packaging docs/ignore rules and validating zip contents."
+        }
+      ],
+      "evidence_links": [
+        "zero-to-one-product-discovery-eval-runs/tmp/2026-05-14-run-02/raw.md#negative_skill_maintenance_boundary"
+      ],
+      "required_patches": []
+    }
+  ],
+  "aggregate": {
+    "average_score": 95.2,
+    "median_score": 95,
+    "lowest_score": 94,
+    "hard_failure_count": 0,
+    "suite_pass": true,
+    "install_candidate": false
+  },
+  "findings": {
+    "substantive_issues": [],
+    "improvement_directions": [
+      "The package-boundary wording added to SKILL.md, README.md, and evaluation-package.md is sufficient for the targeted regression scenario.",
+      "The vendor-boundary rule now prevents maintenance/source-governance prompts from drifting into PRD readiness questions.",
+      "The targeted rerun should be treated as regression closure, not release-grade validation."
+    ],
+    "regression_risks": [
+      "A future full-suite rerun is still needed if v0.1.5 is to be called an install candidate.",
+      "Global-install trigger reliability remains untested in a fresh end-user environment."
+    ],
+    "required_reruns": [
+      "Full 22-scenario strict suite before install-candidate claim.",
+      "Baseline-vs-skill A/B run before superiority claim.",
+      "Global-install trigger test before public install reliability claim."
+    ]
+  },
+  "promotion_recommendation": "promote"
+}

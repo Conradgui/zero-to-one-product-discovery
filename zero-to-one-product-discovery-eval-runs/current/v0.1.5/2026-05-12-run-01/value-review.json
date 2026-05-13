@@ -1,0 +1,25 @@
+{
+  "run_id": "2026-05-12-run-01",
+  "skill_version": "0.1.5",
+  "value_verdict": "valuable",
+  "substantive_findings": [
+    "The strict suite found no hard failures across 22 scenarios, but one scenario failed: package_boundary_eval_runs_not_installed scored 82 because the response did not clearly preserve the intended GitHub evidence archive boundary.",
+    "The run exposed a minor maintenance-boundary drift in child_vendor_boundary: the answer correctly rejected direct vendor routing but ended with a PRD readiness question.",
+    "The run exposed a scoring/spec ambiguity in child_prd_grounded_route: the scenario allows PRD generation, but should distinguish draft vs review-ready PRD more clearly."
+  ],
+  "improvement_directions": [
+    "Add or strengthen runtime-accessible packaging/eval boundary language: promoted eval-runs belong in the GitHub project evidence archive, but never in the installable skill zip.",
+    "Tighten vendor-boundary behavior so maintenance prompts do not end with product-discovery questions unless the user asks to continue into artifact routing.",
+    "Refine the PRD route scenario to explicitly score whether output is draft, review-ready, or final."
+  ],
+  "product_impact": "This run is valuable because it validates the core v0.1.5 multi-agent and stage-gate behavior while finding a concrete release/documentation governance issue. The failed packaging-boundary scenario affects how the project explains credible eval evidence on GitHub without bloating user installs.",
+  "promotion_decision": "promote",
+  "required_next_action": "patch-and-rerun",
+  "evidence_to_preserve": [
+    "zero-to-one-product-discovery-eval-runs/tmp/2026-05-12-run-01/raw.md",
+    "zero-to-one-product-discovery-eval-runs/tmp/2026-05-12-run-01/scored-report.json",
+    "zero-to-one-product-discovery-eval-runs/tmp/2026-05-12-run-01/value-review.json",
+    "zero-to-one-product-discovery-eval-runs/tmp/2026-05-12-run-01/promotion-decision.md"
+  ],
+  "rationale": "The run should be preserved because it produced actionable findings and changed the release-readiness decision: despite a high average score and zero hard failures, v0.1.5 is not an install candidate until the failed packaging-boundary scenario is patched and rerun."
+}

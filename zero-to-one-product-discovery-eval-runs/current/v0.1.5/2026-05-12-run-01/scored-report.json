@@ -1,0 +1,1457 @@
+{
+  "run_id": "2026-05-12-run-01",
+  "skill_version": "0.1.5",
+  "evaluation_file": "zero-to-one-product-discovery/evals/evals.json",
+  "environment": {
+    "agent": "Codex subagent raw generator, scored by Codex controller",
+    "model": "not exposed by subagent",
+    "date": "2026-05-12",
+    "working_directory": "/Users/conrad/Desktop/archive/AI学习/OmniWed",
+    "git_root": "/Users/conrad/Desktop/archive/AI学习/OmniWed",
+    "git_status": "?? .gitignore\n?? dist/\n?? zero-to-one-product-discovery-eval-runs/\n?? zero-to-one-product-discovery/",
+    "limitations": [
+      "Raw generation was performed by an independent subagent, not by a globally installed skill in a fresh end-user environment.",
+      "Scoring was manual but structured against evals.json and eval-rubric-template.md.",
+      "No baseline-vs-skill comparison was run."
+    ]
+  },
+  "scenario_results": [
+    {
+      "id": "trigger_explicit_zero_idea",
+      "category": "trigger_boundary",
+      "risk_level": "medium",
+      "score": 96,
+      "verdict": "pass",
+      "hard_failures": [],
+      "deterministic_checks": [
+        {
+          "id": "single_question",
+          "pass": true,
+          "evidence": "Raw response asks one primary question about the most common/painful specific student failure."
+        },
+        {
+          "id": "no_later_artifact",
+          "pass": true,
+          "evidence": "Response stays in Diagnostic Start and does not create PRD, Roadmap, ADR, tech stack, MVP scope, or implementation plan."
+        }
+      ],
+      "rubric_checks": [
+        {
+          "id": "trigger_boundary_correctness",
+          "score": 15,
+          "evidence": "Explicitly uses zero-to-one-product-discovery and classifies the idea as early-stage."
+        },
+        {
+          "id": "stage_gate_control",
+          "score": 15,
+          "evidence": "Keeps output to Diagnostic Start and avoids later artifacts."
+        },
+        {
+          "id": "evidence_grounding",
+          "score": 15,
+          "evidence": "Grounds facts and risks in students, courses, assignments, and club activities."
+        },
+        {
+          "id": "user_value_question_quality",
+          "score": 10,
+          "evidence": "Question targets the concrete failure that determines reminder, aggregation, collaboration, or decision-aid direction."
+        },
+        {
+          "id": "context_economy",
+          "score": 9,
+          "evidence": "Output is structured but not excessive for a first turn."
+        },
+        {
+          "id": "deterministic_compliance",
+          "score": 10,
+          "evidence": "All deterministic checks pass."
+        },
+        {
+          "id": "recovery_next_action",
+          "score": 10,
+          "evidence": "Next action is a single grounding question."
+        },
+        {
+          "id": "protocol_artifact_integrity",
+          "score": 12,
+          "evidence": "No artifact route is needed; no protocol boundary is violated."
+        }
+      ],
+      "evidence_links": [
+        "zero-to-one-product-discovery-eval-runs/tmp/2026-05-12-run-01/raw.md#trigger_explicit_zero_idea"
+      ],
+      "required_patches": []
+    },
+    {
+      "id": "trigger_implicit_open_source_resume",
+      "category": "trigger_boundary",
+      "risk_level": "medium",
+      "score": 95,
+      "verdict": "pass",
+      "hard_failures": [],
+      "deterministic_checks": [
+        {
+          "id": "implicit_trigger",
+          "pass": true,
+          "evidence": "Response says it will treat the prompt as zero-to-one product discovery without explicit skill mention."
+        },
+        {
+          "id": "no_scaffold",
+          "pass": true,
+          "evidence": "Response avoids repository structure, package choices, and implementation tasks."
+        }
+      ],
+      "rubric_checks": [
+        {
+          "id": "trigger_boundary_correctness",
+          "score": 15,
+          "evidence": "Correctly triggers for an early open-source/resume product idea."
+        },
+        {
+          "id": "evidence_grounding",
+          "score": 15,
+          "evidence": "Preserves open-source and resume value and identifies missing user evidence."
+        },
+        {
+          "id": "user_value_question_quality",
+          "score": 10,
+          "evidence": "Asks for a concrete recent AI-coding inefficiency event."
+        },
+        {
+          "id": "context_economy",
+          "score": 9,
+          "evidence": "Concise enough while still giving three grounded exploration directions."
+        },
+        {
+          "id": "stage_gate_control",
+          "score": 14,
+          "evidence": "Avoids implementation and artifact generation."
+        },
+        {
+          "id": "protocol_artifact_integrity",
+          "score": 12,
+          "evidence": "No child or multi-agent route needed; no boundary violation."
+        },
+        {
+          "id": "deterministic_compliance",
+          "score": 10,
+          "evidence": "All deterministic checks pass."
+        },
+        {
+          "id": "recovery_next_action",
+          "score": 10,
+          "evidence": "Next step is a concrete grounding question."
+        }
+      ],
+      "evidence_links": [
+        "zero-to-one-product-discovery-eval-runs/tmp/2026-05-12-run-01/raw.md#trigger_implicit_open_source_resume"
+      ],
+      "required_patches": []
+    },
+    {
+      "id": "negative_existing_mvp_small_change",
+      "category": "negative_control",
+      "risk_level": "high",
+      "score": 94,
+      "verdict": "pass",
+      "hard_failures": [],
+      "deterministic_checks": [
+        {
+          "id": "no_discovery_sections",
+          "pass": true,
+          "evidence": "Response does not contain Diagnostic Start, candidate directions, or dangerous assumption sections."
+        }
+      ],
+      "rubric_checks": [
+        {
+          "id": "trigger_boundary_correctness",
+          "score": 15,
+          "evidence": "Explicitly says this is not zero-to-one discovery because there is a runnable MVP and narrow UI change."
+        },
+        {
+          "id": "context_economy",
+          "score": 10,
+          "evidence": "Short boundary response with direct implementation next steps."
+        },
+        {
+          "id": "recovery_next_action",
+          "score": 10,
+          "evidence": "Offers to locate filter/button code instead of product discovery."
+        },
+        {
+          "id": "stage_gate_control",
+          "score": 14,
+          "evidence": "No strategic or planning artifacts are introduced."
+        },
+        {
+          "id": "evidence_grounding",
+          "score": 13,
+          "evidence": "Uses runnable task-management web app and small filter-button style change from prompt."
+        },
+        {
+          "id": "protocol_artifact_integrity",
+          "score": 12,
+          "evidence": "No child or multi-agent route needed."
+        },
+        {
+          "id": "deterministic_compliance",
+          "score": 10,
+          "evidence": "Deterministic check passes."
+        },
+        {
+          "id": "user_value_question_quality",
+          "score": 10,
+          "evidence": "Asks only for component path or permission to search code, which is appropriate for bug/UI work."
+        }
+      ],
+      "evidence_links": [
+        "zero-to-one-product-discovery-eval-runs/tmp/2026-05-12-run-01/raw.md#negative_existing_mvp_small_change"
+      ],
+      "required_patches": []
+    },
+    {
+      "id": "negative_skill_maintenance_boundary",
+      "category": "negative_control",
+      "risk_level": "high",
+      "score": 93,
+      "verdict": "pass",
+      "hard_failures": [],
+      "deterministic_checks": [
+        {
+          "id": "maintenance_mode",
+          "pass": true,
+          "evidence": "Response explicitly says this is skill maintenance and product discovery will not start."
+        }
+      ],
+      "rubric_checks": [
+        {
+          "id": "trigger_boundary_correctness",
+          "score": 15,
+          "evidence": "Correctly avoids discovery for eval-system maintenance."
+        },
+        {
+          "id": "context_economy",
+          "score": 9,
+          "evidence": "Concise maintenance plan without product-discovery artifacts."
+        },
+        {
+          "id": "recovery_next_action",
+          "score": 10,
+          "evidence": "Next action is to inspect eval files and related README."
+        },
+        {
+          "id": "stage_gate_control",
+          "score": 14,
+          "evidence": "No product stage is entered."
+        },
+        {
+          "id": "evidence_grounding",
+          "score": 13,
+          "evidence": "Focuses on the user's request to make evals stricter."
+        },
+        {
+          "id": "protocol_artifact_integrity",
+          "score": 12,
+          "evidence": "Mentions deterministic/rubric checks and keeping diff small."
+        },
+        {
+          "id": "deterministic_compliance",
+          "score": 10,
+          "evidence": "Deterministic check passes."
+        },
+        {
+          "id": "user_value_question_quality",
+          "score": 10,
+          "evidence": "No product question is asked; next action is appropriate."
+        }
+      ],
+      "evidence_links": [
+        "zero-to-one-product-discovery-eval-runs/tmp/2026-05-12-run-01/raw.md#negative_skill_maintenance_boundary"
+      ],
+      "required_patches": []
+    },
+    {
+      "id": "stage_gate_user_demands_full_artifacts",
+      "category": "stage_gate",
+      "risk_level": "critical",
+      "score": 96,
+      "verdict": "pass",
+      "hard_failures": [],
+      "deterministic_checks": [
+        {
+          "id": "blocks_full_artifacts",
+          "pass": true,
+          "evidence": "Response explicitly says it cannot create full PRD, Roadmap, Implementation Plan, or tech stack from one sentence."
+        },
+        {
+          "id": "single_question",
+          "pass": true,
+          "evidence": "Response asks one primary question about freelancer segment and customer-management failure."
+        }
+      ],
+      "rubric_checks": [
+        {
+          "id": "stage_gate_control",
+          "score": 15,
+          "evidence": "Blocks final artifacts and allows only outlines/decision surfaces."
+        },
+        {
+          "id": "evidence_grounding",
+          "score": 15,
+          "evidence": "Separates known facts, assumptions, and unknowns."
+        },
+        {
+          "id": "user_value_question_quality",
+          "score": 10,
+          "evidence": "Question unlocks user, problem, MVP, and technical constraints."
+        },
+        {
+          "id": "recovery_next_action",
+          "score": 10,
+          "evidence": "Downgrades to assumption clearing and asks one grounding question."
+        },
+        {
+          "id": "trigger_boundary_correctness",
+          "score": 14,
+          "evidence": "Correctly treats the prompt as zero-to-one discovery despite pressure."
+        },
+        {
+          "id": "protocol_artifact_integrity",
+          "score": 12,
+          "evidence": "No final artifact or route is accepted."
+        },
+        {
+          "id": "context_economy",
+          "score": 10,
+          "evidence": "Output is structured but not a full template dump."
+        },
+        {
+          "id": "deterministic_compliance",
+          "score": 10,
+          "evidence": "All deterministic checks pass."
+        }
+      ],
+      "evidence_links": [
+        "zero-to-one-product-discovery-eval-runs/tmp/2026-05-12-run-01/raw.md#stage_gate_user_demands_full_artifacts"
+      ],
+      "required_patches": []
+    },
+    {
+      "id": "stage_gate_prd_to_implementation_too_early",
+      "category": "stage_gate",
+      "risk_level": "critical",
+      "score": 95,
+      "verdict": "pass",
+      "hard_failures": [],
+      "deterministic_checks": [
+        {
+          "id": "implementation_blocked",
+          "pass": true,
+          "evidence": "Response says it cannot enter Implementation Plan and downgrades to implementation readiness review."
+        },
+        {
+          "id": "missing_fields_named",
+          "pass": true,
+          "evidence": "Response names success metrics, user evidence, and non-goals as blockers."
+        }
+      ],
+      "rubric_checks": [
+        {
+          "id": "stage_gate_control",
+          "score": 15,
+          "evidence": "Implementation Plan is explicitly blocked."
+        },
+        {
+          "id": "evidence_grounding",
+          "score": 15,
+          "evidence": "Uses the prompt's missing success metrics, user evidence, and non-goals."
+        },
+        {
+          "id": "protocol_artifact_integrity",
+          "score": 14,
+          "evidence": "Returns readiness/blocker framing instead of implementation tasks."
+        },
+        {
+          "id": "recovery_next_action",
+          "score": 10,
+          "evidence": "Suggests a PRD readiness patch and one grounding question."
+        },
+        {
+          "id": "trigger_boundary_correctness",
+          "score": 13,
+          "evidence": "Correctly treats existing PRD as material needing assimilation."
+        },
+        {
+          "id": "context_economy",
+          "score": 9,
+          "evidence": "Concise blocker explanation."
+        },
+        {
+          "id": "deterministic_compliance",
+          "score": 10,
+          "evidence": "All deterministic checks pass."
+        },
+        {
+          "id": "user_value_question_quality",
+          "score": 9,
+          "evidence": "Question focuses on target user and core problem; slightly broad but still one high-leverage question."
+        }
+      ],
+      "evidence_links": [
+        "zero-to-one-product-discovery-eval-runs/tmp/2026-05-12-run-01/raw.md#stage_gate_prd_to_implementation_too_early"
+      ],
+      "required_patches": []
+    },
+    {
+      "id": "evidence_existing_prd_contradictions",
+      "category": "evidence_grounding",
+      "risk_level": "high",
+      "score": 97,
+      "verdict": "pass",
+      "hard_failures": [],
+      "deterministic_checks": [
+        {
+          "id": "contradictions_flagged",
+          "pass": true,
+          "evidence": "Response flags target user/value contradiction and MVP/value contradiction."
+        },
+        {
+          "id": "no_final_prd",
+          "pass": true,
+          "evidence": "Response says the material cannot be turned into final PRD."
+        }
+      ],
+      "rubric_checks": [
+        {
+          "id": "evidence_grounding",
+          "score": 15,
+          "evidence": "Separates fact, contradiction, gap, and risk."
+        },
+        {
+          "id": "stage_gate_control",
+          "score": 15,
+          "evidence": "Blocks final PRD and routes to Material Assimilation."
+        },
+        {
+          "id": "user_value_question_quality",
+          "score": 10,
+          "evidence": "Single question asks which core product direction is real."
+        },
+        {
+          "id": "recovery_next_action",
+          "score": 10,
+          "evidence": "Suggests preserving three candidates rather than merging contradictions."
+        },
+        {
+          "id": "trigger_boundary_correctness",
+          "score": 14,
+          "evidence": "Correctly treats PRD summary as existing material."
+        },
+        {
+          "id": "protocol_artifact_integrity",
+          "score": 13,
+          "evidence": "No unsupported artifact acceptance."
+        },
+        {
+          "id": "context_economy",
+          "score": 10,
+          "evidence": "Focused contradiction review."
+        },
+        {
+          "id": "deterministic_compliance",
+          "score": 10,
+          "evidence": "All deterministic checks pass."
+        }
+      ],
+      "evidence_links": [
+        "zero-to-one-product-discovery-eval-runs/tmp/2026-05-12-run-01/raw.md#evidence_existing_prd_contradictions"
+      ],
+      "required_patches": []
+    },
+    {
+      "id": "evidence_user_claims_without_proof",
+      "category": "evidence_grounding",
+      "risk_level": "high",
+      "score": 96,
+      "verdict": "pass",
+      "hard_failures": [],
+      "deterministic_checks": [
+        {
+          "id": "claim_marked_assumption",
+          "pass": true,
+          "evidence": "Response says the universal demand claim can only be an assumption and provides safer wording."
+        }
+      ],
+      "rubric_checks": [
+        {
+          "id": "evidence_grounding",
+          "score": 15,
+          "evidence": "Clearly separates assumption, risk, and unknowns."
+        },
+        {
+          "id": "stage_gate_control",
+          "score": 15,
+          "evidence": "Does not write the claim into requirements as fact."
+        },
+        {
+          "id": "user_value_question_quality",
+          "score": 10,
+          "evidence": "Single question asks for the concrete recurring problem causing time or revenue loss."
+        },
+        {
+          "id": "trigger_boundary_correctness",
+          "score": 14,
+          "evidence": "Correctly treats prompt as discovery/evidence issue."
+        },
+        {
+          "id": "protocol_artifact_integrity",
+          "score": 12,
+          "evidence": "No artifact is finalized from unsupported claim."
+        },
+        {
+          "id": "context_economy",
+          "score": 10,
+          "evidence": "Concise and direct."
+        },
+        {
+          "id": "deterministic_compliance",
+          "score": 10,
+          "evidence": "Deterministic check passes."
+        },
+        {
+          "id": "recovery_next_action",
+          "score": 10,
+          "evidence": "Converts broad claim into testable segment/evidence direction."
+        }
+      ],
+      "evidence_links": [
+        "zero-to-one-product-discovery-eval-runs/tmp/2026-05-12-run-01/raw.md#evidence_user_claims_without_proof"
+      ],
+      "required_patches": []
+    },
+    {
+      "id": "child_prd_grounded_route",
+      "category": "child_skill_routing",
+      "risk_level": "medium",
+      "score": 90,
+      "verdict": "pass",
+      "hard_failures": [],
+      "deterministic_checks": [
+        {
+          "id": "prd_route_named",
+          "pass": true,
+          "evidence": "Response says it enters PRD child capability."
+        },
+        {
+          "id": "no_downstream_artifacts",
+          "pass": true,
+          "evidence": "Response does not create Roadmap or Implementation Plan."
+        }
+      ],
+      "rubric_checks": [
+        {
+          "id": "protocol_artifact_integrity",
+          "score": 13,
+          "evidence": "Includes PRD route, Context Resume Packet, readiness signal, and recommended main skill action."
+        },
+        {
+          "id": "evidence_grounding",
+          "score": 14,
+          "evidence": "Uses provided user, problem, MVP, non-goals, and success indicator."
+        },
+        {
+          "id": "stage_gate_control",
+          "score": 13,
+          "evidence": "Does not jump to Roadmap or Implementation Plan, but the generated PRD is fairly complete and depends on readiness interpretation."
+        },
+        {
+          "id": "trigger_boundary_correctness",
+          "score": 13,
+          "evidence": "PRD route is appropriate for the grounded prompt."
+        },
+        {
+          "id": "user_value_question_quality",
+          "score": 9,
+          "evidence": "Question about measuring reduced missed follow-ups is high leverage."
+        },
+        {
+          "id": "context_economy",
+          "score": 8,
+          "evidence": "Output is long but appropriate for a PRD route."
+        },
+        {
+          "id": "deterministic_compliance",
+          "score": 10,
+          "evidence": "All deterministic checks pass."
+        },
+        {
+          "id": "recovery_next_action",
+          "score": 10,
+          "evidence": "Readiness signal requires main skill decision before Roadmap."
+        }
+      ],
+      "evidence_links": [
+        "zero-to-one-product-discovery-eval-runs/tmp/2026-05-12-run-01/raw.md#child_prd_grounded_route"
+      ],
+      "required_patches": [
+        "Consider making PRD route tests distinguish draft/full/review-ready output more explicitly so scoring can judge whether the generated PRD is too complete for the remaining metric-measurement uncertainty."
+      ]
+    },
+    {
+      "id": "child_roadmap_ungrounded_downgrade",
+      "category": "child_skill_routing",
+      "risk_level": "high",
+      "score": 95,
+      "verdict": "pass",
+      "hard_failures": [],
+      "deterministic_checks": [
+        {
+          "id": "roadmap_downgraded",
+          "pass": true,
+          "evidence": "Response explicitly downgrades to a Now/Next/Later decision surface and says it cannot give a concrete Roadmap."
+        }
+      ],
+      "rubric_checks": [
+        {
+          "id": "stage_gate_control",
+          "score": 15,
+          "evidence": "Blocks committed roadmap."
+        },
+        {
+          "id": "protocol_artifact_integrity",
+          "score": 14,
+          "evidence": "Uses decision-surface mode instead of committed child output."
+        },
+        {
+          "id": "user_value_question_quality",
+          "score": 10,
+          "evidence": "Single question asks for the first user group."
+        },
+        {
+          "id": "trigger_boundary_correctness",
+          "score": 13,
+          "evidence": "Correctly handles product planning request."
+        },
+        {
+          "id": "evidence_grounding",
+          "score": 13,
+          "evidence": "Names missing user and success metric as blockers."
+        },
+        {
+          "id": "context_economy",
+          "score": 10,
+          "evidence": "Short decision surface."
+        },
+        {
+          "id": "deterministic_compliance",
+          "score": 10,
+          "evidence": "Deterministic check passes."
+        },
+        {
+          "id": "recovery_next_action",
+          "score": 10,
+          "evidence": "Next action is user-group grounding."
+        }
+      ],
+      "evidence_links": [
+        "zero-to-one-product-discovery-eval-runs/tmp/2026-05-12-run-01/raw.md#child_roadmap_ungrounded_downgrade"
+      ],
+      "required_patches": []
+    },
+    {
+      "id": "child_vendor_boundary",
+      "category": "child_skill_routing",
+      "risk_level": "high",
+      "score": 86,
+      "verdict": "pass",
+      "hard_failures": [],
+      "deterministic_checks": [
+        {
+          "id": "vendor_not_routeable",
+          "pass": true,
+          "evidence": "Response says vendor is a reference source and not a directly routeable child skill entrypoint."
+        }
+      ],
+      "rubric_checks": [
+        {
+          "id": "trigger_boundary_correctness",
+          "score": 12,
+          "evidence": "Correctly avoids direct vendor route, but then asks a PRD-grounding question in a skill-maintenance boundary scenario."
+        },
+        {
+          "id": "protocol_artifact_integrity",
+          "score": 14,
+          "evidence": "Protects local child-skills adapter boundary."
+        },
+        {
+          "id": "context_economy",
+          "score": 8,
+          "evidence": "Mostly concise, but ends with product PRD readiness question that is not needed for the maintenance request."
+        },
+        {
+          "id": "stage_gate_control",
+          "score": 12,
+          "evidence": "No PRD is generated, but the response partially drifts toward product routing."
+        },
+        {
+          "id": "evidence_grounding",
+          "score": 12,
+          "evidence": "Grounds answer in vendor/local adapter boundary."
+        },
+        {
+          "id": "user_value_question_quality",
+          "score": 6,
+          "evidence": "Final question is useful for actual PRD routing but not for the user's vendor-boundary request."
+        },
+        {
+          "id": "deterministic_compliance",
+          "score": 10,
+          "evidence": "Deterministic check passes."
+        },
+        {
+          "id": "recovery_next_action",
+          "score": 9,
+          "evidence": "Gives correct boundary and next route, with minor drift."
+        }
+      ],
+      "evidence_links": [
+        "zero-to-one-product-discovery-eval-runs/tmp/2026-05-12-run-01/raw.md#child_vendor_boundary"
+      ],
+      "required_patches": [
+        "Tighten skill-maintenance/vendor-boundary responses so they do not end with product-discovery readiness questions unless the user explicitly asks to proceed with a product artifact."
+      ]
+    },
+    {
+      "id": "multi_agent_controller_audit_pass_not_acceptance",
+      "category": "multi_agent_orchestration",
+      "risk_level": "critical",
+      "score": 97,
+      "verdict": "pass",
+      "hard_failures": [],
+      "deterministic_checks": [
+        {
+          "id": "audit_not_acceptance",
+          "pass": true,
+          "evidence": "Response explicitly says Auditor pass does not equal user acceptance."
+        },
+        {
+          "id": "roadmap_blocked",
+          "pass": true,
+          "evidence": "Response says Roadmap producer may proceed only after PRD is accepted as final or review-ready."
+        }
+      ],
+      "rubric_checks": [
+        {
+          "id": "protocol_artifact_integrity",
+          "score": 15,
+          "evidence": "Separates Auditor, Controller, and Roadmap producer responsibilities."
+        },
+        {
+          "id": "stage_gate_control",
+          "score": 15,
+          "evidence": "Blocks final acceptance and Roadmap scheduling without user gate."
+        },
+        {
+          "id": "recovery_next_action",
+          "score": 10,
+          "evidence": "Controller action is to summarize audit and ask for user confirmation."
+        },
+        {
+          "id": "user_value_question_quality",
+          "score": 10,
+          "evidence": "Question asks whether user accepts PRD as Roadmap baseline."
+        },
+        {
+          "id": "evidence_grounding",
+          "score": 14,
+          "evidence": "Uses prompt's audit pass and final acceptance scenario."
+        },
+        {
+          "id": "context_economy",
+          "score": 10,
+          "evidence": "Concise and avoids auditor internal reasoning."
+        },
+        {
+          "id": "deterministic_compliance",
+          "score": 10,
+          "evidence": "All deterministic checks pass."
+        },
+        {
+          "id": "trigger_boundary_correctness",
+          "score": 13,
+          "evidence": "Correctly handles multi-agent planning boundary."
+        }
+      ],
+      "evidence_links": [
+        "zero-to-one-product-discovery-eval-runs/tmp/2026-05-12-run-01/raw.md#multi_agent_controller_audit_pass_not_acceptance"
+      ],
+      "required_patches": []
+    },
+    {
+      "id": "multi_agent_producer_metric_invention",
+      "category": "multi_agent_orchestration",
+      "risk_level": "critical",
+      "score": 97,
+      "verdict": "pass",
+      "hard_failures": [],
+      "deterministic_checks": [
+        {
+          "id": "producer_to_producer_blocked",
+          "pass": true,
+          "evidence": "Response says PRD producer cannot directly call Roadmap producer."
+        },
+        {
+          "id": "metric_as_blocker",
+          "pass": true,
+          "evidence": "Response marks missing success metric as blocker and dependency in a return packet."
+        }
+      ],
+      "rubric_checks": [
+        {
+          "id": "protocol_artifact_integrity",
+          "score": 15,
+          "evidence": "Protects producer boundary, controller routing, and return packet semantics."
+        },
+        {
+          "id": "evidence_grounding",
+          "score": 15,
+          "evidence": "Prevents invented metrics from becoming confirmed requirements."
+        },
+        {
+          "id": "user_value_question_quality",
+          "score": 10,
+          "evidence": "Single question asks what result the first version must prove."
+        },
+        {
+          "id": "stage_gate_control",
+          "score": 15,
+          "evidence": "Roadmap is blocked until success metric is confirmed."
+        },
+        {
+          "id": "context_economy",
+          "score": 10,
+          "evidence": "Short and targeted."
+        },
+        {
+          "id": "deterministic_compliance",
+          "score": 10,
+          "evidence": "All deterministic checks pass."
+        },
+        {
+          "id": "recovery_next_action",
+          "score": 10,
+          "evidence": "Recommended Controller action is user confirmation of success metric."
+        },
+        {
+          "id": "trigger_boundary_correctness",
+          "score": 12,
+          "evidence": "Correctly handles multi-agent orchestration prompt."
+        }
+      ],
+      "evidence_links": [
+        "zero-to-one-product-discovery-eval-runs/tmp/2026-05-12-run-01/raw.md#multi_agent_producer_metric_invention"
+      ],
+      "required_patches": []
+    },
+    {
+      "id": "multi_agent_workbench_full_history",
+      "category": "multi_agent_orchestration",
+      "risk_level": "critical",
+      "score": 94,
+      "verdict": "pass",
+      "hard_failures": [],
+      "deterministic_checks": [
+        {
+          "id": "workbench_current_state_only",
+          "pass": true,
+          "evidence": "Response says Workbench only stores current decision state."
+        },
+        {
+          "id": "trace_outside_runtime",
+          "pass": true,
+          "evidence": "Response routes retrospective needs to Trace Report outside Runtime Workbench."
+        }
+      ],
+      "rubric_checks": [
+        {
+          "id": "trigger_boundary_correctness",
+          "score": 12,
+          "evidence": "Does not run Diagnostic Start, but asks a retrospective-needs question that may be more than strictly necessary."
+        },
+        {
+          "id": "protocol_artifact_integrity",
+          "score": 15,
+          "evidence": "Correctly rejects full transcripts, artifacts, and auditor reasoning in Runtime Workbench."
+        },
+        {
+          "id": "context_economy",
+          "score": 10,
+          "evidence": "Strongly protects context economy."
+        },
+        {
+          "id": "stage_gate_control",
+          "score": 14,
+          "evidence": "No product stage is entered."
+        },
+        {
+          "id": "evidence_grounding",
+          "score": 13,
+          "evidence": "Grounds answer in workbench/retrospective boundary."
+        },
+        {
+          "id": "user_value_question_quality",
+          "score": 10,
+          "evidence": "Question asks which retrospective need matters; acceptable for routing Trace Report shape."
+        },
+        {
+          "id": "deterministic_compliance",
+          "score": 10,
+          "evidence": "All deterministic checks pass."
+        },
+        {
+          "id": "recovery_next_action",
+          "score": 10,
+          "evidence": "Moves detail to Trace Report rather than runtime state."
+        }
+      ],
+      "evidence_links": [
+        "zero-to-one-product-discovery-eval-runs/tmp/2026-05-12-run-01/raw.md#multi_agent_workbench_full_history"
+      ],
+      "required_patches": []
+    },
+    {
+      "id": "audit_user_gate_skip_to_implementation",
+      "category": "audit_user_gate",
+      "risk_level": "critical",
+      "score": 96,
+      "verdict": "pass",
+      "hard_failures": [],
+      "deterministic_checks": [
+        {
+          "id": "user_gate_required",
+          "pass": true,
+          "evidence": "Response requires user confirmation before Implementation Plan."
+        }
+      ],
+      "rubric_checks": [
+        {
+          "id": "stage_gate_control",
+          "score": 15,
+          "evidence": "Blocks Implementation Plan until PRD and Roadmap are accepted."
+        },
+        {
+          "id": "protocol_artifact_integrity",
+          "score": 15,
+          "evidence": "Distinguishes review-ready from accepted implementation baseline."
+        },
+        {
+          "id": "recovery_next_action",
+          "score": 10,
+          "evidence": "Offers implementation readiness confirmation and one acceptance question."
+        },
+        {
+          "id": "evidence_grounding",
+          "score": 14,
+          "evidence": "Uses review-ready PRD/Roadmap from prompt."
+        },
+        {
+          "id": "user_value_question_quality",
+          "score": 10,
+          "evidence": "Question asks whether user accepts current PRD and Roadmap as fixed input baseline."
+        },
+        {
+          "id": "context_economy",
+          "score": 10,
+          "evidence": "Concise gate explanation."
+        },
+        {
+          "id": "deterministic_compliance",
+          "score": 10,
+          "evidence": "Deterministic check passes."
+        },
+        {
+          "id": "trigger_boundary_correctness",
+          "score": 12,
+          "evidence": "Correctly treats as planning gate."
+        }
+      ],
+      "evidence_links": [
+        "zero-to-one-product-discovery-eval-runs/tmp/2026-05-12-run-01/raw.md#audit_user_gate_skip_to_implementation"
+      ],
+      "required_patches": []
+    },
+    {
+      "id": "audit_adr_condition_gate",
+      "category": "audit_user_gate",
+      "risk_level": "high",
+      "score": 96,
+      "verdict": "pass",
+      "hard_failures": [],
+      "deterministic_checks": [
+        {
+          "id": "adr_qualification_check",
+          "pass": true,
+          "evidence": "Response checks whether local import decision locks storage, sync architecture, privacy, deployment, or maintainability before ADR."
+        }
+      ],
+      "rubric_checks": [
+        {
+          "id": "stage_gate_control",
+          "score": 15,
+          "evidence": "Blocks accepted ADR without qualification and gate."
+        },
+        {
+          "id": "protocol_artifact_integrity",
+          "score": 15,
+          "evidence": "Separates Decision Log candidate from ADR escalation."
+        },
+        {
+          "id": "evidence_grounding",
+          "score": 14,
+          "evidence": "Grounds reasoning in local import vs cloud sync and data/sync/privacy consequences."
+        },
+        {
+          "id": "user_value_question_quality",
+          "score": 10,
+          "evidence": "Single question asks whether the choice locks data format or sync architecture."
+        },
+        {
+          "id": "context_economy",
+          "score": 10,
+          "evidence": "Compact decision surface."
+        },
+        {
+          "id": "deterministic_compliance",
+          "score": 10,
+          "evidence": "Deterministic check passes."
+        },
+        {
+          "id": "recovery_next_action",
+          "score": 10,
+          "evidence": "Routes to Decision Log candidate or ADR escalation condition."
+        },
+        {
+          "id": "trigger_boundary_correctness",
+          "score": 12,
+          "evidence": "Correctly handles ADR gate prompt."
+        }
+      ],
+      "evidence_links": [
+        "zero-to-one-product-discovery-eval-runs/tmp/2026-05-12-run-01/raw.md#audit_adr_condition_gate"
+      ],
+      "required_patches": []
+    },
+    {
+      "id": "multi_turn_conflicting_facts",
+      "category": "multi_turn_continuity",
+      "risk_level": "high",
+      "score": 97,
+      "verdict": "pass",
+      "hard_failures": [],
+      "deterministic_checks": [
+        {
+          "id": "conflict_detected",
+          "pass": true,
+          "evidence": "Response identifies conflict between freelancer designers and small law firm assistants."
+        },
+        {
+          "id": "prd_blocked_or_downgraded",
+          "pass": true,
+          "evidence": "Response downgrades PRD progression to target-user switch confirmation."
+        }
+      ],
+      "rubric_checks": [
+        {
+          "id": "evidence_grounding",
+          "score": 15,
+          "evidence": "Separates previous fact, new claim, conflict, and risk."
+        },
+        {
+          "id": "stage_gate_control",
+          "score": 15,
+          "evidence": "Blocks PRD continuation until conflict is resolved."
+        },
+        {
+          "id": "user_value_question_quality",
+          "score": 10,
+          "evidence": "Single question asks whether to switch target user or compare it as a second candidate."
+        },
+        {
+          "id": "trigger_boundary_correctness",
+          "score": 14,
+          "evidence": "Correctly treats as context-continuity product discovery."
+        },
+        {
+          "id": "protocol_artifact_integrity",
+          "score": 13,
+          "evidence": "Protects Evidence Snapshot and PRD gate."
+        },
+        {
+          "id": "context_economy",
+          "score": 10,
+          "evidence": "Concise conflict review."
+        },
+        {
+          "id": "deterministic_compliance",
+          "score": 10,
+          "evidence": "All deterministic checks pass."
+        },
+        {
+          "id": "recovery_next_action",
+          "score": 10,
+          "evidence": "Requires explicit target-user decision."
+        }
+      ],
+      "evidence_links": [
+        "zero-to-one-product-discovery-eval-runs/tmp/2026-05-12-run-01/raw.md#multi_turn_conflicting_facts"
+      ],
+      "required_patches": []
+    },
+    {
+      "id": "context_economy_no_template_dump",
+      "category": "context_economy",
+      "risk_level": "medium",
+      "score": 95,
+      "verdict": "pass",
+      "hard_failures": [],
+      "deterministic_checks": [
+        {
+          "id": "no_template_dump",
+          "pass": true,
+          "evidence": "Response contains no long PRD, roadmap, backlog, or checklist templates."
+        },
+        {
+          "id": "single_question",
+          "pass": true,
+          "evidence": "Response asks one primary question about meeting type."
+        }
+      ],
+      "rubric_checks": [
+        {
+          "id": "context_economy",
+          "score": 10,
+          "evidence": "Short, information-dense Diagnostic Start."
+        },
+        {
+          "id": "evidence_grounding",
+          "score": 14,
+          "evidence": "Grounds response in AI meeting action-item idea."
+        },
+        {
+          "id": "user_value_question_quality",
+          "score": 10,
+          "evidence": "Question about meeting type determines action-item format and workflow."
+        },
+        {
+          "id": "trigger_boundary_correctness",
+          "score": 13,
+          "evidence": "Correctly triggers for rough product idea."
+        },
+        {
+          "id": "stage_gate_control",
+          "score": 14,
+          "evidence": "No premature artifact."
+        },
+        {
+          "id": "protocol_artifact_integrity",
+          "score": 12,
+          "evidence": "No artifact protocol needed; no boundary violation."
+        },
+        {
+          "id": "deterministic_compliance",
+          "score": 10,
+          "evidence": "All deterministic checks pass."
+        },
+        {
+          "id": "recovery_next_action",
+          "score": 10,
+          "evidence": "Next step is concrete meeting-type narrowing."
+        }
+      ],
+      "evidence_links": [
+        "zero-to-one-product-discovery-eval-runs/tmp/2026-05-12-run-01/raw.md#context_economy_no_template_dump"
+      ],
+      "required_patches": []
+    },
+    {
+      "id": "negative_narrow_bugfix",
+      "category": "negative_control",
+      "risk_level": "high",
+      "score": 95,
+      "verdict": "pass",
+      "hard_failures": [],
+      "deterministic_checks": [
+        {
+          "id": "bugfix_boundary",
+          "pass": true,
+          "evidence": "Response says this is a narrow bugfix and does not start product discovery."
+        }
+      ],
+      "rubric_checks": [
+        {
+          "id": "trigger_boundary_correctness",
+          "score": 15,
+          "evidence": "Correctly handles TypeScript error as code bugfix."
+        },
+        {
+          "id": "context_economy",
+          "score": 10,
+          "evidence": "Very concise and practical."
+        },
+        {
+          "id": "stage_gate_control",
+          "score": 15,
+          "evidence": "No product planning introduced."
+        },
+        {
+          "id": "evidence_grounding",
+          "score": 13,
+          "evidence": "Uses ButtonProps/disabled bug details."
+        },
+        {
+          "id": "protocol_artifact_integrity",
+          "score": 12,
+          "evidence": "No artifact route needed."
+        },
+        {
+          "id": "user_value_question_quality",
+          "score": 10,
+          "evidence": "No product question; next action is code search."
+        },
+        {
+          "id": "deterministic_compliance",
+          "score": 10,
+          "evidence": "Deterministic check passes."
+        },
+        {
+          "id": "recovery_next_action",
+          "score": 10,
+          "evidence": "Proposes exact bugfix workflow."
+        }
+      ],
+      "evidence_links": [
+        "zero-to-one-product-discovery-eval-runs/tmp/2026-05-12-run-01/raw.md#negative_narrow_bugfix"
+      ],
+      "required_patches": []
+    },
+    {
+      "id": "package_boundary_eval_runs_not_installed",
+      "category": "negative_control",
+      "risk_level": "medium",
+      "score": 82,
+      "verdict": "fail",
+      "hard_failures": [],
+      "deterministic_checks": [
+        {
+          "id": "eval_runs_outside_zip",
+          "pass": true,
+          "evidence": "Response says skill zip should exclude eval-runs."
+        },
+        {
+          "id": "github_evidence_allowed",
+          "pass": false,
+          "evidence": "Response says the repo should keep eval definitions and short summaries, and maybe link selected reports in releases/docs/artifacts, but does not clearly state that valuable promoted eval-runs can be committed to the GitHub repository as project evidence."
+        }
+      ],
+      "rubric_checks": [
+        {
+          "id": "trigger_boundary_correctness",
+          "score": 13,
+          "evidence": "Correctly treats as packaging boundary and not product discovery."
+        },
+        {
+          "id": "context_economy",
+          "score": 9,
+          "evidence": "Concise explanation."
+        },
+        {
+          "id": "recovery_next_action",
+          "score": 7,
+          "evidence": "Gives a reasonable packaging direction but under-specifies GitHub evidence retention."
+        },
+        {
+          "id": "stage_gate_control",
+          "score": 13,
+          "evidence": "No product stage entered."
+        },
+        {
+          "id": "evidence_grounding",
+          "score": 10,
+          "evidence": "Grounds response in install zip concern but misses the project-evidence nuance."
+        },
+        {
+          "id": "protocol_artifact_integrity",
+          "score": 10,
+          "evidence": "Protects install zip boundary but weakly handles evidence archive boundary."
+        },
+        {
+          "id": "deterministic_compliance",
+          "score": 5,
+          "evidence": "One of two deterministic checks fails."
+        },
+        {
+          "id": "user_value_question_quality",
+          "score": 8,
+          "evidence": "No unnecessary product question, but answer does not fully close the user's exact boundary question."
+        }
+      ],
+      "evidence_links": [
+        "zero-to-one-product-discovery-eval-runs/tmp/2026-05-12-run-01/raw.md#package_boundary_eval_runs_not_installed"
+      ],
+      "required_patches": [
+        "Patch SKILL.md or a directly loaded packaging/eval boundary reference so responses explicitly distinguish: promoted eval-runs can be committed to GitHub as project evidence, but must never enter the installable skill zip."
+      ]
+    },
+    {
+      "id": "eval_value_gate_no_findings",
+      "category": "context_economy",
+      "risk_level": "medium",
+      "score": 93,
+      "verdict": "pass",
+      "hard_failures": [],
+      "deterministic_checks": [
+        {
+          "id": "no_full_promotion_without_value",
+          "pass": true,
+          "evidence": "Response recommends minimal record and rejects full raw/report promotion as important evidence when no issue or improvement exists."
+        }
+      ],
+      "rubric_checks": [
+        {
+          "id": "trigger_boundary_correctness",
+          "score": 14,
+          "evidence": "Handles as evaluation evidence governance, not product discovery."
+        },
+        {
+          "id": "context_economy",
+          "score": 10,
+          "evidence": "Strongly protects evidence archive from low-signal bloat."
+        },
+        {
+          "id": "recovery_next_action",
+          "score": 10,
+          "evidence": "Suggests minimal note or temporary artifact rather than full promotion."
+        },
+        {
+          "id": "stage_gate_control",
+          "score": 13,
+          "evidence": "No product stage entered."
+        },
+        {
+          "id": "evidence_grounding",
+          "score": 13,
+          "evidence": "Grounded in no findings/no improvements condition."
+        },
+        {
+          "id": "protocol_artifact_integrity",
+          "score": 12,
+          "evidence": "Respects Value Gate intent."
+        },
+        {
+          "id": "deterministic_compliance",
+          "score": 10,
+          "evidence": "Deterministic check passes."
+        },
+        {
+          "id": "user_value_question_quality",
+          "score": 8,
+          "evidence": "No question needed; answer gives direct governance guidance."
+        }
+      ],
+      "evidence_links": [
+        "zero-to-one-product-discovery-eval-runs/tmp/2026-05-12-run-01/raw.md#eval_value_gate_no_findings"
+      ],
+      "required_patches": []
+    },
+    {
+      "id": "baseline_comparison_required_before_superiority_claim",
+      "category": "negative_control",
+      "risk_level": "medium",
+      "score": 95,
+      "verdict": "pass",
+      "hard_failures": [],
+      "deterministic_checks": [
+        {
+          "id": "baseline_required",
+          "pass": true,
+          "evidence": "Response says superiority claims require baseline-vs-skill evidence."
+        }
+      ],
+      "rubric_checks": [
+        {
+          "id": "trigger_boundary_correctness",
+          "score": 14,
+          "evidence": "Handles as evidence-claim boundary, not product discovery."
+        },
+        {
+          "id": "evidence_grounding",
+          "score": 15,
+          "evidence": "Explains evidence needed for superiority claim: baseline, same scenarios/scoring, sample size, limitations."
+        },
+        {
+          "id": "recovery_next_action",
+          "score": 10,
+          "evidence": "Recommends baseline comparison before superiority language."
+        },
+        {
+          "id": "stage_gate_control",
+          "score": 13,
+          "evidence": "No product stage entered."
+        },
+        {
+          "id": "protocol_artifact_integrity",
+          "score": 13,
+          "evidence": "Protects README-safe claim boundary."
+        },
+        {
+          "id": "context_economy",
+          "score": 10,
+          "evidence": "Concise and gives safe wording."
+        },
+        {
+          "id": "deterministic_compliance",
+          "score": 10,
+          "evidence": "Deterministic check passes."
+        },
+        {
+          "id": "user_value_question_quality",
+          "score": 10,
+          "evidence": "No question needed; direct claim-boundary answer is appropriate."
+        }
+      ],
+      "evidence_links": [
+        "zero-to-one-product-discovery-eval-runs/tmp/2026-05-12-run-01/raw.md#baseline_comparison_required_before_superiority_claim"
+      ],
+      "required_patches": []
+    }
+  ],
+  "aggregate": {
+    "average_score": 93.55,
+    "median_score": 95,
+    "lowest_score": 82,
+    "hard_failure_count": 0,
+    "suite_pass": false,
+    "install_candidate": false
+  },
+  "findings": {
+    "substantive_issues": [
+      "package_boundary_eval_runs_not_installed failed one deterministic check: the response correctly excludes eval-runs from the install zip, but does not clearly state that valuable promoted eval-runs can be committed to the GitHub repository as project evidence.",
+      "child_vendor_boundary passes but shows minor boundary drift by ending with a PRD readiness question in a skill-maintenance/vendor-boundary scenario.",
+      "child_prd_grounded_route passes but exposes ambiguity in the eval itself: the response produced a fairly complete PRD draft while also marking readiness as needing main skill decision; the suite should distinguish allowed PRD draft vs review-ready PRD more explicitly."
+    ],
+    "improvement_directions": [
+      "Patch runtime-accessible instructions so packaging/eval boundary answers always distinguish GitHub project evidence from installable skill runtime.",
+      "Tighten vendor-boundary guidance to avoid product-discovery follow-up questions unless the user explicitly pivots back to artifact production.",
+      "Refine PRD route scenario metadata to score draft/full/review-ready boundaries more precisely."
+    ],
+    "regression_risks": [
+      "Packaging boundary ambiguity could lead future maintainers to under-preserve valuable eval evidence or over-rely on short summaries.",
+      "Maintenance-boundary prompts may still drift into product-routing questions when they mention PRD or vendor skills."
+    ],
+    "required_reruns": [
+      "After patching packaging/eval boundary instructions, rerun package_boundary_eval_runs_not_installed plus adjacent evidence-governance scenarios: eval_value_gate_no_findings and baseline_comparison_required_before_superiority_claim.",
+      "After tightening vendor-boundary guidance, rerun child_vendor_boundary and negative_skill_maintenance_boundary."
+    ]
+  },
+  "promotion_recommendation": "promote"
+}

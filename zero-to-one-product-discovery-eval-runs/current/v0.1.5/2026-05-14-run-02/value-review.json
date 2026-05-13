@@ -1,0 +1,25 @@
+{
+  "run_id": "2026-05-14-run-02",
+  "skill_version": "0.1.5",
+  "value_verdict": "valuable",
+  "substantive_findings": [
+    "The targeted rerun closes the package_boundary_eval_runs_not_installed failure from 2026-05-12-run-01: the response now explicitly separates GitHub promoted eval-run evidence from the installable skill zip.",
+    "The targeted rerun closes the child_vendor_boundary drift from 2026-05-12-run-01: the response now stops at source-governance and does not ask a PRD readiness question.",
+    "The PRD draft/final ambiguity was patched in evals.json, though the PRD scenario itself was not part of this five-scenario rerun."
+  ],
+  "improvement_directions": [
+    "Keep the new package-boundary language in runtime-readable SKILL.md, not only in README.md.",
+    "Preserve targeted rerun evidence as regression-closure evidence, not as a full install-candidate claim.",
+    "Run the full strict suite again before changing release status."
+  ],
+  "product_impact": "This run is valuable because it verifies that the one failing scenario and the nearby maintenance/vendor boundary risks from the first v0.1.5 strict-suite run have been patched. It changes the project status from 'known failed package boundary needs patch' to 'targeted boundary regression closed, full-suite rerun still needed for install-candidate claims.'",
+  "promotion_decision": "promote",
+  "required_next_action": "no-action",
+  "evidence_to_preserve": [
+    "zero-to-one-product-discovery-eval-runs/tmp/2026-05-14-run-02/raw.md",
+    "zero-to-one-product-discovery-eval-runs/tmp/2026-05-14-run-02/scored-report.json",
+    "zero-to-one-product-discovery-eval-runs/tmp/2026-05-14-run-02/value-review.json",
+    "zero-to-one-product-discovery-eval-runs/tmp/2026-05-14-run-02/promotion-decision.md"
+  ],
+  "rationale": "The run should be promoted because it is directly tied to a prior promoted failure and confirms a release-relevant regression closure. It should not be used as a substitute for a full 22-scenario rerun."
+}
