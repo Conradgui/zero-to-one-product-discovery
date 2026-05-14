@@ -81,4 +81,6 @@ If a run uses manual scoring instead of JSON output, preserve the same sections 
 
 For `v0.1.5`, `current/v0.1.5/2026-05-12-run-01/` is the first fresh strict-suite run, `current/v0.1.5/2026-05-14-run-02/` is a targeted boundary rerun that closes the package/vendor findings from that run, and `current/v0.1.5/2026-05-14-run-03/` is the patched full strict-suite rerun.
 
+For run-03, read `current/v0.1.5/2026-05-14-run-03/summary-report.md` first. It is the human-readable entry point. `scored-report.json` and `value-review.json` remain the machine-readable scoring and value-review sources of truth.
+
 These records are valuable GitHub project evidence, but they are not release-grade proof by themselves. The patched full suite has passed, but clean global-install trigger testing and baseline-vs-skill comparison are still needed before stronger public claims.
