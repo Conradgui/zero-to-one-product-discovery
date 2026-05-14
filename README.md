@@ -1,5 +1,305 @@
 # Zero-to-One Product Discovery
 
+面向早期产品想法的 AI workflow skill：从一句模糊想法开始，逐步完成问题澄清、材料吸收、MVP 假设、规划产物和实施准备。
+
+它适合个人开源项目、作品集项目、内部工具、side project 和 startup MVP 的早期探索。核心目标不是“快速套一个 PRD 模板”，而是防止 AI 在证据不足时过早进入 PRD、Roadmap、ADR 或编码阶段。
+
+> Status: `v0.1.5`。当前是开发中版本，适合试用、评审和迭代；尚未声明 release-grade validation。
+
+## Highlights
+
+- **主控 workflow**：由 `SKILL.md` 控制阶段门禁、上下文连续性、子能力路由和最终输出验收。
+- **中文优先体验**：默认面向中文产品探索和协作场景，同时保留英文 artifact 名称以兼容常见 PM / engineering 术语。
+- **一轮一个关键问题**：每轮只问当前最高杠杆问题；用户回答后再更新 facts / assumptions / risks / gaps。
+- **防止过早产物化**：信息不足时只能输出 outline、decision surface、evidence gap 或 blocking question，不能伪造成最终 PRD。
+- **专业子能力**：PRD、Roadmap、User Stories、Acceptance Criteria、ADR、Mermaid、Implementation Plan 等由本地 child skill adapter 承担。
+- **轻量多 agent 协作**：Workflow 规则负责阶段门禁，Controller Agent 负责路由，Producer Agents 负责产物，Auditor Agent 负责独立审核，Runtime Workbench 只保存当前决策状态。
+- **Copy-first 来源治理**：高质量上游 skill 被保存在 `vendor/` 作为来源快照，但不能直接绕过本地 workflow。
+
+## When To Use
+
+适合：
+
+- 只有一个初步产品、工具、开源项目或 startup 想法。
+- 已有笔记、PRD 草稿、用户反馈、竞品研究或路线图，但缺少系统化发现过程。
+- 想先确认问题、用户场景、MVP、风险、非目标和成功标准，再进入开发。
+- 想把探索过程沉淀成可复盘、可展示的产品发现记录。
+
+不适合：
+
+- 已明确需求的小功能实现。
+- bug fix、局部 UI 调整、纯 code review。
+- 已有成熟产品的增长、运营或迭代优化。
+- 在没有 grounded context 的情况下直接生成最终 PRD、Roadmap 或 Implementation Plan。
+
+## Install
+
+### Option 1: Install From GitHub With Codex
+
+仓库公开后，可以在 Codex 中使用 `$skill-installer` 直接安装：
+
+```text
+$skill-installer install https://github.com/Conradgui/zero-to-one-product-discovery
+```
+
+如果未来把这个 skill 放进某个 monorepo 的子目录，再使用 GitHub tree 路径：
+
+```text
+$skill-installer install https://github.com/<your-name>/<your-repo>/tree/main/zero-to-one-product-discovery
+```
+
+安装后重启 Codex，让 skill 被重新发现。
+
+### Option 2: Manual Install For Codex
+
+从当前 workspace 复制到 Codex 的个人 skill 目录：
+
+```bash
+mkdir -p ~/.codex/skills
+cp -R zero-to-one-product-discovery ~/.codex/skills/zero-to-one-product-discovery
+```
+
+然后重启 Codex。
+
+### Option 3: Manual Install For Other SKILL.md-Compatible Agents
+
+如果你的 agent 支持 `SKILL.md` 目录格式，把整个 `zero-to-one-product-discovery/` 文件夹复制到对应的 skills 目录即可。常见目录形态包括：
+
+```text
+~/.codex/skills/zero-to-one-product-discovery
+~/.claude/skills/zero-to-one-product-discovery
+.codex/skills/zero-to-one-product-discovery
+.claude/skills/zero-to-one-product-discovery
+```
+
+不同客户端的目录名和重启方式可能不同，以你的客户端文档为准。
+
+## Usage
+
+自然语言触发：
+
+```text
+我有一个从零开始的开源产品想法，想先梳理问题和 MVP，不要急着写代码。
+```
+
+显式触发：
+
+```text
+Use $zero-to-one-product-discovery as the main workflow to explore this early product idea.
+```
+
+一个典型协作节奏：
+
+1. 用户提出初步想法。
+2. skill 输出 Diagnostic Start：事实、假设、风险、未知、候选探索方向和当前最高杠杆问题。
+3. 用户逐轮回答关键问题或提供材料。
+4. skill 吸收材料并推进 Problem Framing、Solution Exploration、Feasibility Discovery 和 MVP Hypothesis。
+5. 当前置条件满足后，主控 workflow 路由到 PRD、Roadmap、User Stories、ADR 或 Implementation Plan 子能力。
+
+## Workflow
+
+```text
+Diagnostic Start
+  -> Material Assimilation
+  -> Problem Framing
+  -> Solution Exploration
+  -> Feasibility Discovery
+  -> MVP Hypothesis
+  -> Planning Artifacts
+  -> Implementation Planning
+```
+
+阶段不是死板 checklist，而是防止 AI 跳步的 guardrail。显式要求“直接给完整 PRD”也不能绕过门禁；如果前置条件不足，输出必须降级。
+
+## Multi-Agent Model
+
+这个 skill 的多 agent 设计保持平台无关，不要求特定客户端支持真实子代理。实现时可以是真实 subagent，也可以是同一 agent 内的专业角色模拟。
+
+```text
+Workflow Rules -> Controller Agent -> Producer Agent -> Runtime Workbench -> Auditor Agent -> Controller Decision
+```
+
+第一版核心 producer 覆盖：
+
+- `Research`：吸收材料、区分 evidence / assumption / contradiction / gap。
+- `PRD`：在 grounded context 下生成 PRD 或 PRD outline。
+- `Roadmap`：在 PRD 或 PRD outline 确认后做 Now / Next / Later 或 phase gate。
+- `ADR`：只在 durable technical decision 出现时触发，普通范围取舍进入 Decision Log。
+- `Implementation Plan`：只在 planning artifacts review-ready 后生成工程计划。
+
+`Runtime Workbench` 只保存当前协作状态，例如证据快照、产物状态、依赖、冲突、风险、审核队列和下一步动作。它不保存完整聊天记录、完整产物或长历史。复盘材料通过 `Audit Report` 或阶段性 `Trace Report` 生成，不进入实时主控路径。
+
+## Repository Layout
+
+```text
+zero-to-one-product-discovery/
+├── README.md                # GitHub 展示与安装说明
+├── SKILL.md                 # 主控 workflow skill
+├── agents/
+│   └── openai.yaml          # Codex UI 元数据
+├── child-skills/            # 本地子能力 adapter，只能由主控路由
+├── references/              # 阶段规则、路由协议、多 agent 协议、来源治理和文档模板
+├── vendor/                  # 上游 skill/source 快照和许可证，不可直接路由
+└── evals/                   # 可复用评测场景、rubric 和测试协议
+```
+
+历史 raw responses、scored reports 和 handoff 记录不放入安装包；维护者可以在本地外部归档中保存它们，例如：
+
+```text
+zero-to-one-product-discovery-eval-runs/
+├── archive/
+├── current/
+├── design-records/
+├── handoffs/
+└── tmp/
+```
+
+普通 skill 使用不需要加载这些归档。新测试先写入 `tmp/<run-id>/`；只有发现实质问题、暴露回归、确认关键 release gate，或产生可执行改进方向的测评，才通过 Value Gate 提升到 `current/<version>/<run-id>/` 或版本化 archive。被提升的 eval-runs 可以随 GitHub 仓库提交，作为公开验证证据；它们不是 runtime context，也绝不能进入用户安装的 skill zip。
+
+## Child Skills
+
+`child-skills/` 中的模块是本地 adapter，不是用户直接调用的独立流程。
+
+| Child skill | Purpose |
+|---|---|
+| `research-brief` | 综合访谈、反馈、竞品、笔记，区分 evidence / assumption / contradiction / gap |
+| `prd` | 在 grounded context 下输出 PRD；信息不足时只输出 PRD outline 和缺口 |
+| `roadmap` | 生成 Now / Next / Later、阶段化路线图和验证门禁 |
+| `user-stories` | 生成用户故事、故事地图和 release slice |
+| `acceptance-criteria` | 为已确认需求或故事生成验收标准 |
+| `adr-governance` | 判断 Decision Log vs ADR，处理长期技术决策 |
+| `mermaid` | 基于已知结构生成 Mermaid 图 |
+| `implementation-plan` | 从 review-ready planning artifacts 进入工程实施计划 |
+| `review` | 从产品、UX、工程、测试和架构角度审查 artifact |
+| `context-handoff` | 生成跨轮次或跨会话的 Context Resume Packet |
+
+主控规则：
+
+- child skill 不能自行跳阶段。
+- child skill 不能调用其他 child skill。
+- child skill 不能从 `vendor/` 直接执行上游 command。
+- child skill 不能把假设包装成事实。
+- producer agent 不能直接调用其他 producer agent；只能通过 Controller 和 Runtime Workbench 提交依赖或冲突。
+- 重要产物在接受为 final 或 review-ready 前需要 Controller review 或 Audit Report。
+- 重要输出必须带 readiness signal 和 Context Resume Packet。
+
+## Source Strategy
+
+本项目采用 copy-first 策略：先把高质量上游项目的相关 skill/source snapshot 保存到 `vendor/`，再将其改写成本地 adapter contract。
+
+主要参考来源：
+
+- [Product-Manager-Skills](https://github.com/deanpeters/Product-Manager-Skills)：PM 深度、PRD、Roadmap、JTBD、故事地图。
+- [pm-skills](https://github.com/product-on-purpose/pm-skills)：artifact skill 组织、PRD、ADR、Mermaid、用户故事、验收标准。
+- [agent-skills](https://github.com/addyosmani/agent-skills)：工程治理、ADR、计划拆解、测试、review。
+- [awesome-copilot](https://github.com/github/awesome-copilot)：生态索引和补充参考。
+
+`vendor/` 是来源库，不是 route target。所有用户可感知行为必须经过 `child-skills/` 和主控 stage gate。
+
+See also:
+
+- `vendor/MANIFEST.md`
+- `references/source-attribution.md`
+- `references/source-evaluation.md`
+
+## Evaluation
+
+可复用评测协议保存在 `evals/`：
+
+- `evals/evals.json`：v0.1.5 strict suite、deterministic checks、rubric checks、hard failures 和 Value Gate 元数据。
+- `evals/eval-rubric-template.md`：评分 rubric 和 Evidence Value Review 模板。
+- `evals/claude-code-pressure-test-protocol.md`：五阶段 pressure test 协议：raw generation、deterministic checks、rubric grading、value review、promotion decision。
+- `evals/eval-report.schema.json`：结构化评分报告 schema。
+- `evals/value-review.schema.json`：测试后价值判定 schema。
+- `evals/evaluation-package.md`：当前证据、限制和安全 claim。
+
+当前可以谨慎声明：
+
+- 历史 runs 解释了早期架构演进，但不能作为 `v0.1.5` release-grade 证据。
+- `v0.1.5` 已有严格测评体系、结构化 schema 和 Value Gate。
+- multi-agent workflow protocol 已完成结构化设计和 strict suite 扩展。
+- `current/v0.1.5/2026-05-12-run-01/` 是首轮 fresh pressure evidence：它发现了 package/eval boundary 表达不清、vendor-boundary 回复轻微漂移、PRD draft/final 规格不够细的问题，因此不能单独作为 install-candidate 证据。
+- `current/v0.1.5/2026-05-14-run-02/` 是 targeted rerun evidence：它验证 package/eval boundary 和 vendor-boundary drift 已被补丁关闭，但仍不是 full-suite install-candidate 证据。
+- `current/v0.1.5/2026-05-14-run-03/` 是补丁后的 full strict-suite rerun：22 个场景全部通过，0 hard failure，最低分 90；它证明补丁后的核心场景回归通过，但仍不是干净安装触发证据。推荐先读该 run 的 `summary-report.md`，再查看结构化 JSON 评分。
+- 任何新测试只有通过 Value Gate，才会作为 GitHub 项目证据沉淀；用户安装 skill zip 时不会下载这些 run artifacts。
+
+当前不能声明：
+
+- release-grade validation。
+- 全局安装后的自然触发可靠性。
+- 完整多轮 workflow 质量。
+- copy-first child adapter 相对旧 artifact adapter 的系统性 A/B 优势。
+- clean install 环境中的 multi-agent workflow 稳定性。
+
+## Versioning
+
+当前版本：`v0.1.5`。
+
+版本管理规则：
+
+- Git tag、GitHub Release 名称、zip 文件名必须使用同一个版本号。
+- `v0.1.0-draft` 保留为早期历史草稿版本；multi-agent workflow 属于较大的架构升级，从 `v0.1.5` 开始记录。
+- Draft 状态和 release-grade validation 状态用文档说明，不再把这批 multi-agent 改动继续补在 `v0.1.0-draft` 后面。
+- 每次打包前确认 `README.md`、`SKILL.md`、`agents/openai.yaml`、`references/`、`child-skills/`、`evals/` 已同步。
+- 临时发布目录如 `zero-to-one-product-discovery-publish.*` 不进入仓库；可发布包以 `dist/zero-to-one-product-discovery-skill-<version>.zip` 为准。
+
+## Packaging
+
+推荐发布包只包含：
+
+```text
+zero-to-one-product-discovery/
+```
+
+不要把本地外部归档打进 skill 安装包，例如：
+
+```text
+zero-to-one-product-discovery-eval-runs/
+```
+
+边界规则：
+
+- GitHub 仓库可以保留通过 Value Gate promoted 的 eval-runs，用来说明本项目如何验证真实可用性。
+- 用户安装 zip 只能包含 `zero-to-one-product-discovery/` runtime 目录；不要包含 `zero-to-one-product-discovery-eval-runs/`、`.git/`、`tmp/` 或发布临时目录。
+- 当某次 run 没有实质发现，只能按 `minimal-note` 或 `discard-full-run` 处理，不能用完整 raw/report 制造虚假的强证据。
+
+本地打包命令必须带版本号。当前版本是 `v0.1.5`：
+
+```bash
+VERSION=v0.1.5
+mkdir -p dist
+zip -r "dist/zero-to-one-product-discovery-skill-${VERSION}.zip" zero-to-one-product-discovery \
+  -x '*/.DS_Store' \
+  -x '*/__pycache__/*'
+```
+
+后续上传 GitHub Release、手动分发或本地归档时，zip 文件名、release 名称和 git tag 应使用同一个版本号。
+
+解压后应能看到：
+
+```text
+zero-to-one-product-discovery/SKILL.md
+zero-to-one-product-discovery/README.md
+zero-to-one-product-discovery/child-skills/
+zero-to-one-product-discovery/references/
+zero-to-one-product-discovery/vendor/
+zero-to-one-product-discovery/evals/
+```
+
+## License And Attribution
+
+This repository is intended for personal open-source / portfolio use while it is still in draft.
+
+The `vendor/` directory contains copied upstream snapshots with mixed licenses, including CC BY-NC-SA 4.0, Apache-2.0, and MIT. Before publishing, redistributing, or reusing substantial upstream content, review:
+
+- `vendor/MANIFEST.md`
+- `references/source-attribution.md`
+- upstream repository licenses
+
+Local workflow and adapter text should remain clearly separated from verbatim upstream source snapshots.
+
+# Zero-to-One Product Discovery
+
 This repository contains the `zero-to-one-product-discovery` AI workflow skill and its public evaluation evidence.
 
 The installable skill lives in:
