@@ -24,7 +24,8 @@ Do not package raw responses, JSONL traces, long scored reports, handoff notes, 
 ```text
 archive/pre-v0.1.5/          Historical runs before the v0.1.5 multi-agent architecture.
 archive/<version>/           Superseded but still useful evidence for a version.
-current/v0.1.5/<run-id>/     Promoted current-version evidence worth reviewing.
+current/v0.1.5/<run-id>/     Promoted v0.1.5 regression evidence worth reviewing.
+current/v0.1.6/<run-id>/     Current handoff and external validation evidence.
 design-records/              Architecture and design decision records.
 handoffs/                    Project status handoff notes.
 tmp/<run-id>/                Scratch raw/report outputs before value review.
@@ -83,4 +84,6 @@ For `v0.1.5`, `current/v0.1.5/2026-05-12-run-01/` is the first fresh strict-suit
 
 For run-03, read `current/v0.1.5/2026-05-14-run-03/summary-report.md` first. It is the human-readable entry point. `scored-report.json` and `value-review.json` remain the machine-readable scoring and value-review sources of truth.
 
-These records are valuable GitHub project evidence, but they are not release-grade proof by themselves. The patched full suite has passed, but clean global-install trigger testing and baseline-vs-skill comparison are still needed before stronger public claims.
+For `v0.1.6`, read `current/v0.1.6/2026-05-14-windows-clean-install-handoff/test-packet.md` before running the external Windows Codex validation. Use `relay-template.md` to copy raw responses back without editing them. `verification-status.md` remains `pending_external_raw_responses` until those responses are scored.
+
+These records are valuable GitHub project evidence, but they are not release-grade proof by themselves. The patched full suite has passed, but fresh post-restart Windows trigger conversations, real raw multi-turn traces, and baseline-vs-skill comparison are still needed before install-candidate or stronger public claims.

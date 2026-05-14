@@ -4,7 +4,7 @@
 
 它适合个人开源项目、作品集项目、内部工具、side project 和 startup MVP 的早期探索。核心目标不是“快速套一个 PRD 模板”，而是防止 AI 在证据不足时过早进入 PRD、Roadmap、ADR 或编码阶段。
 
-> Status: `v0.1.5`。当前是开发中版本，适合试用、评审和迭代；尚未声明 release-grade validation。
+> Status: `v0.1.6`。当前是 Windows clean-install validation handoff 版本，适合交给另一台干净 Windows Codex 做真实安装与触发测试；尚未声明 install candidate 或 release-grade validation。
 
 ## Highlights
 
@@ -206,7 +206,7 @@ See also:
 
 可复用评测协议保存在 `evals/`：
 
-- `evals/evals.json`：v0.1.5 strict suite、deterministic checks、rubric checks、hard failures 和 Value Gate 元数据。
+- `evals/evals.json`：v0.1.5 strict suite、deterministic checks、rubric checks、hard failures 和 Value Gate 元数据；`v0.1.6` 继续复用该套核心回归场景。
 - `evals/eval-rubric-template.md`：评分 rubric 和 Evidence Value Review 模板。
 - `evals/claude-code-pressure-test-protocol.md`：五阶段 pressure test 协议：raw generation、deterministic checks、rubric grading、value review、promotion decision。
 - `evals/eval-report.schema.json`：结构化评分报告 schema。
@@ -215,30 +215,33 @@ See also:
 
 当前可以谨慎声明：
 
-- 历史 runs 解释了早期架构演进，但不能作为 `v0.1.5` release-grade 证据。
-- `v0.1.5` 已有严格测评体系、结构化 schema 和 Value Gate。
+- 历史 runs 解释了早期架构演进，但不能作为 `v0.1.6` release-grade 证据。
+- `v0.1.5` 已有严格测评体系、结构化 schema 和 Value Gate；`v0.1.6` 是面向 Windows 干净环境验证的交接版本。
 - multi-agent workflow protocol 已完成结构化设计和 strict suite 扩展。
 - `current/v0.1.5/2026-05-12-run-01/` 是首轮 fresh pressure evidence：它发现了 package/eval boundary 表达不清、vendor-boundary 回复轻微漂移、PRD draft/final 规格不够细的问题，因此不能单独作为 install-candidate 证据。
 - `current/v0.1.5/2026-05-14-run-02/` 是 targeted rerun evidence：它验证 package/eval boundary 和 vendor-boundary drift 已被补丁关闭，但仍不是 full-suite install-candidate 证据。
 - `current/v0.1.5/2026-05-14-run-03/` 是补丁后的 full strict-suite rerun：22 个场景全部通过，0 hard failure，最低分 90；它证明补丁后的核心场景回归通过，但仍不是干净安装触发证据。推荐先读该 run 的 `summary-report.md`，再查看结构化 JSON 评分。
+- `current/v0.1.6/2026-05-14-windows-clean-install-handoff/` 是 Windows clean-install validation handoff：它提供测试包、回传模板和 pending 状态记录，等待外部 Windows Codex 原始回复后再评分。
 - 任何新测试只有通过 Value Gate，才会作为 GitHub 项目证据沉淀；用户安装 skill zip 时不会下载这些 run artifacts。
 
 当前不能声明：
 
 - release-grade validation。
-- 全局安装后的自然触发可靠性。
+- install candidate 状态。
+- 跨客户端、重启后的自然触发可靠性。
 - 完整多轮 workflow 质量。
 - copy-first child adapter 相对旧 artifact adapter 的系统性 A/B 优势。
-- clean install 环境中的 multi-agent workflow 稳定性。
+- release-grade multi-agent workflow 稳定性。
 
 ## Versioning
 
-当前版本：`v0.1.5`。
+当前版本：`v0.1.6`。
 
 版本管理规则：
 
 - Git tag、GitHub Release 名称、zip 文件名必须使用同一个版本号。
 - `v0.1.0-draft` 保留为早期历史草稿版本；multi-agent workflow 属于较大的架构升级，从 `v0.1.5` 开始记录。
+- `v0.1.6` 是 Windows clean-install validation handoff 版本；它不移动或改写已经发布的 `v0.1.5` tag。
 - Draft 状态和 release-grade validation 状态用文档说明，不再把这批 multi-agent 改动继续补在 `v0.1.0-draft` 后面。
 - 每次打包前确认 `README.md`、`SKILL.md`、`agents/openai.yaml`、`references/`、`child-skills/`、`evals/` 已同步。
 - 临时发布目录如 `zero-to-one-product-discovery-publish.*` 不进入仓库；可发布包以 `dist/zero-to-one-product-discovery-skill-<version>.zip` 为准。
@@ -263,10 +266,10 @@ zero-to-one-product-discovery-eval-runs/
 - 用户安装 zip 只能包含 `zero-to-one-product-discovery/` runtime 目录；不要包含 `zero-to-one-product-discovery-eval-runs/`、`.git/`、`tmp/` 或发布临时目录。
 - 当某次 run 没有实质发现，只能按 `minimal-note` 或 `discard-full-run` 处理，不能用完整 raw/report 制造虚假的强证据。
 
-本地打包命令必须带版本号。当前版本是 `v0.1.5`：
+本地打包命令必须带版本号。当前版本是 `v0.1.6`：
 
 ```bash
-VERSION=v0.1.5
+VERSION=v0.1.6
 mkdir -p dist
 zip -r "dist/zero-to-one-product-discovery-skill-${VERSION}.zip" zero-to-one-product-discovery \
   -x '*/.DS_Store' \
@@ -288,86 +291,12 @@ zero-to-one-product-discovery/evals/
 
 ## License And Attribution
 
-This repository is intended for personal open-source / portfolio use while it is still in draft.
+This repository is intended for personal open-source / portfolio use and non-commercial trial while it is still in draft.
 
-The `vendor/` directory contains copied upstream snapshots with mixed licenses, including CC BY-NC-SA 4.0, Apache-2.0, and MIT. Before publishing, redistributing, or reusing substantial upstream content, review:
+The `vendor/` directory contains copied upstream snapshots with mixed licenses, including CC BY-NC-SA 4.0, Apache-2.0, and MIT. For source transparency and attribution, review:
 
 - `vendor/MANIFEST.md`
 - `references/source-attribution.md`
 - upstream repository licenses
 
-Local workflow and adapter text should remain clearly separated from verbatim upstream source snapshots.
-
-# Zero-to-One Product Discovery
-
-This repository contains the `zero-to-one-product-discovery` AI workflow skill and its public evaluation evidence.
-
-The installable skill lives in:
-
-```text
-zero-to-one-product-discovery/
-```
-
-Evaluation runs, design records, and validation evidence live outside the installable skill package in:
-
-```text
-zero-to-one-product-discovery-eval-runs/
-```
-
-## Current Version
-
-Current version: `v0.1.5`
-
-Status: development / evaluation build. The patched full strict suite has passed, but `v0.1.5` is not yet an install candidate because clean install and natural trigger validation are still pending.
-
-## Where To Start
-
-| Need | File |
-|---|---|
-| Skill overview, install instructions, architecture, packaging rules | [`zero-to-one-product-discovery/README.md`](zero-to-one-product-discovery/README.md) |
-| Runtime workflow instructions | [`zero-to-one-product-discovery/SKILL.md`](zero-to-one-product-discovery/SKILL.md) |
-| Multi-agent orchestration protocol | [`zero-to-one-product-discovery/references/multi-agent-orchestration.md`](zero-to-one-product-discovery/references/multi-agent-orchestration.md) |
-| Evaluation protocol and strict suite | [`zero-to-one-product-discovery/evals/`](zero-to-one-product-discovery/evals/) |
-| Public evaluation evidence archive | [`zero-to-one-product-discovery-eval-runs/README.md`](zero-to-one-product-discovery-eval-runs/README.md) |
-| Latest human-readable evaluation report | [`zero-to-one-product-discovery-eval-runs/current/v0.1.5/2026-05-14-run-03/summary-report.md`](zero-to-one-product-discovery-eval-runs/current/v0.1.5/2026-05-14-run-03/summary-report.md) |
-| Packaged zip artifacts | [`dist/`](dist/) |
-
-## Validation Snapshot
-
-Latest promoted full-suite run:
-
-```text
-zero-to-one-product-discovery-eval-runs/current/v0.1.5/2026-05-14-run-03/
-```
-
-Result:
-
-- 22 / 22 scenarios passed.
-- 0 hard failures.
-- Average score: 93.73.
-- Median score: 94.
-- Lowest score: 90.
-- `install_candidate = false`.
-
-This supports core regression confidence for `v0.1.5`, but does not prove clean global-install behavior or baseline superiority.
-
-## Installable Package Boundary
-
-User installation should use only the runtime skill folder or versioned zip:
-
-```text
-zero-to-one-product-discovery/
-dist/zero-to-one-product-discovery-skill-v0.1.5.zip
-```
-
-Do not include `zero-to-one-product-discovery-eval-runs/` in the installable skill package. Those files are public project evidence for GitHub review, not runtime context.
-
-## Source And License Notes
-
-The skill uses a copy-first source strategy. Upstream source snapshots are preserved under `zero-to-one-product-discovery/vendor/` for attribution, review, and adapter development. They are not active child-skill routes.
-
-Before redistribution or commercial use, review:
-
-- [`zero-to-one-product-discovery/vendor/MANIFEST.md`](zero-to-one-product-discovery/vendor/MANIFEST.md)
-- [`zero-to-one-product-discovery/references/source-attribution.md`](zero-to-one-product-discovery/references/source-attribution.md)
-- upstream licenses in `vendor/`
+Local workflow and adapter text should remain clearly separated from verbatim upstream source snapshots. `vendor/` is a source snapshot library, not an active child skill or original runtime capability.
