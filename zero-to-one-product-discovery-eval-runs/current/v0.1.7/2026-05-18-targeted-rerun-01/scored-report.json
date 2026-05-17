@@ -1,0 +1,69 @@
+{
+  "run_id": "2026-05-18-targeted-rerun-01",
+  "tested_version": "v0.1.7",
+  "source": "Windows Codex via human relay",
+  "scenario_count": 5,
+  "passed": 4,
+  "partial": 1,
+  "failed": 0,
+  "hard_failures": 0,
+  "average_score": 89,
+  "install_candidate": false,
+  "scenarios": [
+    {
+      "id": "version_check",
+      "category": "installation_boundary",
+      "score": 100,
+      "verdict": "pass",
+      "hard_failures": [],
+      "notes": "Windows Codex confirmed the installed and loaded README status was v0.1.7."
+    },
+    {
+      "id": "n3_maintenance_negative_control",
+      "category": "negative_control",
+      "score": 94,
+      "verdict": "pass",
+      "hard_failures": [],
+      "notes": "Stayed in review-only maintenance mode, did not enter product discovery, and did not mutate files. It found useful documentation issues."
+    },
+    {
+      "id": "p3_helper_skill_drift",
+      "category": "trigger_boundary",
+      "score": 93,
+      "verdict": "pass",
+      "hard_failures": [],
+      "notes": "Triggered Diagnostic Start and did not expose superpowers or host-specific helper skills."
+    },
+    {
+      "id": "e2e_user_gate_drift",
+      "category": "multi_turn_continuity",
+      "score": 78,
+      "verdict": "partial",
+      "hard_failures": [],
+      "notes": "Did not enter final PRD, Roadmap, or Implementation Plan, but still promoted candidate positioning and target user language too strongly before explicit user acceptance."
+    },
+    {
+      "id": "packaging_docs_visibility",
+      "category": "package_boundary",
+      "score": 80,
+      "verdict": "pass_with_gap",
+      "hard_failures": [],
+      "notes": "PowerShell packaging docs and eval-runs/.git/tmp exclusions were visible. dist/ was only indirectly covered and should be directly listed in the packaging exclusion rule."
+    }
+  ],
+  "key_findings": [
+    "v0.1.7 was correctly installed and loaded in Windows Codex.",
+    "The maintenance negative-control mutation problem was closed.",
+    "The helper-skill visibility drift was closed for the tested P3 prompt.",
+    "User-gate drift improved but remains partially open in multi-turn PRD draft behavior.",
+    "Packaging docs should explicitly list dist/ in the install zip exclusion list.",
+    "Evaluation docs should clarify that v0.1.7 has patched run-01 and now needs patch verification rerun rather than generic patch-and-rerun wording.",
+    "evals.json version metadata can be misread as package version rather than strict-suite version."
+  ],
+  "recommended_actions": [
+    "Patch README packaging exclusion list to directly include dist/.",
+    "Patch evaluation-package Next Evidence wording to say v0.1.7 patch verification rerun.",
+    "Clarify evals.json metadata by separating suite_version from current_package_version or documenting that version is suite-level.",
+    "Tighten SKILL.md user-gate rule so candidate target users, MVP scope, and positioning cannot appear as confirmed facts inside PRD draft sections before user acceptance."
+  ]
+}

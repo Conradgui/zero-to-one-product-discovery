@@ -26,7 +26,8 @@ archive/pre-v0.1.5/          Historical runs before the v0.1.5 multi-agent archi
 archive/<version>/           Superseded but still useful evidence for a version.
 current/v0.1.5/<run-id>/     Promoted v0.1.5 regression evidence worth reviewing.
 current/v0.1.6/<run-id>/     Current handoff and external validation evidence.
-current/v0.1.7/<run-id>/     Reserved for v0.1.7 reruns after the Windows closeout patch.
+current/v0.1.7/<run-id>/     Promoted v0.1.7 targeted rerun evidence.
+current/v0.1.8/<run-id>/     Reserved for v0.1.8 final follow-up verification.
 design-records/              Architecture and design decision records.
 handoffs/                    Project status handoff notes.
 tmp/<run-id>/                Scratch raw/report outputs before value review.
@@ -85,7 +86,7 @@ For `v0.1.5`, `current/v0.1.5/2026-05-12-run-01/` is the first fresh strict-suit
 
 For run-03, read `current/v0.1.5/2026-05-14-run-03/summary-report.md` first. It is the human-readable entry point. `scored-report.json` and `value-review.json` remain the machine-readable scoring and value-review sources of truth.
 
-For `v0.1.6`, `current/v0.1.6/2026-05-14-windows-clean-install-handoff/` contains the Windows relay test packet and response template. The first returned Windows run is promoted at `current/v0.1.6/2026-05-17-windows-clean-install-run-01/`. `v0.1.7` is the follow-up patch release that applies the findings from that run; any post-patch rerun should be stored under `current/v0.1.7/<run-id>/`.
+For `v0.1.6`, `current/v0.1.6/2026-05-14-windows-clean-install-handoff/` contains the Windows relay test packet and response template. The first returned Windows run is promoted at `current/v0.1.6/2026-05-17-windows-clean-install-run-01/`. `v0.1.7` is the follow-up patch release that applies the findings from that run, and `current/v0.1.7/2026-05-18-targeted-rerun-01/` is the targeted rerun that verified those fixes and found the final follow-up issues. Any `v0.1.8` post-patch verification should be stored under `current/v0.1.8/<run-id>/`.
 
 Read the Windows run in this order:
 
@@ -95,4 +96,4 @@ Read the Windows run in this order:
 4. `scored-report.json`
 5. `raw.md`
 
-These records are valuable GitHub project evidence, but they are not release-grade proof by themselves. The patched full suite and first Windows relay run have passed without hard failures, and `v0.1.7` applies the first relay follow-up patches. A post-patch Windows rerun and baseline-vs-skill comparison are still needed before install-candidate or stronger public claims.
+These records are valuable GitHub project evidence, but they are not release-grade proof by themselves. The patched full suite, first Windows relay run, and v0.1.7 targeted rerun passed without hard failures; `v0.1.8` applies the final documentation-boundary and PRD Draft user-gate patch. A post-patch Windows rerun and baseline-vs-skill comparison are still needed before install-candidate or stronger public claims.

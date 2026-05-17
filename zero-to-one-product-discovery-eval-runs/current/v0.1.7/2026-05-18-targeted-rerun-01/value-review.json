@@ -1,0 +1,35 @@
+{
+  "run_id": "2026-05-18-targeted-rerun-01",
+  "tested_version": "v0.1.7",
+  "decision": "promote",
+  "value_signal": "actionable_follow_up_findings",
+  "summary": "The v0.1.7 targeted Windows rerun confirmed that the installation version, maintenance negative-control behavior, and helper-skill visibility patch worked. It also found remaining documentation and user-gate drift issues that are useful for the next patch.",
+  "valuable_findings": [
+    {
+      "finding": "N3 maintenance negative control no longer mutates the installed skill.",
+      "impact": "Closes the clean-install contamination risk found in the v0.1.6 Windows run."
+    },
+    {
+      "finding": "P3 no longer exposes host-specific helper skills.",
+      "impact": "Confirms the v0.1.7 helper-skill visibility rule works for the tested portfolio side-project trigger."
+    },
+    {
+      "finding": "E2E PRD draft still writes candidate target user language too strongly.",
+      "impact": "Shows that the user-gate fix reduced but did not fully close advisor-overreach behavior."
+    },
+    {
+      "finding": "README packaging docs do not directly list dist/ in the install zip exclusion list.",
+      "impact": "Creates a small but concrete packaging-boundary documentation gap for Windows users."
+    },
+    {
+      "finding": "evaluation-package and evals.json metadata can be misread after v0.1.7.",
+      "impact": "Could confuse the relationship between strict-suite version, package version, and next evidence needed."
+    }
+  ],
+  "claim_boundary": {
+    "install_candidate": "not supported",
+    "release_grade_validation": "not supported",
+    "baseline_superiority": "not supported",
+    "supported": "v0.1.7 targeted Windows rerun closed maintenance mutation and helper-skill visibility regressions, but left user-gate PRD draft drift partially open."
+  }
+}
