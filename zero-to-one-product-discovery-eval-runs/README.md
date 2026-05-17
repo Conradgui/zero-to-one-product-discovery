@@ -26,6 +26,7 @@ archive/pre-v0.1.5/          Historical runs before the v0.1.5 multi-agent archi
 archive/<version>/           Superseded but still useful evidence for a version.
 current/v0.1.5/<run-id>/     Promoted v0.1.5 regression evidence worth reviewing.
 current/v0.1.6/<run-id>/     Current handoff and external validation evidence.
+current/v0.1.7/<run-id>/     Reserved for v0.1.7 reruns after the Windows closeout patch.
 design-records/              Architecture and design decision records.
 handoffs/                    Project status handoff notes.
 tmp/<run-id>/                Scratch raw/report outputs before value review.
@@ -84,6 +85,14 @@ For `v0.1.5`, `current/v0.1.5/2026-05-12-run-01/` is the first fresh strict-suit
 
 For run-03, read `current/v0.1.5/2026-05-14-run-03/summary-report.md` first. It is the human-readable entry point. `scored-report.json` and `value-review.json` remain the machine-readable scoring and value-review sources of truth.
 
-For `v0.1.6`, read `current/v0.1.6/2026-05-14-windows-clean-install-handoff/test-packet.md` before running the external Windows Codex validation. Use `relay-template.md` to copy raw responses back without editing them. `verification-status.md` remains `pending_external_raw_responses` until those responses are scored.
+For `v0.1.6`, `current/v0.1.6/2026-05-14-windows-clean-install-handoff/` contains the Windows relay test packet and response template. The first returned Windows run is promoted at `current/v0.1.6/2026-05-17-windows-clean-install-run-01/`. `v0.1.7` is the follow-up patch release that applies the findings from that run; any post-patch rerun should be stored under `current/v0.1.7/<run-id>/`.
 
-These records are valuable GitHub project evidence, but they are not release-grade proof by themselves. The patched full suite has passed, but fresh post-restart Windows trigger conversations, real raw multi-turn traces, and baseline-vs-skill comparison are still needed before install-candidate or stronger public claims.
+Read the Windows run in this order:
+
+1. `summary-report.md`
+2. `promotion-decision.md`
+3. `value-review.json`
+4. `scored-report.json`
+5. `raw.md`
+
+These records are valuable GitHub project evidence, but they are not release-grade proof by themselves. The patched full suite and first Windows relay run have passed without hard failures, and `v0.1.7` applies the first relay follow-up patches. A post-patch Windows rerun and baseline-vs-skill comparison are still needed before install-candidate or stronger public claims.

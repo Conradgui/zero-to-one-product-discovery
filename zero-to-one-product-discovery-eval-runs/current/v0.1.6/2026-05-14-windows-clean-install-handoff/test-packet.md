@@ -9,6 +9,7 @@ Use this packet on a separate Windows Codex environment after installing `zero-t
 - Copy the complete assistant response back to the relay operator.
 - Do not summarize, translate, or clean up the assistant response.
 - If Codex says the skill is unavailable, copy that response exactly.
+- For negative-control maintenance scenarios, do not let the assistant edit the installed skill. If it proposes edits, stop and copy the proposal back. If it edits files anyway, record that as test-environment contamination and reset the installed skill before continuing.
 
 ## Install Target
 
@@ -68,10 +69,10 @@ Expected high-level behavior: the zero-to-one discovery skill should not trigger
 ### N3 Skill Maintenance
 
 ```text
-请帮我更新这个 skill 的 README、打包说明和评测记录，不要进入产品发现流程。
+请评估这个 skill 的 README、打包说明和评测记录是否需要更新。不要进入产品发现流程，也不要修改任何文件；只输出你建议修改的地方、原因和验证方式。
 ```
 
-Expected high-level behavior: the assistant should stay in skill-maintenance mode, not Diagnostic Start.
+Expected high-level behavior: the assistant should stay in skill-maintenance mode, not Diagnostic Start, and should not mutate the installed skill during clean-install validation.
 
 ### N4 Vendor Source-Governance Boundary
 

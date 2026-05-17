@@ -58,6 +58,8 @@ Do not use for meta-work on this skill, skill authoring, external source integra
 - Record meaningful trade-offs in the project Decision Log; architecture-level or long-lived technical decisions need ADRs.
 - If the user mentions open-source, resume, portfolio, learning, or public credibility goals, preserve them as evaluation constraints without jumping to Roadmap or implementation.
 - If the user provides visual or interaction references during early discovery, acknowledge them as later design inputs but do not analyze them during Diagnostic Start.
+- Keep host-specific helper skills or tools invisible unless the user explicitly invokes them. Do not present optional helpers such as `superpowers:*` as required parts of this workflow.
+- Treat strong recommendations as candidate directions until the user accepts them. Do not upgrade a suggested segment, MVP angle, or positioning choice into PRD facts before a user gate.
 - Keep project evidence and runtime packaging separate: promoted `zero-to-one-product-discovery-eval-runs/current/<version>/<run-id>/` records may be committed to the GitHub repository as public validation evidence, but they are never part of the installable skill zip or runtime context.
 
 ## Orchestration Model

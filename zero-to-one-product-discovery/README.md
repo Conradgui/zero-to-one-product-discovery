@@ -4,7 +4,7 @@
 
 它适合个人开源项目、作品集项目、内部工具、side project 和 startup MVP 的早期探索。核心目标不是“快速套一个 PRD 模板”，而是防止 AI 在证据不足时过早进入 PRD、Roadmap、ADR 或编码阶段。
 
-> Status: `v0.1.6`。当前是 Windows clean-install validation handoff 版本，适合交给另一台干净 Windows Codex 做真实安装与触发测试；尚未声明 install candidate 或 release-grade validation。
+> Status: `v0.1.7`。当前是 Windows 收尾补丁版本：已吸收第一轮 Windows clean-install relay 的安装、打包、测试流程和轻微行为漂移修复；尚未声明 install candidate 或 release-grade validation。
 
 ## Highlights
 
@@ -39,10 +39,10 @@
 仓库公开后，可以在 Codex 中使用 `$skill-installer` 直接安装：
 
 ```text
-$skill-installer install https://github.com/Conradgui/zero-to-one-product-discovery
+$skill-installer install https://github.com/Conradgui/zero-to-one-product-discovery/tree/main/zero-to-one-product-discovery
 ```
 
-如果未来把这个 skill 放进某个 monorepo 的子目录，再使用 GitHub tree 路径：
+这个仓库根目录同时包含 `dist/` 和 `zero-to-one-product-discovery-eval-runs/`，所以安装时必须指向 `zero-to-one-product-discovery/` 子目录，而不是仓库根 URL。如果未来把这个 skill 放进某个 monorepo 的其他子目录，也使用 GitHub tree 路径：
 
 ```text
 $skill-installer install https://github.com/<your-name>/<your-repo>/tree/main/zero-to-one-product-discovery
@@ -206,7 +206,7 @@ See also:
 
 可复用评测协议保存在 `evals/`：
 
-- `evals/evals.json`：v0.1.5 strict suite、deterministic checks、rubric checks、hard failures 和 Value Gate 元数据；`v0.1.6` 继续复用该套核心回归场景。
+- `evals/evals.json`：v0.1.5 strict suite、deterministic checks、rubric checks、hard failures 和 Value Gate 元数据；`v0.1.7` 继续复用该套核心回归场景。
 - `evals/eval-rubric-template.md`：评分 rubric 和 Evidence Value Review 模板。
 - `evals/claude-code-pressure-test-protocol.md`：五阶段 pressure test 协议：raw generation、deterministic checks、rubric grading、value review、promotion decision。
 - `evals/eval-report.schema.json`：结构化评分报告 schema。
@@ -215,13 +215,14 @@ See also:
 
 当前可以谨慎声明：
 
-- 历史 runs 解释了早期架构演进，但不能作为 `v0.1.6` release-grade 证据。
-- `v0.1.5` 已有严格测评体系、结构化 schema 和 Value Gate；`v0.1.6` 是面向 Windows 干净环境验证的交接版本。
+- 历史 runs 解释了早期架构演进，但不能作为 `v0.1.7` release-grade 证据。
+- `v0.1.5` 已有严格测评体系、结构化 schema 和 Value Gate；`v0.1.6` 是面向 Windows 干净环境验证的交接版本；`v0.1.7` 是吸收 Windows run-01 发现问题后的收尾补丁版本。
 - multi-agent workflow protocol 已完成结构化设计和 strict suite 扩展。
 - `current/v0.1.5/2026-05-12-run-01/` 是首轮 fresh pressure evidence：它发现了 package/eval boundary 表达不清、vendor-boundary 回复轻微漂移、PRD draft/final 规格不够细的问题，因此不能单独作为 install-candidate 证据。
 - `current/v0.1.5/2026-05-14-run-02/` 是 targeted rerun evidence：它验证 package/eval boundary 和 vendor-boundary drift 已被补丁关闭，但仍不是 full-suite install-candidate 证据。
 - `current/v0.1.5/2026-05-14-run-03/` 是补丁后的 full strict-suite rerun：22 个场景全部通过，0 hard failure，最低分 90；它证明补丁后的核心场景回归通过，但仍不是干净安装触发证据。推荐先读该 run 的 `summary-report.md`，再查看结构化 JSON 评分。
-- `current/v0.1.6/2026-05-14-windows-clean-install-handoff/` 是 Windows clean-install validation handoff：它提供测试包、回传模板和 pending 状态记录，等待外部 Windows Codex 原始回复后再评分。
+- `current/v0.1.6/2026-05-14-windows-clean-install-handoff/` 是 Windows clean-install validation handoff：它提供测试包和回传模板。
+- `current/v0.1.6/2026-05-17-windows-clean-install-run-01/` 是第一轮 Windows clean-install relay evidence：8 个场景通过、0 hard failure，同时发现维护请求污染测试环境、安装说明和评测协议需要补丁。
 - 任何新测试只有通过 Value Gate，才会作为 GitHub 项目证据沉淀；用户安装 skill zip 时不会下载这些 run artifacts。
 
 当前不能声明：
@@ -235,13 +236,13 @@ See also:
 
 ## Versioning
 
-当前版本：`v0.1.6`。
+当前版本：`v0.1.7`。
 
 版本管理规则：
 
 - Git tag、GitHub Release 名称、zip 文件名必须使用同一个版本号。
 - `v0.1.0-draft` 保留为早期历史草稿版本；multi-agent workflow 属于较大的架构升级，从 `v0.1.5` 开始记录。
-- `v0.1.6` 是 Windows clean-install validation handoff 版本；它不移动或改写已经发布的 `v0.1.5` tag。
+- `v0.1.6` 是 Windows clean-install validation handoff 和第一轮 relay evidence 版本；`v0.1.7` 是 Windows 收尾补丁版本；它们都不移动或改写已经发布的历史 tag。
 - Draft 状态和 release-grade validation 状态用文档说明，不再把这批 multi-agent 改动继续补在 `v0.1.0-draft` 后面。
 - 每次打包前确认 `README.md`、`SKILL.md`、`agents/openai.yaml`、`references/`、`child-skills/`、`evals/` 已同步。
 - 临时发布目录如 `zero-to-one-product-discovery-publish.*` 不进入仓库；可发布包以 `dist/zero-to-one-product-discovery-skill-<version>.zip` 为准。
@@ -266,14 +267,22 @@ zero-to-one-product-discovery-eval-runs/
 - 用户安装 zip 只能包含 `zero-to-one-product-discovery/` runtime 目录；不要包含 `zero-to-one-product-discovery-eval-runs/`、`.git/`、`tmp/` 或发布临时目录。
 - 当某次 run 没有实质发现，只能按 `minimal-note` 或 `discard-full-run` 处理，不能用完整 raw/report 制造虚假的强证据。
 
-本地打包命令必须带版本号。当前版本是 `v0.1.6`：
+本地打包命令必须带版本号。当前版本是 `v0.1.7`：
 
 ```bash
-VERSION=v0.1.6
+VERSION=v0.1.7
 mkdir -p dist
 zip -r "dist/zero-to-one-product-discovery-skill-${VERSION}.zip" zero-to-one-product-discovery \
   -x '*/.DS_Store' \
   -x '*/__pycache__/*'
+```
+
+Windows PowerShell:
+
+```powershell
+$Version = "v0.1.7"
+New-Item -ItemType Directory -Force -Path dist | Out-Null
+Compress-Archive -Path zero-to-one-product-discovery -DestinationPath "dist/zero-to-one-product-discovery-skill-$Version.zip" -Force
 ```
 
 后续上传 GitHub Release、手动分发或本地归档时，zip 文件名、release 名称和 git tag 应使用同一个版本号。

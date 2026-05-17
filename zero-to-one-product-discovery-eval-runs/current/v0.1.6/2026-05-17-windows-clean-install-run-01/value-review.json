@@ -1,0 +1,46 @@
+{
+  "run_id": "2026-05-17-windows-clean-install-run-01",
+  "version": "v0.1.6",
+  "value_verdict": "valuable",
+  "promotion_decision": "promote",
+  "summary": "The Windows clean-install relay run produced release-relevant evidence. Positive and negative trigger boundaries held, vendor/source-governance routing passed, and the multi-turn workflow produced a PRD Draft without finalizing or entering implementation. The run also exposed process and documentation improvements.",
+  "substantive_findings": [
+    {
+      "finding": "N3 skill-maintenance request avoided product discovery but mutated the installed skill, contaminating the clean test environment.",
+      "product_impact": "Future clean-install tests can become invalid if maintenance negative controls are allowed to edit the installed runtime.",
+      "actionability": "Update the Windows test packet to prohibit file edits during negative-control prompts or run maintenance mutation tests in a disposable copy."
+    },
+    {
+      "finding": "Windows response identified real documentation/protocol improvements: version-aware promoted run paths and Windows packaging instructions.",
+      "product_impact": "These improvements reduce versioning mistakes and make Windows validation more reproducible.",
+      "actionability": "Patch repository docs and pressure-test protocol before the next validation cycle."
+    },
+    {
+      "finding": "P3 exposed superpowers:brainstorming in the user-facing output.",
+      "product_impact": "This can make the platform-agnostic skill appear dependent on host-specific helper skills.",
+      "actionability": "Clarify optional host tooling language in SKILL.md or future eval criteria."
+    },
+    {
+      "finding": "E2E turns 3-4 showed mild advisor overreach by strongly recommending a target segment and MVP angle.",
+      "product_impact": "The workflow may prematurely narrow strategy before explicit user acceptance.",
+      "actionability": "Add a rubric item or guidance requiring strong recommendations to remain candidate decisions until user-gated acceptance."
+    }
+  ],
+  "confidence_change": {
+    "trigger_boundary": "improved",
+    "negative_control": "improved",
+    "vendor_boundary": "improved",
+    "multi_turn_workflow": "improved but not release-grade",
+    "install_candidate": "not yet supported",
+    "release_grade_validation": "not supported",
+    "baseline_superiority": "not supported"
+  },
+  "required_next_action": [
+    "Patch repository docs for GitHub subdirectory install path.",
+    "Patch pressure-test protocol to use current/<tested-version>/<run-id>/.",
+    "Patch Windows test packet to prevent mutation during clean-install negative controls.",
+    "Rerun affected maintenance/install documentation checks after patch.",
+    "Defer install-candidate claim until patched run and final review pass."
+  ],
+  "rationale": "The run found no hard failure in product-discovery behavior and produced concrete improvements that affect future validation reliability. It should be retained as v0.1.6 project evidence, but it should not be used as release-grade proof."
+}

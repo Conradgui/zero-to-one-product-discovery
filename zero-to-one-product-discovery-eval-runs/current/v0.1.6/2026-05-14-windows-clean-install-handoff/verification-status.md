@@ -4,13 +4,19 @@ Run ID: `2026-05-14-windows-clean-install-handoff`
 
 ## Status
 
-`pending_external_raw_responses`
+`external_raw_responses_received`
 
 ## Purpose
 
 This handoff prepares `v0.1.6` for clean Windows Codex validation through a human relay.
 
-`v0.1.6` is not an install candidate yet. It is a clean handoff version that packages the runtime skill, preserves the `v0.1.5` strict-suite evidence, and provides a test packet for a separate Windows environment.
+`v0.1.6` is not an install candidate. It is a clean handoff version that packages the runtime skill, preserves the `v0.1.5` strict-suite evidence, and provides a test packet for a separate Windows environment. `v0.1.7` is the closeout patch generated from the first returned Windows relay run.
+
+The first Windows relay run has been received and promoted:
+
+```text
+zero-to-one-product-discovery-eval-runs/current/v0.1.6/2026-05-17-windows-clean-install-run-01/
+```
 
 ## Local Precheck Completed
 
@@ -25,18 +31,27 @@ The local Mac workspace precheck covers only package and documentation boundarie
 
 The following evidence must come from the Windows Codex environment before stronger claims:
 
+Completed in `2026-05-17-windows-clean-install-run-01`:
+
 - Fresh post-install positive trigger responses.
 - Fresh post-install negative trigger responses.
 - Raw multi-turn end-to-end discovery transcript.
 - Scored report, value review, and promotion decision generated from those raw responses.
 
+Still pending before stronger claims:
+
+- Patch and rerun findings from the Windows run.
+- Baseline-vs-skill comparison.
+
 ## Claim Boundary
 
 Supported now:
 
-- `v0.1.6` is ready for Windows clean-install validation.
+- `v0.1.6` has first Windows clean-install relay evidence.
+- `v0.1.7` applies the first relay follow-up patch.
 - `v0.1.5` remains the latest strict-suite regression evidence.
 - The repository has a structured relay protocol for collecting external clean-environment evidence.
+- The Windows run found no hard failures, but did find actionable follow-up patches.
 
 Unsupported now:
 

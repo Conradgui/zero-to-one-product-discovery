@@ -33,9 +33,9 @@ Promoted records in `zero-to-one-product-discovery-eval-runs/current/<version>/<
 
 ## Current Version
 
-Current package version: `v0.1.6`.
+Current package version: `v0.1.7`.
 
-`v0.1.0-draft` remains the early historical draft. The multi-agent workflow architecture is tracked as the larger `v0.1.5` upgrade. `v0.1.6` packages the current runtime for Windows clean-install validation and does not replace the `v0.1.5` strict-suite evidence.
+`v0.1.0-draft` remains the early historical draft. The multi-agent workflow architecture is tracked as the larger `v0.1.5` upgrade. `v0.1.6` packaged the Windows clean-install validation handoff; `v0.1.7` is the Windows closeout patch generated from the first relay findings and does not replace the `v0.1.5` strict-suite evidence.
 
 ## Strict Suite Shape
 
@@ -81,7 +81,8 @@ No-actionable-finding runs must not be presented as strong evidence. They can be
 | `v0.1.5` strict suite | `current/v0.1.5/2026-05-12-run-01/` | Fresh run found one failed package-boundary scenario and two improvement points; it is valuable evidence but not install-candidate proof. |
 | Targeted boundary rerun | `current/v0.1.5/2026-05-14-run-02/` | Five adjacent scenarios passed after patch; closes the package/vendor boundary regression, but does not replace a full-suite rerun. |
 | Patched full strict-suite rerun | `current/v0.1.5/2026-05-14-run-03/` | 22 scenarios passed with 0 hard failures and lowest score 90; supports core regression confidence, but not clean install trigger reliability. |
-| Windows clean-install handoff | `current/v0.1.6/2026-05-14-windows-clean-install-handoff/` | Test packet, relay template, and pending status prepared for external Windows Codex validation; no external raw responses have been scored yet. |
+| Windows clean-install handoff | `current/v0.1.6/2026-05-14-windows-clean-install-handoff/` | Test packet and relay template for external Windows Codex validation; status now points to the first returned relay run. |
+| Windows clean-install relay run | `current/v0.1.6/2026-05-17-windows-clean-install-run-01/` | 8 relay scenarios passed with 0 hard failures; found actionable follow-up patches for maintenance test contamination, install docs, and version-aware eval paths. |
 
 ## Allowed Claims
 
@@ -92,7 +93,8 @@ The current evidence supports these claims:
 - Historical runs helped shape the current architecture, but they are not release-grade validation for `v0.1.5`.
 - The `v0.1.5` multi-agent architecture is structurally documented and has passed a patched full strict-suite rerun.
 - The first fresh strict-suite run produced actionable findings, the targeted boundary rerun confirmed the package/vendor boundary patch, and the patched full rerun confirmed no hard failures across the 22 core scenarios.
-- `v0.1.6` is prepared for external Windows clean-install validation through a structured relay test packet.
+- `v0.1.6` prepared external Windows clean-install validation through a structured relay test packet.
+- `v0.1.7` incorporates the first Windows clean-install relay follow-up patches after 8 scenarios passed with no hard failures.
 
 ## Unsupported Claims
 
@@ -109,6 +111,6 @@ Do not claim:
 
 Before stronger release claims, run and value-review:
 
-1. Fresh post-restart trigger conversations in Windows Codex using the v0.1.6 zip or GitHub install.
+1. Patch and rerun findings from `2026-05-17-windows-clean-install-run-01`.
 2. Real raw multi-turn discovery trace through Research Brief -> PRD -> Roadmap -> Implementation Plan readiness.
 3. Baseline-vs-skill A/B run on the updated scenario set.

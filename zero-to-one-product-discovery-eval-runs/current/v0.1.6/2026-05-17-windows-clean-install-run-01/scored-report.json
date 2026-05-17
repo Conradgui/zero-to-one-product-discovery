@@ -1,0 +1,269 @@
+{
+  "run_id": "2026-05-17-windows-clean-install-run-01",
+  "version": "v0.1.6",
+  "date": "2026-05-17",
+  "environment": {
+    "source": "Windows Codex via human relay",
+    "os": "Windows",
+    "host": "Codex",
+    "model": "not exposed by relay",
+    "installation_state": "Installed and loaded in Windows Codex; reset after N3 before N4/E2E",
+    "repo_state": "Mac repository at v0.1.6 evidence collection; Windows raw responses came from installed skill"
+  },
+  "suite": {
+    "name": "v0.1.6 windows clean-install handoff scenarios",
+    "scenario_count": 8,
+    "passed": 8,
+    "failed": 0,
+    "hard_failure_count": 0,
+    "average_score": 91.75,
+    "lowest_score": 86,
+    "median_score": 92,
+    "suite_pass": true,
+    "install_candidate": false
+  },
+  "results": [
+    {
+      "id": "P1_early_open_source_product_idea",
+      "category": "positive_trigger",
+      "risk_level": "high",
+      "verdict": "pass",
+      "score": 96,
+      "hard_failures": [],
+      "deterministic_checks": [
+        {
+          "check": "Skill triggers Diagnostic Start",
+          "result": "pass",
+          "evidence": "Response explicitly uses zero-to-one-product-discovery and says Diagnostic Start."
+        },
+        {
+          "check": "No PRD, Roadmap, or coding",
+          "result": "pass",
+          "evidence": "Response says it will not enter PRD, Roadmap, or coding."
+        },
+        {
+          "check": "One highest-leverage question",
+          "result": "pass",
+          "evidence": "Ends with one question asking for the raw product idea/problem source."
+        }
+      ],
+      "rubric_notes": "Strong trigger behavior, stage purity, and evidence separation."
+    },
+    {
+      "id": "P2_existing_prd_not_validated",
+      "category": "positive_trigger",
+      "risk_level": "high",
+      "verdict": "pass",
+      "score": 94,
+      "hard_failures": [],
+      "deterministic_checks": [
+        {
+          "check": "Treats PRD as existing material, not final truth",
+          "result": "pass",
+          "evidence": "Response asks to inspect PRD sections before deciding groundedness."
+        },
+        {
+          "check": "Does not fill PRD or define MVP",
+          "result": "pass",
+          "evidence": "Response explicitly says it will not directly补 PRD or定 MVP."
+        },
+        {
+          "check": "Grounding focus",
+          "result": "pass",
+          "evidence": "Response separates evidence-backed claims from reasonable guesses."
+        }
+      ],
+      "rubric_notes": "Good material-assimilation posture. Slightly lists multiple requested sections, but the next action is one material request."
+    },
+    {
+      "id": "P3_portfolio_side_project",
+      "category": "positive_trigger",
+      "risk_level": "medium",
+      "verdict": "pass",
+      "score": 88,
+      "hard_failures": [],
+      "deterministic_checks": [
+        {
+          "check": "Triggers zero-to-one discovery",
+          "result": "pass",
+          "evidence": "Response says it uses zero-to-one-product-discovery for early product discovery."
+        },
+        {
+          "check": "No PRD/Roadmap/Implementation Plan",
+          "result": "pass",
+          "evidence": "Response stays in Diagnostic Start and does not generate planning artifacts."
+        },
+        {
+          "check": "Preserves portfolio constraint",
+          "result": "pass",
+          "evidence": "Response centers portfolio and AI agent design ability."
+        }
+      ],
+      "rubric_notes": "Pass with minor drift: it invokes superpowers:brainstorming as a visible dependency and uses an A/B/C/D format for the highest-leverage question."
+    },
+    {
+      "id": "N1_code_review_negative_control",
+      "category": "negative_control",
+      "risk_level": "high",
+      "verdict": "pass",
+      "score": 96,
+      "hard_failures": [],
+      "deterministic_checks": [
+        {
+          "check": "Does not trigger product discovery",
+          "result": "pass",
+          "evidence": "Response stays in code-review context and asks for code."
+        },
+        {
+          "check": "No Diagnostic Start",
+          "result": "pass",
+          "evidence": "No product-discovery artifact appears."
+        }
+      ],
+      "rubric_notes": "Correct negative-control behavior."
+    },
+    {
+      "id": "N2_existing_mvp_small_change_negative_control",
+      "category": "negative_control",
+      "risk_level": "high",
+      "verdict": "pass",
+      "score": 96,
+      "hard_failures": [],
+      "deterministic_checks": [
+        {
+          "check": "Explicitly avoids zero-to-one discovery",
+          "result": "pass",
+          "evidence": "Response says it will not use zero-to-one-product-discovery or revisit MVP/product direction."
+        },
+        {
+          "check": "Asks for local fix details only",
+          "result": "pass",
+          "evidence": "Response asks for button style and bug reproduction details."
+        }
+      ],
+      "rubric_notes": "Strong negative-control pass."
+    },
+    {
+      "id": "N3_skill_maintenance_negative_control",
+      "category": "negative_control",
+      "risk_level": "critical",
+      "verdict": "pass_with_process_risk",
+      "score": 86,
+      "hard_failures": [],
+      "deterministic_checks": [
+        {
+          "check": "Does not enter product discovery",
+          "result": "pass",
+          "evidence": "Response says it handled skill maintenance and did not enter product discovery."
+        },
+        {
+          "check": "No Diagnostic Start/PRD/Roadmap",
+          "result": "pass",
+          "evidence": "No product-discovery artifacts are produced."
+        },
+        {
+          "check": "Does not contaminate clean test environment",
+          "result": "fail",
+          "evidence": "Response edited the installed skill under C:/Users/Administrator/.codex/skills/zero-to-one-product-discovery."
+        }
+      ],
+      "rubric_notes": "Behavioral route is correct, but the agent mutated the installed skill during the clean-install validation. This created a test-process risk and required environment reset before continuing."
+    },
+    {
+      "id": "N4_vendor_source_governance_boundary",
+      "category": "negative_control",
+      "risk_level": "high",
+      "verdict": "pass",
+      "score": 96,
+      "hard_failures": [],
+      "deterministic_checks": [
+        {
+          "check": "Rejects direct vendor routing",
+          "result": "pass",
+          "evidence": "Response says vendor cannot be directly called and is not a routing target."
+        },
+        {
+          "check": "Keeps child-skills as routeable surface",
+          "result": "pass",
+          "evidence": "Response says only local child-skills adapters/wrappers are callable."
+        },
+        {
+          "check": "No PRD/product-discovery drift",
+          "result": "pass",
+          "evidence": "Response stays in source-governance mode."
+        }
+      ],
+      "rubric_notes": "Strong vendor boundary pass."
+    },
+    {
+      "id": "E2E_learning_planner_multi_turn",
+      "category": "multi_turn_continuity",
+      "risk_level": "critical",
+      "verdict": "pass",
+      "score": 82,
+      "hard_failures": [],
+      "deterministic_checks": [
+        {
+          "check": "Maintains stage progression",
+          "result": "pass",
+          "evidence": "Starts with Diagnostic Start, then moves through problem framing and MVP hypothesis before PRD draft."
+        },
+        {
+          "check": "Separates evidence from assumptions",
+          "result": "pass",
+          "evidence": "Turn 2 says observed course-saving behavior is valuable but not demand evidence."
+        },
+        {
+          "check": "Does not produce final PRD",
+          "result": "pass",
+          "evidence": "Turn 5 output is labeled PRD Draft."
+        },
+        {
+          "check": "Does not enter Roadmap or Implementation Plan",
+          "result": "pass",
+          "evidence": "No roadmap or implementation plan is produced."
+        },
+        {
+          "check": "Avoids overcommitting unvalidated direction",
+          "result": "partial",
+          "evidence": "Turns 3 and 4 strongly recommend narrowing to self-taught programming users and plan recovery, before user explicitly chooses those directions."
+        }
+      ],
+      "rubric_notes": "Useful end-to-end pass, but the assistant becomes advisor-dominant in turns 3-4 and the PRD draft lacks explicit readiness/evidence labels for every major claim."
+    }
+  ],
+  "substantive_findings": [
+    {
+      "id": "maintenance_request_can_mutate_installed_skill",
+      "severity": "medium",
+      "description": "N3 correctly avoided product discovery, but it edited the installed skill in the clean Windows environment, contaminating later test state.",
+      "recommended_action": "Add test-packet guardrails: maintenance negative-control tests must request no file edits, or must be run in a disposable copy. Consider a future scenario that checks skill-maintenance mode explains intended edits before mutating installed runtime."
+    },
+    {
+      "id": "superpowers_dependency_visible_in_skill_response",
+      "severity": "low",
+      "description": "P3 exposed superpowers:brainstorming in a user-facing response. This can confuse platform-agnostic skill behavior.",
+      "recommended_action": "Clarify in SKILL.md that optional host workflow aids should not be presented as required dependencies unless the host explicitly invokes them."
+    },
+    {
+      "id": "advisor_overreach_in_multi_turn",
+      "severity": "low",
+      "description": "E2E turns 3-4 strongly recommended a target segment and MVP angle before explicit user acceptance.",
+      "recommended_action": "Tighten guidance around recommendation language: label such narrowing as a candidate to validate and ask for user acceptance before upgrading it into PRD draft assumptions."
+    },
+    {
+      "id": "windows_packaging_and_versioned_eval_path",
+      "severity": "medium",
+      "description": "N3 discovered useful maintenance improvements: Windows PowerShell packaging docs and replacing hard-coded v0.1.5 promotion paths with version-aware paths.",
+      "recommended_action": "Patch the Mac repository with these documentation/protocol fixes before the next release."
+    }
+  ],
+  "improvement_directions": [
+    "Patch README install instructions to use the GitHub tree path for the skill subdirectory.",
+    "Patch pressure-test protocol promotion path from current/v0.1.5/<run-id>/ to current/<tested-version>/<run-id>/.",
+    "Add Windows PowerShell packaging command or point Windows users to the GitHub tree install path.",
+    "Update Windows test packet to prevent mutation during negative-control maintenance scenarios.",
+    "Add a future rubric check for advisor overreach before user acceptance."
+  ],
+  "promotion_recommendation": "promote"
+}

@@ -136,7 +136,7 @@ Goal: decide what to keep.
 
 Use one of:
 
-- `promote`: move the run to `zero-to-one-product-discovery-eval-runs/current/v0.1.5/<run-id>/`.
+- `promote`: move the run to `zero-to-one-product-discovery-eval-runs/current/<tested-version>/<run-id>/`.
 - `minimal-note`: keep a short note only, when the run closes a named release question without needing full raw evidence.
 - `discard-full-run`: do not retain the full run as project evidence.
 
