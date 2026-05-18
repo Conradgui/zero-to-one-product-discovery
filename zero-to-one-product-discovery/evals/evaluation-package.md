@@ -36,9 +36,9 @@ Promoted records in `zero-to-one-product-discovery-eval-runs/current/<version>/<
 
 ## Current Version
 
-Current evidence version: `v0.1.9-baseline-ab-evidence`.
+Current package version: `v0.2.0-portfolio-release`.
 
-`v0.1.0-draft` remains the early historical draft. The multi-agent workflow architecture is tracked as the larger `v0.1.5` upgrade. `v0.1.6` packaged the Windows clean-install validation handoff, `v0.1.7` closed the first relay findings, and `v0.1.8` applies the final documentation-boundary and PRD Draft user-gate patch. `v0.1.9` adds a controlled local baseline-vs-skill A/B methodology and evidence run. None of these replace the `v0.1.5` strict-suite evidence.
+`v0.1.0-draft` remains the early historical draft. The multi-agent workflow architecture is tracked as the larger `v0.1.5` upgrade. `v0.1.6` packaged the Windows clean-install validation handoff, `v0.1.7` closed the first relay findings, `v0.1.8` applies the final documentation-boundary and PRD Draft user-gate patch, and `v0.1.9` adds a controlled local baseline-vs-skill A/B methodology and evidence run. `v0.2.0` is the portfolio release that packages the installable showcase and evidence dashboard. None of these replace the `v0.1.5` strict-suite evidence.
 
 ## Strict Suite Shape
 
@@ -79,7 +79,7 @@ No-actionable-finding runs must not be presented as strong evidence. They can be
 |---|---|---|
 | Initial trigger and stage-purity checks | Historical evidence in `archive/pre-v0.1.5/` | Useful baseline only; predates later architecture changes. |
 | Child-skill routing and wrapper behavior | Historical evidence in `archive/pre-v0.1.5/` | Supports prior refactor decisions, but is not fresh evidence for `v0.1.5`. |
-| Copy-first source boundary | Historical evidence in `archive/pre-v0.1.5/` | Supports source-governance direction, with historical limitations. |
+| Source-adapter boundary | Historical evidence in `archive/pre-v0.1.5/` | Supports source-governance direction, with historical limitations. |
 | Multi-agent workflow protocol | Structural design documented in `design-records/v0.1.5/` | Architecture is documented and has initial strict-suite pressure evidence. |
 | `v0.1.5` strict suite | `current/v0.1.5/2026-05-12-run-01/` | Fresh run found one failed package-boundary scenario and two improvement points; it is valuable evidence but not install-candidate proof. |
 | Targeted boundary rerun | `current/v0.1.5/2026-05-14-run-02/` | Five adjacent scenarios passed after patch; closes the package/vendor boundary regression, but does not replace a full-suite rerun. |
@@ -88,6 +88,7 @@ No-actionable-finding runs must not be presented as strong evidence. They can be
 | Windows clean-install relay run | `current/v0.1.6/2026-05-17-windows-clean-install-run-01/` | 8 relay scenarios passed with 0 hard failures; found actionable follow-up patches for maintenance test contamination, install docs, and version-aware eval paths. |
 | v0.1.7 targeted Windows rerun | `current/v0.1.7/2026-05-18-targeted-rerun-01/` | Confirmed maintenance mutation and helper-skill visibility fixes; found final follow-up issues in packaging docs, eval metadata, and PRD Draft user-gate wording. |
 | v0.1.9 baseline A/B | `current/v0.1.9/2026-05-18-baseline-ab-run-01/` | Controlled local 10-scenario A/B: skill average 95.7, baseline average 68.4, average delta +27.3, 0 skill hard failures; supports scenario-scoped improvement only. |
+| v0.2.0 portfolio release | Repository README, portfolio case study, and install zip | Converts prior architecture and evaluation evidence into an installable showcase package; does not add new release-grade validation. |
 
 ## Allowed Claims
 
@@ -102,13 +103,14 @@ The current evidence supports these claims:
 - `v0.1.7` incorporates the first Windows clean-install relay follow-up patches after 8 scenarios passed with no hard failures.
 - `v0.1.8` incorporates the targeted rerun follow-up patch for packaging docs, eval metadata clarity, and PRD Draft user-gate wording.
 - `v0.1.9` adds baseline-vs-skill methodology and a controlled local 10-scenario A/B run showing scenario-scoped improvement in stage gates, boundary safety, and user-gate behavior.
+- `v0.2.0` is an installable portfolio release that organizes the evidence dashboard, package boundary, and project case study.
 
 ## Unsupported Claims
 
 Do not claim:
 
 - Release-grade validation.
-- Install-candidate status.
+- Production-grade stability.
 - Cross-client natural trigger reliability after restart.
 - Stable multi-agent runtime behavior in real model runs.
 - Complete real-user multi-turn workflow quality.

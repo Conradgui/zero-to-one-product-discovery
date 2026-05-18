@@ -1,20 +1,35 @@
-# Zero-to-One Product Discovery
+# AI Product Discovery Workflow Skill with Multi-Agent Governance and Quantitative Evals
 
-面向早期产品想法的 AI workflow skill：从一句模糊想法开始，逐步完成问题澄清、材料吸收、MVP 假设、规划产物和实施准备。
+`zero-to-one-product-discovery` 是一个面向早期产品想法的 AI workflow skill：从一句模糊想法开始，逐步完成问题澄清、材料吸收、MVP 假设、规划产物和实施准备。
 
 它适合个人开源项目、作品集项目、内部工具、side project 和 startup MVP 的早期探索。核心目标不是“快速套一个 PRD 模板”，而是防止 AI 在证据不足时过早进入 PRD、Roadmap、ADR 或编码阶段。
 
-> Status: `v0.1.9-baseline-ab-evidence`。当前新增 baseline-vs-skill A/B 方法论和一次受控本地 A/B 证据 run；尚未声明 release-grade validation、production stability 或跨模型全面优越性。
+> Status: `v0.2.0 Portfolio Release`。这是可安装、可展示的作品集版本：已完成多 agent workflow、stage gates、评测协议、Windows relay evidence 和 baseline A/B evidence；仍不声明 release-grade validation、production stability 或跨模型全面优越性。
 
 ## Highlights
 
-- **主控 workflow**：由 `SKILL.md` 控制阶段门禁、上下文连续性、子能力路由和最终输出验收。
+- **Stage-gated workflow**：由 `SKILL.md` 控制阶段门禁、上下文连续性、子能力路由和最终输出验收。
+- **Multi-agent governance**：Workflow 规则负责阶段门禁，Controller Agent 负责路由，Producer Agents 负责产物，Auditor Agent 负责独立审核，Runtime Workbench 只保存当前决策状态。
+- **Quantitative evals**：包含 strict suite、Windows relay、targeted rerun、Baseline A/B、hard failures、Value Gate 和机器可读 schema。
 - **中文优先体验**：默认面向中文产品探索和协作场景，同时保留英文 artifact 名称以兼容常见 PM / engineering 术语。
 - **一轮一个关键问题**：每轮只问当前最高杠杆问题；用户回答后再更新 facts / assumptions / risks / gaps。
 - **防止过早产物化**：信息不足时只能输出 outline、decision surface、evidence gap 或 blocking question，不能伪造成最终 PRD。
 - **专业子能力**：PRD、Roadmap、User Stories、Acceptance Criteria、ADR、Mermaid、Implementation Plan 等由本地 child skill adapter 承担。
-- **轻量多 agent 协作**：Workflow 规则负责阶段门禁，Controller Agent 负责路由，Producer Agents 负责产物，Auditor Agent 负责独立审核，Runtime Workbench 只保存当前决策状态。
-- **Copy-first 来源治理**：高质量上游 skill 被保存在 `vendor/` 作为来源快照，但不能直接绕过本地 workflow。
+
+## Evaluation Dashboard
+
+| Evidence | Scenarios | Result | Hard failures | What It Supports |
+|---|---:|---|---:|---|
+| `v0.1.5` full strict suite | 22 | 22/22 pass, avg 93.73, lowest 90 | 0 | Core trigger, stage-gate, boundary, audit, context-economy regression confidence |
+| `v0.1.6` Windows relay | 8 | 8 pass | 0 | Clean-install relay surfaced Windows/package/runtime-context issues |
+| `v0.1.7` targeted rerun | 5 | 4 pass, 1 partial, avg 89 | 0 | Confirmed maintenance and helper-skill drift fixes; found final user-gate/doc gaps |
+| `v0.1.9` Baseline A/B | 10 paired | skill avg 95.7 vs baseline avg 68.4, delta +27.3 | 0 skill hard failures | Scenario-scoped improvement in stage gates, boundary safety, and user-gate behavior |
+
+Supported claim: this project has evidence-backed workflow governance for the tested early product discovery scenarios.
+
+Unsupported claim: this is not release-grade validation, production-stability proof, cross-model superiority, or long-term real-user validation.
+
+Portfolio case study: see the repository root file [`PORTFOLIO-CASE-STUDY.md`](../PORTFOLIO-CASE-STUDY.md) on GitHub.
 
 ## When To Use
 
@@ -183,9 +198,9 @@ zero-to-one-product-discovery-eval-runs/
 - 重要产物在接受为 final 或 review-ready 前需要 Controller review 或 Audit Report。
 - 重要输出必须带 readiness signal 和 Context Resume Packet。
 
-## Source Strategy
+## Source Transparency
 
-本项目采用 copy-first 策略：先把高质量上游项目的相关 skill/source snapshot 保存到 `vendor/`，再将其改写成本地 adapter contract。
+`vendor/` 保存外部来源快照、许可证和参考实现，用于来源透明和 adapter 质量参考。它不是本项目的核心能力卖点，也不是运行时 route target。
 
 主要参考来源：
 
@@ -218,7 +233,7 @@ See also:
 
 当前可以谨慎声明：
 
-- 历史 runs 解释了早期架构演进，但不能作为 `v0.1.8` release-grade 证据。
+- 历史 runs 解释了早期架构演进，但不能作为 `v0.2.0` release-grade 证据。
 - `v0.1.5` 已有严格测评体系、结构化 schema 和 Value Gate；`v0.1.6` 是面向 Windows 干净环境验证的交接版本；`v0.1.7` 是吸收 Windows run-01 发现问题后的收尾补丁版本；`v0.1.8` 是吸收 v0.1.7 targeted rerun 发现问题后的最终收官补丁版本；`v0.1.9` 新增受控本地 baseline A/B 方法论和证据。
 - multi-agent workflow protocol 已完成结构化设计和 strict suite 扩展。
 - `current/v0.1.5/2026-05-12-run-01/` 是首轮 fresh pressure evidence：它发现了 package/eval boundary 表达不清、vendor-boundary 回复轻微漂移、PRD draft/final 规格不够细的问题，因此不能单独作为 install-candidate 证据。
@@ -236,18 +251,19 @@ See also:
 - install candidate 状态。
 - 跨客户端、重启后的自然触发可靠性。
 - 完整多轮 workflow 质量。
-- copy-first child adapter 相对旧 artifact adapter 的系统性 A/B 优势。
+- 本地 source adapter 相对旧 artifact adapter 的系统性 A/B 优势。
 - release-grade multi-agent workflow 稳定性。
 
 ## Versioning
 
-当前版本：`v0.1.8`。
+当前版本：`v0.2.0`。
 
 版本管理规则：
 
 - Git tag、GitHub Release 名称、zip 文件名必须使用同一个版本号。
 - `v0.1.0-draft` 保留为早期历史草稿版本；multi-agent workflow 属于较大的架构升级，从 `v0.1.5` 开始记录。
-- `v0.1.6` 是 Windows clean-install validation handoff 和第一轮 relay evidence 版本；`v0.1.7` 是 Windows 收尾补丁版本；`v0.1.8` 是最终收官补丁版本；它们都不移动或改写已经发布的历史 tag。
+- `v0.1.6` 是 Windows clean-install validation handoff 和第一轮 relay evidence 版本；`v0.1.7` 是 Windows 收尾补丁版本；`v0.1.8` 是最终收官补丁版本；`v0.1.9` 是 Baseline A/B evidence 版本；它们都不移动或改写已经发布的历史 tag。
+- `v0.2.0` 是 Portfolio Release：整理 GitHub 展示、证据 dashboard、安装包和面试材料，但仍不声明 production-grade 或 release-grade。
 - Draft 状态和 release-grade validation 状态用文档说明，不再把这批 multi-agent 改动继续补在 `v0.1.0-draft` 后面。
 - 每次打包前确认 `README.md`、`SKILL.md`、`agents/openai.yaml`、`references/`、`child-skills/`、`evals/` 已同步。
 - 临时发布目录如 `zero-to-one-product-discovery-publish.*` 不进入仓库；可发布包以 `dist/zero-to-one-product-discovery-skill-<version>.zip` 为准。
@@ -272,10 +288,10 @@ zero-to-one-product-discovery-eval-runs/
 - 用户安装 zip 只能包含 `zero-to-one-product-discovery/` runtime 目录；不要包含 `zero-to-one-product-discovery-eval-runs/`、`.git/`、`tmp/`、`dist/` 或发布临时目录。
 - 当某次 run 没有实质发现，只能按 `minimal-note` 或 `discard-full-run` 处理，不能用完整 raw/report 制造虚假的强证据。
 
-本地打包命令必须带版本号。当前版本是 `v0.1.8`：
+本地打包命令必须带版本号。当前版本是 `v0.2.0`：
 
 ```bash
-VERSION=v0.1.8
+VERSION=v0.2.0
 mkdir -p dist
 zip -r "dist/zero-to-one-product-discovery-skill-${VERSION}.zip" zero-to-one-product-discovery \
   -x '*/.DS_Store' \
@@ -285,7 +301,7 @@ zip -r "dist/zero-to-one-product-discovery-skill-${VERSION}.zip" zero-to-one-pro
 Windows PowerShell:
 
 ```powershell
-$Version = "v0.1.8"
+$Version = "v0.2.0"
 New-Item -ItemType Directory -Force -Path dist | Out-Null
 Compress-Archive -Path zero-to-one-product-discovery -DestinationPath "dist/zero-to-one-product-discovery-skill-$Version.zip" -Force
 ```

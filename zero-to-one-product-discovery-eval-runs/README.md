@@ -32,6 +32,7 @@ current/v0.1.6/<run-id>/     Current handoff and external validation evidence.
 current/v0.1.7/<run-id>/     Promoted v0.1.7 targeted rerun evidence.
 current/v0.1.8/<run-id>/     Reserved for v0.1.8 final follow-up verification.
 current/v0.1.9/<run-id>/     Baseline-vs-skill A/B evidence.
+current/v0.2.0/<run-id>/     Reserved for future portfolio-release verification evidence.
 design-records/              Architecture and design decision records.
 handoffs/                    Project status handoff notes.
 tmp/<run-id>/                Scratch raw/report outputs before value review.
@@ -102,4 +103,4 @@ Read the Windows run in this order:
 4. `scored-report.json`
 5. `raw.md`
 
-These records are valuable GitHub project evidence, but they are not release-grade proof by themselves. The patched full suite, first Windows relay run, and v0.1.7 targeted rerun passed without hard failures; `v0.1.8` applies the final documentation-boundary and PRD Draft user-gate patch. `v0.1.9` adds a controlled local baseline-vs-skill comparison that supports scenario-scoped improvement, not broad model superiority.
+These records are valuable GitHub project evidence, but they are not release-grade proof by themselves. The patched full suite, first Windows relay run, and v0.1.7 targeted rerun passed without hard failures; `v0.1.8` applies the final documentation-boundary and PRD Draft user-gate patch. `v0.1.9` adds a controlled local baseline-vs-skill comparison that supports scenario-scoped improvement, not broad model superiority. `v0.2.0` is the portfolio release layer built on this evidence, not a new production-stability proof.
