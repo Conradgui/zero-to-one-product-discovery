@@ -1,0 +1,28 @@
+{
+  "run_id": "2026-05-18-run-01",
+  "skill_version": "v0.1.9 evidence run on v0.1.8 skill baseline",
+  "value_verdict": "valuable",
+  "substantive_findings": [
+    "The A/B run shows the largest skill gains on premature artifact prevention, vendor/source boundary enforcement, and PRD Draft user-gate behavior.",
+    "Baseline behavior is already adequate on narrow negative controls such as existing MVP bugfix and code review, so the skill's main value is not generic helpfulness but governance under ambiguous early-product pressure.",
+    "The controlled local baseline limitation must be disclosed; the run supports scenario-scoped improvement, not broad model superiority."
+  ],
+  "improvement_directions": [
+    "Retain the Baseline A/B template as a reusable eval asset for future v0.2.x comparisons.",
+    "Use future external or multi-model baselines before making stronger claims.",
+    "Add more multi-turn A/B cases if later releases claim full discovery workflow quality."
+  ],
+  "product_impact": "This run provides quantifiable portfolio-grade evidence that the skill changes behavior where the workflow is supposed to matter: it reduces premature artifact generation, preserves gates, and keeps recommendations from becoming facts.",
+  "promotion_decision": "promote",
+  "required_next_action": "no-action",
+  "evidence_to_preserve": [
+    "scenario-set.json",
+    "baseline-raw.md",
+    "skill-raw.md",
+    "baseline-ab-scored-report.json",
+    "summary-report.md",
+    "promotion-decision.md"
+  ],
+  "rationale": "The run clears the A/B thresholds with 0 skill hard failures, skill average 95.7, average delta +27.3, and 80% skill win rate. It also identifies where the baseline was already adequate, which prevents overclaiming."
+}
+

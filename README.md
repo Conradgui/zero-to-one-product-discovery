@@ -4,7 +4,7 @@
 
 它适合个人开源项目、作品集项目、内部工具、side project 和 startup MVP 的早期探索。核心目标不是“快速套一个 PRD 模板”，而是防止 AI 在证据不足时过早进入 PRD、Roadmap、ADR 或编码阶段。
 
-> Status: `v0.1.8`。当前是最终收官补丁版本：已吸收 v0.1.7 targeted Windows rerun 的文档边界和 PRD Draft user-gate 修复；尚未声明 install candidate 或 release-grade validation。
+> Status: `v0.1.9-baseline-ab-evidence`。当前新增 baseline-vs-skill A/B 方法论和一次受控本地 A/B 证据 run；尚未声明 release-grade validation、production stability 或跨模型全面优越性。
 
 ## Highlights
 
@@ -206,17 +206,20 @@ See also:
 
 可复用评测协议保存在 `evals/`：
 
-- `evals/evals.json`：v0.1.5 strict suite、deterministic checks、rubric checks、hard failures 和 Value Gate 元数据；`v0.1.8` 继续复用该套核心回归场景。
+- `evals/evals.json`：v0.1.5 strict suite、deterministic checks、rubric checks、hard failures 和 Value Gate 元数据；`v0.1.9` 继续复用该套核心回归场景。
 - `evals/eval-rubric-template.md`：评分 rubric 和 Evidence Value Review 模板。
 - `evals/claude-code-pressure-test-protocol.md`：五阶段 pressure test 协议：raw generation、deterministic checks、rubric grading、value review、promotion decision。
 - `evals/eval-report.schema.json`：结构化评分报告 schema。
 - `evals/value-review.schema.json`：测试后价值判定 schema。
+- `evals/baseline-ab-template.md`：baseline-vs-skill A/B 模板。
+- `evals/baseline-ab-scoring-rubric.md`：paired A/B 评分细则。
+- `evals/baseline-ab-report.schema.json`：A/B 结构化报告 schema。
 - `evals/evaluation-package.md`：当前证据、限制和安全 claim。
 
 当前可以谨慎声明：
 
 - 历史 runs 解释了早期架构演进，但不能作为 `v0.1.8` release-grade 证据。
-- `v0.1.5` 已有严格测评体系、结构化 schema 和 Value Gate；`v0.1.6` 是面向 Windows 干净环境验证的交接版本；`v0.1.7` 是吸收 Windows run-01 发现问题后的收尾补丁版本；`v0.1.8` 是吸收 v0.1.7 targeted rerun 发现问题后的最终收官补丁版本。
+- `v0.1.5` 已有严格测评体系、结构化 schema 和 Value Gate；`v0.1.6` 是面向 Windows 干净环境验证的交接版本；`v0.1.7` 是吸收 Windows run-01 发现问题后的收尾补丁版本；`v0.1.8` 是吸收 v0.1.7 targeted rerun 发现问题后的最终收官补丁版本；`v0.1.9` 新增受控本地 baseline A/B 方法论和证据。
 - multi-agent workflow protocol 已完成结构化设计和 strict suite 扩展。
 - `current/v0.1.5/2026-05-12-run-01/` 是首轮 fresh pressure evidence：它发现了 package/eval boundary 表达不清、vendor-boundary 回复轻微漂移、PRD draft/final 规格不够细的问题，因此不能单独作为 install-candidate 证据。
 - `current/v0.1.5/2026-05-14-run-02/` 是 targeted rerun evidence：它验证 package/eval boundary 和 vendor-boundary drift 已被补丁关闭，但仍不是 full-suite install-candidate 证据。
@@ -224,6 +227,7 @@ See also:
 - `current/v0.1.6/2026-05-14-windows-clean-install-handoff/` 是 Windows clean-install validation handoff：它提供测试包和回传模板。
 - `current/v0.1.6/2026-05-17-windows-clean-install-run-01/` 是第一轮 Windows clean-install relay evidence：8 个场景通过、0 hard failure，同时发现维护请求污染测试环境、安装说明和评测协议需要补丁。
 - `current/v0.1.7/2026-05-18-targeted-rerun-01/` 是 v0.1.7 targeted Windows rerun evidence：它确认维护污染和 helper-skill 外显问题已关闭，同时发现 packaging `dist/` 文档、eval metadata 和 PRD Draft user-gate 仍需最终补丁。
+- `current/v0.1.9/2026-05-18-baseline-ab-run-01/` 是 v0.1.9 controlled local baseline A/B evidence：10 个 paired scenarios 中 skill average 95.7、baseline average 68.4、average delta +27.3、skill hard failures 0；该结果只支持场景内改进，不支持跨模型全面优越性。
 - 任何新测试只有通过 Value Gate，才会作为 GitHub 项目证据沉淀；用户安装 skill zip 时不会下载这些 run artifacts。
 
 当前不能声明：

@@ -25,6 +25,9 @@ The installable skill keeps only reusable evaluation assets:
 - `claude-code-pressure-test-protocol.md`: five-pass pressure-test protocol.
 - `eval-report.schema.json`: structured report schema.
 - `value-review.schema.json`: post-test value-gate schema.
+- `baseline-ab-template.md`: reusable baseline-vs-skill A/B protocol.
+- `baseline-ab-scoring-rubric.md`: paired A/B scoring rubric and claim thresholds.
+- `baseline-ab-report.schema.json`: machine-readable A/B report schema.
 - `evaluation-package.md`: concise evidence interpretation and release boundary.
 
 Raw responses, JSONL traces, scored reports, audit notes, handoff records, and design records stay outside the skill package in `zero-to-one-product-discovery-eval-runs/`.
@@ -33,9 +36,9 @@ Promoted records in `zero-to-one-product-discovery-eval-runs/current/<version>/<
 
 ## Current Version
 
-Current package version: `v0.1.8`.
+Current evidence version: `v0.1.9-baseline-ab-evidence`.
 
-`v0.1.0-draft` remains the early historical draft. The multi-agent workflow architecture is tracked as the larger `v0.1.5` upgrade. `v0.1.6` packaged the Windows clean-install validation handoff, `v0.1.7` closed the first relay findings, and `v0.1.8` applies the final documentation-boundary and PRD Draft user-gate patch. None of these replace the `v0.1.5` strict-suite evidence.
+`v0.1.0-draft` remains the early historical draft. The multi-agent workflow architecture is tracked as the larger `v0.1.5` upgrade. `v0.1.6` packaged the Windows clean-install validation handoff, `v0.1.7` closed the first relay findings, and `v0.1.8` applies the final documentation-boundary and PRD Draft user-gate patch. `v0.1.9` adds a controlled local baseline-vs-skill A/B methodology and evidence run. None of these replace the `v0.1.5` strict-suite evidence.
 
 ## Strict Suite Shape
 
@@ -84,6 +87,7 @@ No-actionable-finding runs must not be presented as strong evidence. They can be
 | Windows clean-install handoff | `current/v0.1.6/2026-05-14-windows-clean-install-handoff/` | Test packet and relay template for external Windows Codex validation; status now points to the first returned relay run. |
 | Windows clean-install relay run | `current/v0.1.6/2026-05-17-windows-clean-install-run-01/` | 8 relay scenarios passed with 0 hard failures; found actionable follow-up patches for maintenance test contamination, install docs, and version-aware eval paths. |
 | v0.1.7 targeted Windows rerun | `current/v0.1.7/2026-05-18-targeted-rerun-01/` | Confirmed maintenance mutation and helper-skill visibility fixes; found final follow-up issues in packaging docs, eval metadata, and PRD Draft user-gate wording. |
+| v0.1.9 baseline A/B | `current/v0.1.9/2026-05-18-baseline-ab-run-01/` | Controlled local 10-scenario A/B: skill average 95.7, baseline average 68.4, average delta +27.3, 0 skill hard failures; supports scenario-scoped improvement only. |
 
 ## Allowed Claims
 
@@ -97,6 +101,7 @@ The current evidence supports these claims:
 - `v0.1.6` prepared external Windows clean-install validation through a structured relay test packet.
 - `v0.1.7` incorporates the first Windows clean-install relay follow-up patches after 8 scenarios passed with no hard failures.
 - `v0.1.8` incorporates the targeted rerun follow-up patch for packaging docs, eval metadata clarity, and PRD Draft user-gate wording.
+- `v0.1.9` adds baseline-vs-skill methodology and a controlled local 10-scenario A/B run showing scenario-scoped improvement in stage gates, boundary safety, and user-gate behavior.
 
 ## Unsupported Claims
 
@@ -107,12 +112,12 @@ Do not claim:
 - Cross-client natural trigger reliability after restart.
 - Stable multi-agent runtime behavior in real model runs.
 - Complete real-user multi-turn workflow quality.
-- Proven superiority over baseline model behavior.
+- Broad or cross-model superiority over baseline model behavior.
 
 ## Next Evidence Needed
 
 Before stronger release claims, run and value-review:
 
-1. Verify the `v0.1.8` follow-up patch against the targeted Windows scenarios from `2026-05-18-targeted-rerun-01`.
+1. External or multi-model baseline A/B if stronger superiority claims are needed.
 2. Real raw multi-turn discovery trace through Research Brief -> PRD -> Roadmap -> Implementation Plan readiness.
-3. Baseline-vs-skill A/B run on the updated scenario set.
+3. Long-horizon real-user usage evidence before any release-grade or production-stability claim.

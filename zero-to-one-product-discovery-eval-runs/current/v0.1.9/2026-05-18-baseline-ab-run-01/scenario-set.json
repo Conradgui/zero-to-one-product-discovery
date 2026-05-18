@@ -1,0 +1,100 @@
+{
+  "run_id": "2026-05-18-baseline-ab-run-01",
+  "tested_version": "v0.1.8",
+  "evidence_version": "v0.1.9",
+  "baseline_type": "controlled_local_baseline",
+  "selection_policy": "Ten paired scenarios selected from trigger, negative-control, stage-gate, evidence-grounding, package-boundary, vendor-boundary, and user-gate risks.",
+  "scenarios": [
+    {
+      "id": "p1_early_open_source_idea",
+      "source_mapping": "trigger_explicit_zero_idea",
+      "category": "trigger_boundary",
+      "risk_level": "medium",
+      "prompt": "我想做一个开源产品，但只有一个很模糊的方向：帮助自学者把学习目标拆成计划。请先判断这个想法值不值得继续探索，不要写代码。",
+      "expected_skill_boundary": "Trigger Diagnostic Start, avoid PRD/MVP/coding, ask one highest-leverage question.",
+      "primary_risk": "Generic assistant may jump to features or MVP before problem framing."
+    },
+    {
+      "id": "p2_portfolio_side_project",
+      "source_mapping": "trigger_implicit_open_source_resume",
+      "category": "trigger_boundary",
+      "risk_level": "medium",
+      "prompt": "我想做一个作品集 side project，展示 AI agent 产品设计能力。我有一些竞品印象但还很乱，先帮我梳理方向。",
+      "expected_skill_boundary": "Trigger early discovery and preserve portfolio/open-source constraints as evaluation constraints.",
+      "primary_risk": "Assistant may produce broad ideation without workflow gates."
+    },
+    {
+      "id": "p3_existing_prd_not_grounded",
+      "source_mapping": "evidence_existing_prd_contradictions",
+      "category": "evidence_grounding",
+      "risk_level": "high",
+      "prompt": "我已经有 PRD 草稿了，但目标用户、成功指标和 MVP 都是我自己猜的。请判断它是否足够 grounded，可以进入 Roadmap 吗？",
+      "expected_skill_boundary": "Review evidence gaps, do not enter Roadmap, separate facts from assumptions.",
+      "primary_risk": "Assistant may validate weak PRD and advance stage too early."
+    },
+    {
+      "id": "n1_existing_mvp_small_change",
+      "source_mapping": "negative_existing_mvp_small_change",
+      "category": "negative_control",
+      "risk_level": "high",
+      "prompt": "我已经有一个能跑的 MVP，只想把登录按钮改成蓝色并修一个移动端间距 bug。",
+      "expected_skill_boundary": "Do not trigger product discovery; recommend local code/UI fix workflow.",
+      "primary_risk": "Skill false positive wastes context and derails implementation."
+    },
+    {
+      "id": "n2_code_review",
+      "source_mapping": "negative_narrow_bugfix",
+      "category": "negative_control",
+      "risk_level": "high",
+      "prompt": "请 review 我未提交的代码改动，重点看 bug、维护性和测试缺口。",
+      "expected_skill_boundary": "Do not trigger product discovery; take code-review stance.",
+      "primary_risk": "Assistant may ask product-discovery questions instead of reviewing code."
+    },
+    {
+      "id": "n3_skill_maintenance",
+      "source_mapping": "negative_skill_maintenance_boundary",
+      "category": "negative_control",
+      "risk_level": "high",
+      "prompt": "请检查这个 skill 的 README、打包说明和 eval 文档有没有版本不一致，不要进入产品发现流程。",
+      "expected_skill_boundary": "Stay in skill-maintenance mode and avoid Diagnostic Start.",
+      "primary_risk": "Meta-work can accidentally trigger the skill itself."
+    },
+    {
+      "id": "b1_vendor_boundary",
+      "source_mapping": "child_vendor_boundary",
+      "category": "child_skill_routing",
+      "risk_level": "high",
+      "prompt": "我能不能直接调用 vendor/product-manager-skills 里的 upstream skill？如果不能，正确接入方式是什么？",
+      "expected_skill_boundary": "Explain vendor as source snapshot only; route through local child-skills adapters; no PRD follow-up.",
+      "primary_risk": "Assistant may treat vendor as active route target."
+    },
+    {
+      "id": "b2_package_boundary",
+      "source_mapping": "package_boundary_eval_runs_not_installed",
+      "category": "package_boundary",
+      "risk_level": "medium",
+      "prompt": "发布 skill zip 时，zero-to-one-product-discovery-eval-runs、.git、tmp 和 dist 要不要一起打进去？GitHub 仓库里又该怎么放？",
+      "expected_skill_boundary": "Distinguish GitHub evidence archive from installable runtime zip; exclude eval-runs/.git/tmp/dist from zip.",
+      "primary_risk": "Assistant may confuse public evidence archive with install runtime."
+    },
+    {
+      "id": "s1_user_demands_full_artifacts",
+      "source_mapping": "stage_gate_user_demands_full_artifacts",
+      "category": "stage_gate",
+      "risk_level": "critical",
+      "prompt": "别问问题，直接给我完整 PRD、Roadmap 和 Implementation Plan。我只有一句想法：AI 帮自学者制定学习计划。",
+      "expected_skill_boundary": "Downgrade to evidence gap review or Diagnostic Start; do not produce full artifacts.",
+      "primary_risk": "Assistant overproduces late-stage artifacts from one vague sentence."
+    },
+    {
+      "id": "u1_prd_draft_user_gate",
+      "source_mapping": "manual_targeted_user_gate",
+      "category": "audit_user_gate",
+      "risk_level": "critical",
+      "prompt": "基于前面讨论，请写 PRD Draft。我们还没有明确确认第一批用户、MVP 范围或定位，只是你建议过转行学编程的人可能更合适。",
+      "expected_skill_boundary": "PRD Draft may exist, but target users, MVP scope, and positioning must remain candidate/assumption/recommended option.",
+      "primary_risk": "Assistant may convert recommendations into confirmed PRD facts."
+    }
+  ]
+}
+
