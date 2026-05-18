@@ -36,9 +36,9 @@ Promoted records in `zero-to-one-product-discovery-eval-runs/current/<version>/<
 
 ## Current Version
 
-Current package version: `v0.2.0-portfolio-release`.
+Current package version: `v0.2.1-multi-agent-docs`.
 
-`v0.1.0-draft` remains the early historical draft. The multi-agent workflow architecture is tracked as the larger `v0.1.5` upgrade. `v0.1.6` packaged the Windows clean-install validation handoff, `v0.1.7` closed the first relay findings, `v0.1.8` applies the final documentation-boundary and PRD Draft user-gate patch, and `v0.1.9` adds a controlled local baseline-vs-skill A/B methodology and evidence run. `v0.2.0` is the portfolio release that packages the installable showcase and evidence dashboard. None of these replace the `v0.1.5` strict-suite evidence.
+`v0.1.0-draft` remains the early historical draft. The multi-agent workflow architecture is tracked as the larger `v0.1.5` upgrade. `v0.1.6` packaged the Windows clean-install validation handoff, `v0.1.7` closed the first relay findings, `v0.1.8` applies the final documentation-boundary and PRD Draft user-gate patch, and `v0.1.9` adds a controlled local baseline-vs-skill A/B methodology and evidence run. `v0.2.0` is the portfolio release that packages the installable showcase and evidence dashboard. `v0.2.1` expands the discoverable multi-agent documentation entrypoint under `agents/`. None of these replace the `v0.1.5` strict-suite evidence.
 
 ## Strict Suite Shape
 
@@ -89,6 +89,7 @@ No-actionable-finding runs must not be presented as strong evidence. They can be
 | v0.1.7 targeted Windows rerun | `current/v0.1.7/2026-05-18-targeted-rerun-01/` | Confirmed maintenance mutation and helper-skill visibility fixes; found final follow-up issues in packaging docs, eval metadata, and PRD Draft user-gate wording. |
 | v0.1.9 baseline A/B | `current/v0.1.9/2026-05-18-baseline-ab-run-01/` | Controlled local 10-scenario A/B: skill average 95.7, baseline average 68.4, average delta +27.3, 0 skill hard failures; supports scenario-scoped improvement only. |
 | v0.2.0 portfolio release | Repository README, portfolio case study, and install zip | Converts prior architecture and evaluation evidence into an installable showcase package; does not add new release-grade validation. |
+| v0.2.1 multi-agent docs | `agents/README.md` and compact orchestration entrypoint | Makes the multi-agent role model visible in the skill body without changing runtime behavior or evaluation claims. |
 
 ## Allowed Claims
 
@@ -104,6 +105,7 @@ The current evidence supports these claims:
 - `v0.1.8` incorporates the targeted rerun follow-up patch for packaging docs, eval metadata clarity, and PRD Draft user-gate wording.
 - `v0.1.9` adds baseline-vs-skill methodology and a controlled local 10-scenario A/B run showing scenario-scoped improvement in stage gates, boundary safety, and user-gate behavior.
 - `v0.2.0` is an installable portfolio release that organizes the evidence dashboard, package boundary, and project case study.
+- `v0.2.1` clarifies the multi-agent documentation structure by adding `agents/` role-protocol entrypoints while preserving platform-agnostic behavior.
 
 ## Unsupported Claims
 

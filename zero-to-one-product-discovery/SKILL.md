@@ -13,7 +13,7 @@ This is the main workflow skill. It controls stage gates, context continuity, ch
 
 This skill is tool-agnostic. Use the host agent's normal file reading, repository inspection, search, and planning tools.
 
-Do not assume a specific runtime such as Codex or Claude Code inside the workflow. Codex-specific UI metadata may live in `agents/openai.yaml`; Claude Code can use this `SKILL.md` and `references/` content directly.
+Do not assume a specific runtime such as Codex or Claude Code inside the workflow. Codex-specific UI metadata may live in `agents/openai.yaml`; multi-agent role protocol entrypoints may live in `agents/`; Claude Code can use this `SKILL.md` and `references/` content directly.
 
 ## When To Use
 
@@ -78,6 +78,8 @@ Use a hub-and-spoke model with lightweight multi-agent roles:
 - Utility capabilities: Acceptance Criteria, Mermaid diagrams, Context Resume Packet, source attribution, and artifact self-review.
 - Internal local adapters in `child-skills/`: routeable specialist capability contracts. Ordinary users should experience these as one coherent workflow, not as separate tools.
 - Internal upstream source library in `vendor/`: copied source snapshots and licenses used to improve adapter quality. It is never a routing target.
+
+For a quick multi-agent role entrypoint, see `agents/README.md`. For the full protocol, see `references/multi-agent-orchestration.md`.
 
 Preferred quality references:
 
@@ -148,6 +150,8 @@ Load references only when needed:
 - `references/tradeoff-framework.md`: decision dimensions and recording rules for product, technical, design, scope, and roadmap trade-offs.
 - `references/planning-artifacts.md`: routing, upgrade, downgrade, Decision Log / ADR escalation, and UX consistency rules for specialist child skills.
 - `references/multi-agent-orchestration.md`: Controller / Producer / Auditor roles, Runtime Workbench, Agent Work Order, Agent Return Packet, Audit Report, execution order, user gates, and Trace Report rules.
+- `agents/README.md`: quick multi-agent role entrypoint and relationship to `openai.yaml`; use when inspecting repository structure or explaining the role model.
+- `agents/multi-agent-orchestration.md`: compact Agent Work Order, Agent Return Packet, Runtime Workbench, and Audit Report templates.
 - `references/artifact-adapters.md`: child-skill contracts for PRD, Roadmap, Milestones, ADRs, User Stories, Acceptance Criteria, Mermaid diagrams, Research Briefs, Implementation Plans, and Reviews.
 - `references/child-skill-integration-blueprint.md`: external child-skill candidate map, integration modes, install policy, and drift monitoring rules.
 - `references/child-skill-wrappers.md`: active local wrappers for Problem Framing, ADR Governance, and Context Handoff.

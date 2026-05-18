@@ -4,7 +4,7 @@
 
 它适合个人开源项目、作品集项目、内部工具、side project 和 startup MVP 的早期探索。核心目标不是“快速套一个 PRD 模板”，而是防止 AI 在证据不足时过早进入 PRD、Roadmap、ADR 或编码阶段。
 
-> Status: `v0.2.0 Portfolio Release`。这是可安装、可展示的作品集版本：已完成多 agent workflow、stage gates、评测协议、Windows relay evidence 和 baseline A/B evidence；仍不声明 release-grade validation、production stability 或跨模型全面优越性。
+> Status: `v0.2.1 Portfolio Release`。这是可安装、可展示的作品集版本：已完成多 agent workflow、stage gates、评测协议、Windows relay evidence 和 baseline A/B evidence；仍不声明 release-grade validation、production stability 或跨模型全面优越性。
 
 ## Highlights
 
@@ -128,21 +128,45 @@ Diagnostic Start
 
 ## Multi-Agent Model
 
-这个 skill 的多 agent 设计保持平台无关，不要求特定客户端支持真实子代理。实现时可以是真实 subagent，也可以是同一 agent 内的专业角色模拟。
+这个 skill 的多 agent 设计保持平台无关，不要求特定客户端支持真实子代理。实现时可以是真实 subagent，也可以是同一 agent 内的专业角色模拟。入口文档见 `agents/README.md`，完整协议见 `references/multi-agent-orchestration.md`。
 
 ```text
 Workflow Rules -> Controller Agent -> Producer Agent -> Runtime Workbench -> Auditor Agent -> Controller Decision
 ```
 
-第一版核心 producer 覆盖：
+| Role | Responsibility | Must Not |
+|---|---|---|
+| Workflow Rules | 定义 stages、gates、downgrade rules、allowed outputs 和 user gates。 | 充当 agent、保存 runtime state 或接受 artifact。 |
+| Controller Agent | 应用 workflow rules，创建 Agent Work Order，更新 Runtime Workbench，并决定下一步安全动作。 | 产出未经审核的 final artifact，或隐藏 producer / auditor blocker。 |
+| Producer Agents | 根据 Controller 提供的 bounded work order 产出一个 artifact 或 readiness review。 | 选择下一阶段、调用其他 producer、接受自己的输出为 final。 |
+| Auditor Agent | 独立检查 boundary、evidence quality、cross-artifact consistency 和 acceptance readiness。 | 替 producer 重写 artifact，或替用户做产品决策。 |
+| Runtime Workbench | 保存当前决策状态：证据快照、产物状态、依赖、冲突、风险、审核队列和下一步动作。 | 保存 full transcript、full history、完整 artifact 或复盘长日志。 |
 
-- `Research`：吸收材料、区分 evidence / assumption / contradiction / gap。
-- `PRD`：在 grounded context 下生成 PRD 或 PRD outline。
-- `Roadmap`：在 PRD 或 PRD outline 确认后做 Now / Next / Later 或 phase gate。
-- `ADR`：只在 durable technical decision 出现时触发，普通范围取舍进入 Decision Log。
-- `Implementation Plan`：只在 planning artifacts review-ready 后生成工程计划。
+核心 Producer：
 
-`Runtime Workbench` 只保存当前协作状态，例如证据快照、产物状态、依赖、冲突、风险、审核队列和下一步动作。它不保存完整聊天记录、完整产物或长历史。复盘材料通过 `Audit Report` 或阶段性 `Trace Report` 生成，不进入实时主控路径。
+| Producer | Trigger | Output | Must Not |
+|---|---|---|---|
+| `Research` | 材料、反馈、PRD、笔记或市场/用户证据需要综合时。 | Evidence snapshot、contradictions、assumptions、gaps、risks。 | 编造 evidence，或把 assumptions 标成 facts。 |
+| `PRD` | problem、solution direction、MVP hypothesis、risks、success/failure indicators 足够 grounded 时。 | PRD draft、PRD outline 或 readiness review。 | 在用户接受和 evidence readiness 前产出 final PRD。 |
+| `Roadmap` | PRD 或 PRD outline 已足够确认，可以排序验证或交付时。 | Now/Next/Later、phases、milestones、validation gates。 | 把弱假设变成 delivery commitment。 |
+| `ADR` | 出现 durable architecture、platform、data、security、dependency 或 maintainability 决策时。 | Decision Log entry 或 ADR candidate。 | 把普通 scope tradeoff 升级成不必要 ADR。 |
+| `Implementation Plan` | planning artifacts 和相关 technical decisions 达到 review-ready 时。 | Engineering plan、verification plan、sequencing、risks。 | 在 readiness 前开始 coding 或 scaffold repo。 |
+
+运行顺序：
+
+```text
+Workflow Rules
+  -> Controller Agent
+  -> Agent Work Order
+  -> Producer Agent
+  -> Agent Return Packet
+  -> Runtime Workbench update
+  -> Auditor Agent, when substantial output needs review
+  -> Controller Decision
+  -> User Gate, when required
+```
+
+默认采用 stage-serial production + local parallel audit：产物生产按证据链串行推进，审核和一致性检查可以在同一 accepted workbench state 上局部并行。复盘材料通过 `Audit Report` 或阶段性 `Trace Report` 生成，不进入实时主控路径。
 
 ## Repository Layout
 
@@ -151,7 +175,9 @@ zero-to-one-product-discovery/
 ├── README.md                # GitHub 展示与安装说明
 ├── SKILL.md                 # 主控 workflow skill
 ├── agents/
-│   └── openai.yaml          # Codex UI 元数据
+│   ├── openai.yaml          # Codex UI metadata，不是 agent runtime protocol
+│   ├── README.md            # Multi-agent role protocol 入口
+│   └── multi-agent-orchestration.md
 ├── child-skills/            # 本地子能力 adapter，只能由主控路由
 ├── references/              # 阶段规则、路由协议、多 agent 协议、来源治理和文档模板
 ├── vendor/                  # 上游 skill/source 快照和许可证，不可直接路由
@@ -256,7 +282,7 @@ See also:
 
 ## Versioning
 
-当前版本：`v0.2.0`。
+当前版本：`v0.2.1`。
 
 版本管理规则：
 
@@ -264,6 +290,7 @@ See also:
 - `v0.1.0-draft` 保留为早期历史草稿版本；multi-agent workflow 属于较大的架构升级，从 `v0.1.5` 开始记录。
 - `v0.1.6` 是 Windows clean-install validation handoff 和第一轮 relay evidence 版本；`v0.1.7` 是 Windows 收尾补丁版本；`v0.1.8` 是最终收官补丁版本；`v0.1.9` 是 Baseline A/B evidence 版本；它们都不移动或改写已经发布的历史 tag。
 - `v0.2.0` 是 Portfolio Release：整理 GitHub 展示、证据 dashboard、安装包和面试材料，但仍不声明 production-grade 或 release-grade。
+- `v0.2.1` 是 multi-agent documentation structure patch：把 agent role protocol 放入 `agents/`，并强化 README 的 Multi-Agent Model 展示。
 - Draft 状态和 release-grade validation 状态用文档说明，不再把这批 multi-agent 改动继续补在 `v0.1.0-draft` 后面。
 - 每次打包前确认 `README.md`、`SKILL.md`、`agents/openai.yaml`、`references/`、`child-skills/`、`evals/` 已同步。
 - 临时发布目录如 `zero-to-one-product-discovery-publish.*` 不进入仓库；可发布包以 `dist/zero-to-one-product-discovery-skill-<version>.zip` 为准。
@@ -288,10 +315,10 @@ zero-to-one-product-discovery-eval-runs/
 - 用户安装 zip 只能包含 `zero-to-one-product-discovery/` runtime 目录；不要包含 `zero-to-one-product-discovery-eval-runs/`、`.git/`、`tmp/`、`dist/` 或发布临时目录。
 - 当某次 run 没有实质发现，只能按 `minimal-note` 或 `discard-full-run` 处理，不能用完整 raw/report 制造虚假的强证据。
 
-本地打包命令必须带版本号。当前版本是 `v0.2.0`：
+本地打包命令必须带版本号。当前版本是 `v0.2.1`：
 
 ```bash
-VERSION=v0.2.0
+VERSION=v0.2.1
 mkdir -p dist
 zip -r "dist/zero-to-one-product-discovery-skill-${VERSION}.zip" zero-to-one-product-discovery \
   -x '*/.DS_Store' \
@@ -301,7 +328,7 @@ zip -r "dist/zero-to-one-product-discovery-skill-${VERSION}.zip" zero-to-one-pro
 Windows PowerShell:
 
 ```powershell
-$Version = "v0.2.0"
+$Version = "v0.2.1"
 New-Item -ItemType Directory -Force -Path dist | Out-Null
 Compress-Archive -Path zero-to-one-product-discovery -DestinationPath "dist/zero-to-one-product-discovery-skill-$Version.zip" -Force
 ```
