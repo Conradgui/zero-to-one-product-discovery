@@ -1,6 +1,6 @@
 # AI Product Discovery Workflow Skill with Multi-Agent Governance and Quantitative Evals
 
-`zero-to-one-product-discovery` 是一个面向早期产品想法的 AI workflow skill：从一句模糊想法开始，逐步完成问题澄清、材料吸收、MVP 假设、规划产物和实施准备。
+`zero-to-one-product-discovery` 是一个面向早期产品想法的 AI workflow skill：从一句模糊想法开始，逐步完成问题澄清、材料吸收、MVP 假设、规划产物、实施计划准备和具体计划实施。
 
 它适合个人开源项目、作品集项目、内部工具、side project 和 startup MVP 的早期探索。核心目标不是“快速套一个模板”，而是防止 AI 在证据不足时过早进入 PRD、Roadmap、ADR 或编码阶段，通过充分且持续的过程控制确保AI产出的可信与契合预期。
 
