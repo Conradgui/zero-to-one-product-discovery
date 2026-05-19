@@ -2,7 +2,7 @@
 
 `zero-to-one-product-discovery` 是一个面向早期产品想法的 AI workflow skill：从一句模糊想法开始，逐步完成问题澄清、材料吸收、MVP 假设、规划产物和实施准备。
 
-它适合个人开源项目、作品集项目、内部工具、side project 和 startup MVP 的早期探索。核心目标不是“快速套一个 PRD 模板”，而是防止 AI 在证据不足时过早进入 PRD、Roadmap、ADR 或编码阶段。
+它适合个人开源项目、作品集项目、内部工具、side project 和 startup MVP 的早期探索。核心目标不是“快速套一个模板”，而是防止 AI 在证据不足时过早进入 PRD、Roadmap、ADR 或编码阶段，通过充分且持续的过程控制确保AI产出的可信与契合预期。
 
 > Status: `v0.2.1 Portfolio Release`。这是可安装、可展示的作品集版本：已完成多 agent workflow、stage gates、评测协议、Windows relay evidence 和 baseline A/B evidence；仍不声明 release-grade validation、production stability 或跨模型全面优越性。
 
