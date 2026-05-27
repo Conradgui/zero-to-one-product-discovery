@@ -4,13 +4,15 @@
 
 它适合个人开源项目、作品集项目、内部工具、side project 和 startup MVP 的早期探索。核心目标不是“快速套一个模板”，而是防止 AI 在证据不足时过早进入 PRD、Roadmap、ADR 或编码阶段，通过充分且持续的过程控制确保AI产出的可信与契合预期。
 
+这个项目把早期产品发现中的判断纪律写进 agent 可执行的 workflow：先判断证据成熟度和当前阶段，再决定是继续追问、吸收材料、降级输出，还是路由到 PRD、Roadmap、ADR 或 Implementation Plan。它关注的不只是“让 AI 多产出”，而是让 AI 在不确定性最高的时候知道什么还不能定稿。
+
 > Status: `v0.2.1 Portfolio Release`。这是可安装、可展示的作品集版本：已完成多 agent workflow、stage gates、评测协议、Windows relay evidence 和 baseline A/B evidence；仍不声明 release-grade validation、production stability 或跨模型全面优越性。
 
 ## Highlights
 
-- **Stage-gated workflow**：由 `SKILL.md` 控制阶段门禁、上下文连续性、子能力路由和最终输出验收。
-- **Multi-agent governance**：Workflow 规则负责阶段门禁，Controller Agent 负责路由，Producer Agents 负责产物，Auditor Agent 负责独立审核，Runtime Workbench 只保存当前决策状态。
-- **Quantitative evals**：包含 strict suite、Windows relay、targeted rerun、Baseline A/B、hard failures、Value Gate 和机器可读 schema。
+- **Stage-gated workflow**：由 `SKILL.md` 控制阶段门禁、上下文连续性、子能力路由和最终输出验收，把 discovery、planning 和 implementation 分开处理。
+- **Multi-agent governance**：Workflow 规则负责阶段门禁，Controller Agent 负责路由，Producer Agents 负责产物，Auditor Agent 负责独立审核，Runtime Workbench 只保存当前决策状态，避免产出者自我验收。
+- **Quantitative evals**：包含 strict suite、Windows relay、targeted rerun、Baseline A/B、hard failures、Value Gate 和机器可读 schema，用可复查证据约束“效果更好”的说法。
 - **中文优先体验**：默认面向中文产品探索和协作场景，同时保留英文 artifact 名称以兼容常见 PM / engineering 术语。
 - **一轮一个关键问题**：每轮只问当前最高杠杆问题；用户回答后再更新 facts / assumptions / risks / gaps。
 - **防止过早产物化**：信息不足时只能输出 outline、decision surface、evidence gap 或 blocking question，不能伪造成最终 PRD。
@@ -28,6 +30,8 @@
 Supported claim: this project has evidence-backed workflow governance for the tested early product discovery scenarios.
 
 Unsupported claim: this is not release-grade validation, production-stability proof, cross-model superiority, or long-term real-user validation.
+
+这组评测不是为了证明“模型一定更聪明”，而是验证 workflow 是否在关键风险点上更守边界：不把假设写成事实、不把草稿伪装成最终产物、不让安装包和评测归档混在一起、不让 producer 绕过 user gate 或 auditor gate。
 
 Portfolio case study: see [`PORTFOLIO-CASE-STUDY.md`](PORTFOLIO-CASE-STUDY.md).
 
