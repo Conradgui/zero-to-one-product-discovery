@@ -102,6 +102,7 @@ For Producer Agent routes, also include the Agent Return Packet fields: status, 
 | Mermaid | Known entities, flows, dependencies, or decisions need visualization | pm-skills Mermaid; local diagram rules | Assumption-labeled sketch only | `needs_more_evidence` |
 | Implementation Plan | Product and design artifacts are confirmed | Addy planning/task breakdown; superpowers writing-plans | Planning readiness review | `blocked` or `ready_for_next_stage` |
 | Review | Artifact or plan needs quality gate | Addy review/verification; Dean PM critique | Review findings with blockers | `needs_main_skill_decision` |
+| Execution Bridge | Review-ready Implementation Plan exists and user requests execution handoff | Local format conversion; GitHub/Claude/Jira conventions | Gap report if Implementation Plan is incomplete | `ready_for_next_stage` or `blocked` |
 
 ## Active Adapter Locations
 
@@ -117,6 +118,7 @@ For Producer Agent routes, also include the Agent Return Packet fields: status, 
 | Implementation Plan | `child-skills/implementation-plan/ADAPTER.md` | `vendor/agent-skills/skills/planning-and-task-breakdown/`; `vendor/awesome-copilot/index/create-implementation-plan.UPSTREAM_SKILL.md` |
 | Review | `child-skills/review/ADAPTER.md` | `vendor/agent-skills/skills/code-review-and-quality/`; `vendor/agent-skills/skills/test-driven-development/` |
 | Context Handoff | `child-skills/context-handoff/ADAPTER.md` | `vendor/agent-skills/skills/context-engineering/` |
+| Execution Bridge | `child-skills/execution-bridge/ADAPTER.md` | 本地新建；无外部 vendored source |
 
 ## Capability Contracts
 
@@ -191,6 +193,18 @@ Route when a major artifact, implementation plan, or release candidate needs cri
 The child skill should review from product/value, user experience, open-source maintainer, engineering, testing, and long-term architecture perspectives as relevant. Findings must lead, blockers must be explicit, and stylistic preferences must not be treated as blockers.
 
 Review can act as the Auditor Agent, but it must report through the Audit Report shape and must not become a second producer for the same artifact.
+
+### Execution Bridge
+
+Route after Implementation Planning produces a review-ready Implementation Plan and the user requests execution handoff (e.g., "转为 GitHub Issues", "生成 Claude Code tasks", "导出 Jira tickets").
+
+The child skill converts Implementation Plan tasks into the requested target format while preserving evidence labels, acceptance criteria, and verification commands. It does not modify the Implementation Plan content — it transcodes and restructures only.
+
+If the Implementation Plan has gaps (missing acceptance criteria, missing verification commands, unclear task boundaries), the child skill returns a gap report with `needs_more_evidence` rather than filling gaps with assumptions.
+
+As a Producer Agent, Execution Bridge must report the number of tasks converted, evidence distribution (fact-grounded vs assumption-labeled), and any gaps found during conversion.
+
+Execution Bridge cannot be used to bypass the Implementation Planning stage. It only accepts review-ready Implementation Plans as input.
 
 ## Heavy Advisor Orchestration
 

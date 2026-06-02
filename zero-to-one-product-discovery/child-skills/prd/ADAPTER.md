@@ -26,6 +26,7 @@ Produce a PRD artifact, PRD outline, or PRD readiness review from the main workf
 - Evidence status for major claims.
 - Requirements separated from assumptions.
 - Non-goals and scope boundaries.
+- Evidence Maturity Summary: total items, facts count, assumptions count, unknowns count, risks count, validated count, maturity level, maturity percentage.
 - The highest-leverage blocking question for the current turn if prerequisites are missing.
 - Decision Log candidates.
 - ADR candidates only for durable technical decisions.

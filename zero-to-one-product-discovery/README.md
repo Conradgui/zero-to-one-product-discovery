@@ -111,6 +111,23 @@ Use $zero-to-one-product-discovery as the main workflow to explore this early pr
 4. skill 吸收材料并推进 Problem Framing、Solution Exploration、Feasibility Discovery 和 MVP Hypothesis。
 5. 当前置条件满足后，主控 workflow 路由到 PRD、Roadmap、User Stories、ADR 或 Implementation Plan 子能力。
 
+### Quick Mode
+
+如果你已经有充足的材料（完整的 PRD draft、详细的 notes、竞品分析等），不想逐 stage 探索，可以直接进入 Quick Mode：
+
+```text
+我有一份详细的 PRD 草稿，直接进入快速模式帮我审查并补全。
+```
+
+Quick Mode 会跳过交互式探索循环，直接产出带 evidence labels 的 draft：
+
+- 每个 section 标注 `[Fact]` / `[Assumption]` / `[Unknown]`
+- 末尾附 Evidence Gap Summary：按优先级排序，告诉你最该先验证什么
+- 拿到 draft 后可以说"给我一份 evidence assessment"获得独立的证据评估表
+- 也可以说"回到标准模式"继续深入验证任何假设
+
+Quick Mode 不是跳过 evidence grounding——它仍然区分事实和假设，只是跳过了逐轮问答的过程。适合需要快速产出、后续再迭代验证的场景。
+
 ## Workflow
 
 ```text
@@ -213,6 +230,7 @@ zero-to-one-product-discovery-eval-runs/
 | `implementation-plan` | 从 review-ready planning artifacts 进入工程实施计划 |
 | `review` | 从产品、UX、工程、测试和架构角度审查 artifact |
 | `context-handoff` | 生成跨轮次或跨会话的 Context Resume Packet |
+| `execution-bridge` | 把 Implementation Plan 转为 GitHub Issues / Claude Code tasks / Jira tickets 格式 |
 
 主控规则：
 
@@ -312,7 +330,7 @@ zero-to-one-product-discovery-eval-runs/
 边界规则：
 
 - GitHub 仓库可以保留通过 Value Gate promoted 的 eval-runs，用来说明本项目如何验证真实可用性。
-- 用户安装 zip 只能包含 `zero-to-one-product-discovery/` runtime 目录；不要包含 `zero-to-one-product-discovery-eval-runs/`、`.git/`、`tmp/`、`dist/` 或发布临时目录。
+- 用户安装 zip 只能包含 `zero-to-one-product-discovery/` runtime 目录；不要包含 `zero-to-one-product-discovery-eval-runs/`、`.git/`、`tmp/`、`dist/`、`.z2o-state/` 或发布临时目录。
 - 当某次 run 没有实质发现，只能按 `minimal-note` 或 `discard-full-run` 处理，不能用完整 raw/report 制造虚假的强证据。
 
 本地打包命令必须带版本号。当前版本是 `v0.2.1`：

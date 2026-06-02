@@ -35,6 +35,7 @@
 | `implementation-plan` | agent-skills planning-and-task-breakdown；awesome-copilot implementation-plan references | Implementation Planning |
 | `review` | agent-skills code-review-and-quality / test-driven-development | Artifact Review / Implementation Review |
 | `context-handoff` | agent-skills context-engineering | 任何需要跨轮次或跨会话交接的阶段 |
+| `execution-bridge` | 本地新建；GitHub Issues / Claude Code task / Jira ticket 格式转换 | Implementation Planning（需 review-ready Implementation Plan + 用户主动请求执行交接） |
 
 ## 使用原则
 

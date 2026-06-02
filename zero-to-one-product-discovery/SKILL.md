@@ -62,6 +62,9 @@ Do not use for meta-work on this skill, skill authoring, external source integra
 - Treat strong recommendations as candidate directions until the user accepts them. Do not upgrade a suggested segment, MVP angle, or positioning choice into PRD facts before a user gate.
 - In PRD Drafts, keep unaccepted target users, MVP scope, positioning, and workflow recommendations explicitly labeled as `candidate`, `assumption`, or `recommended option`. Do not place them in confirmed-fact sections such as Target Users, MVP Scope, or Positioning unless the user has accepted them or provided direct evidence.
 - Keep project evidence and runtime packaging separate: promoted `zero-to-one-product-discovery-eval-runs/current/<version>/<run-id>/` records may be committed to the GitHub repository as public validation evidence, but they are never part of the installable skill zip or runtime context.
+- Persist Runtime Workbench state to `.z2o-state/workbench.json` on every stage transition, substantial artifact acceptance or downgrade, or explicit user save request. On new session start, check for persisted state and offer to resume if the state is less than 7 days old. Do not store full artifact text in the persisted state; store only summaries, evidence snapshot, artifact status, and decision log. Exclude `.z2o-state/` from the installable skill zip.
+- Track evidence maturity using structured items in the workbench state (schema defined in `workflow.md` State Persistence). On every stage transition, append a one-line evidence summary. On user request, show the full Evidence Maturity Dashboard.
+- When identifying an assumption, suggest a validation plan (experiment, success criteria, timeline) unless the user explicitly declines. Do not force validation — the suggestion is advisory. Bind the validation plan to the assumption in the workbench state so the dashboard can track it.
 
 ## Orchestration Model
 
@@ -76,6 +79,7 @@ Use a hub-and-spoke model with lightweight multi-agent roles:
 - PM specialist capabilities: Research Brief, PRD, Roadmap, Milestone, positioning, user stories, story mapping, and product critique.
 - Engineering governance capabilities: ADR, implementation plan, verification plan, review, and ship-readiness gates.
 - Utility capabilities: Acceptance Criteria, Mermaid diagrams, Context Resume Packet, source attribution, and artifact self-review.
+- Execution capabilities: Execution Bridge for converting Implementation Plans into GitHub Issues, Claude Code tasks, or Jira ticket format.
 - Internal local adapters in `child-skills/`: routeable specialist capability contracts. Ordinary users should experience these as one coherent workflow, not as separate tools.
 - Internal upstream source library in `vendor/`: copied source snapshots and licenses used to improve adapter quality. It is never a routing target.
 
@@ -108,6 +112,37 @@ Heavy Advisor is not inherently better. It trades context and flexibility for a 
 
 If the user requests Heavy Advisor but the product domain is still under-specified, simulate multiple child-skill routes as artifact outlines, decision surfaces, and assumption clearings. Label every leaf-level claim as an assumption, decision surface, candidate, or unknown. Do not present complete PRD, Roadmap, Milestones, ADRs, implementation plans, or backlogs as final artifacts.
 
+### Quick Mode
+
+Quick Mode is an independent mode switch, not a depth level. It can be activated at any stage.
+
+Use when the user says "快速模式", "Quick Mode", "直接出 PRD", "直接给我 draft", or when the system detects that the user has provided sufficient materials (complete PRD draft, detailed notes, competitor analysis, etc.) and the user confirms.
+
+Quick Mode skips interactive exploration loops and produces draft artifacts with explicit evidence labels:
+
+- Output format: `[Quick Mode Draft]`
+- Every section is labeled `[Fact]`, `[Assumption]`, or `[Unknown]`
+- Ends with an Evidence Gap Summary listing missing evidence and suggested validation paths, ordered by priority (most urgent validation first)
+- Skipped stages are marked as "unverified" in the gap summary, not "completed"
+
+After receiving a Quick Mode draft, the user may say "给我一份 evidence assessment" to receive a standalone assessment table (dimension / status / explanation / suggested validation path). This is optional — the user is not forced to read an assessment before seeing the draft.
+
+Quick Mode cannot produce unlabeled final artifacts. It cannot skip the Auditor's evidence check (simplified to inline check). It cannot be used for Implementation Planning. It cannot reopen product strategy decisions that were already accepted in a previous stage.
+
+To exit Quick Mode, say "回到标准模式" or "回到探索". The workflow resumes from the stage before Quick Mode was activated.
+
+### Evidence Maturity Dashboard
+
+The Evidence Maturity Dashboard gives the user a real-time view of evidence verification progress.
+
+Show the dashboard when the user says "evidence dashboard" / "证据成熟度" / "evidence 状态" / "给我看 dashboard".
+
+On every stage transition, append a one-line evidence summary without expanding the full dashboard: `[Evidence: X facts, Y assumptions, Z unknowns, W risks | Maturity: <level> (<percentage>%)]`
+
+Maturity calculation: only verified facts count as mature. `maturity_percentage = verified_facts / total_evidence_items × 100`. Display with four-level labels: Insufficient (<25%), Partial (25-50%), Sufficient (50-75%), Strong (>75%). Format: `Evidence Maturity: Partial (42%)`.
+
+The dashboard is read-only. It does not modify evidence state. It does not replace the one-question-per-turn rule. Unverified assumptions are never counted as "mature" even if accepted by the user.
+
 ## Diagnostic Start Output
 
 Keep this stage pure. Do not include candidate users, user scenarios, MVP scope, technology choices, PRD outline, Roadmap, Milestones, or ADR candidates unless the user explicitly asks for a deeper mode.
@@ -131,7 +166,7 @@ If the user says materials exist but does not provide them, this turn's highest-
 Use these stages as a flexible map, not a rigid checklist:
 
 1. Diagnostic Start.
-2. Material Assimilation, only if the user provides notes, PRDs, sketches, feedback, research, roadmaps, or requirement lists.
+2. Material Assimilation, only if the user provides notes, PRDs, sketches, feedback, research, roadmaps, or requirement lists. Offers Express Review option for batch-accepting extraction results.
 3. Problem Framing.
 4. Solution Exploration.
 5. Feasibility Discovery.
@@ -160,6 +195,7 @@ Load references only when needed:
 - `references/documentation-templates.md`: record-style document structure and templates.
 - `references/design-reference-protocol.md`: how to analyze visual, interaction, brand, or website references without copying them.
 - `references/source-attribution.md`: external source, license, and adaptation boundary records.
+- `.z2o-state/workbench.json`: persisted Runtime Workbench state from previous sessions. Load on new session start to check for resumable discovery context. If absent or older than 7 days, start fresh.
 
 ## Handoff
 

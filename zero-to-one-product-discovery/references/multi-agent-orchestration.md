@@ -39,6 +39,14 @@ Working Assumptions:
 Unknowns:
 Risks:
 
+## Evidence Maturity Summary
+Total Items:
+Verified Facts:
+Maturity Level: Insufficient / Partial / Sufficient / Strong
+Maturity Percentage:
+Assumptions With Validation Plan:
+Assumptions Validated This Session:
+
 ## Artifact Status
 Research:
 PRD:
@@ -80,6 +88,18 @@ Expected Output:
 - Do not record full agent-to-agent conversation.
 - Do not use the workbench as a historical trace.
 - If a retrospective is needed, generate a separate Trace Report after the stage or evaluation run.
+
+### Workbench Persistence
+
+Save the workbench state to `.z2o-state/workbench.json` on every stage transition, substantial artifact acceptance or downgrade, or explicit user save request. This ensures that long-running discovery workflows survive session interruptions.
+
+The persisted state includes: workflow state (current stage, goal, output mode, depth mode), evidence snapshot (structured items with type, validation_status, validation_plan, source, plus summary counters for maturity tracking), artifact status (not_started / in_progress / ready_for_review / accepted), decision log, and skipped stages.
+
+Do not persist full artifact text, conversation transcripts, Agent Work Orders, Agent Return Packets, or Audit Reports. The workbench is a decision board, not an archive.
+
+On new session start, check for `.z2o-state/workbench.json`. If it exists and is less than 7 days old, offer the user a choice to resume or start fresh. If older than 7 days, default to starting fresh.
+
+For detailed JSON schema and resume protocol, see `workflow.md` section "State Persistence".
 
 ## Agent Work Order
 

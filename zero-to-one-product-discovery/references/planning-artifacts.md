@@ -46,6 +46,8 @@ Before routing to a final Planning Artifact, confirm every required input is gro
 
 If any gate is missing, route to an outline, evidence gap review, decision surface, or the highest-leverage blocking question for the current turn instead of a final artifact. After the user answers, re-evaluate the gate and repeat the loop until the artifact is grounded or blocked.
 
+When routing to any Planning Artifact, show the current Evidence Maturity level and the recommended maturity for that artifact (see "Recommended Evidence Maturity By Artifact" below). If current maturity is below recommended, inform the user and ask whether to proceed with a labeled draft or first address evidence gaps.
+
 ## Grounding Contract
 
 An artifact is grounded only when the main workflow can name the evidence status for each required input.
@@ -62,6 +64,27 @@ An artifact is grounded only when the main workflow can name the evidence status
 | Mermaid | Named entities, flows, dependencies, states, or decisions, plus reason a diagram helps | Produce assumption-labeled sketch or no diagram |
 | Implementation Plan | Review-ready planning artifacts, accepted technical decisions, file/module boundaries, acceptance criteria, and verification commands | Produce planning readiness review |
 | Review | Artifact or plan exists, review lens is named, and blocker definition is clear | Ask what artifact or lens to review |
+
+### Recommended Evidence Maturity By Artifact
+
+Each artifact has a recommended minimum evidence maturity level. These are guidelines, not hard gates — the Grounding Contract remains the authoritative check.
+
+| Artifact | Recommended Maturity | Rationale |
+|---|---|---|
+| Research Brief | Insufficient (any) | Research is the first synthesis step; no minimum maturity required |
+| PRD | Partial (≥25%) | Problem and solution direction need some verified facts before PRD |
+| Roadmap | Partial (≥25%) | Sequencing requires grounded PRD, which requires some verified facts |
+| Milestone | Sufficient (≥50%) | Validation gates need verified evidence to be meaningful |
+| User Stories | Partial (≥25%) | Stories need grounded MVP hypothesis |
+| Acceptance Criteria | Partial (≥25%) | Criteria need specific requirements |
+| ADR | Sufficient (≥50%) | Architecture decisions need verified constraints |
+| Mermaid | Insufficient (any) | Diagrams can use assumption-labeled sketches |
+| Implementation Plan | Sufficient (≥50%) | Engineering plans need verified product and technical decisions |
+| Review | Insufficient (any) | Reviews can happen at any maturity level |
+
+"Insufficient (any)" means the artifact can be produced at any evidence maturity level. No minimum maturity check is applied.
+
+When the user requests an artifact below its recommended maturity level, show the current maturity and the gap, then ask whether to proceed with a labeled draft or first address the evidence gaps.
 
 ## Routing Matrix
 
@@ -80,6 +103,18 @@ An artifact is grounded only when the main workflow can name the evidence status
 | Known relationships need visualization | Mermaid contract | Purposeful diagram with assumption labels | Decorative or invented architecture diagrams |
 | Planning artifacts are confirmed and engineering handoff is needed | Implementation Plan contract | Decision-complete implementation plan | Reopening product strategy without a contradiction |
 | Artifact or plan needs critique | Review contract | Findings, blockers, risks, suggested changes | Style-only objections as blockers |
+| Quick Mode activated with sufficient materials and user requests artifact draft | Respective artifact contract in Quick Mode | Draft artifact with `[Fact]` / `[Assumption]` / `[Unknown]` labels and Evidence Gap Summary | Unlabeled final artifacts, Implementation Planning |
+| Review-ready Implementation Plan exists and user requests execution handoff | Execution Bridge contract | Converted tasks in target format with evidence labels | Modifying Implementation Plan content, bypassing Implementation Planning |
+
+### Quick Mode Grounding Rules
+
+When Quick Mode is active, the grounding contract is relaxed but not eliminated:
+
+- The artifact is produced as a `[Quick Mode Draft]`, not a final artifact.
+- Every section must be labeled `[Fact]`, `[Assumption]`, or `[Unknown]` based on available evidence.
+- The Entry Gate is evaluated but does not block — instead, ungrounded inputs are labeled and listed in the Evidence Gap Summary.
+- The Grounding Contract table still applies: if an input is missing, the corresponding section is labeled `[Unknown]` rather than omitted or invented.
+- Implementation Planning is excluded from Quick Mode. It requires review-ready planning artifacts regardless of mode.
 
 ## Agent Work Order / Child Skill Handoff Packet
 
