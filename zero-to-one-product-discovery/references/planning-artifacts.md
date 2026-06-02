@@ -48,6 +48,61 @@ If any gate is missing, route to an outline, evidence gap review, decision surfa
 
 When routing to any Planning Artifact, show the current Evidence Maturity level and the recommended maturity for that artifact (see "Recommended Evidence Maturity By Artifact" below). If current maturity is below recommended, inform the user and ask whether to proceed with a labeled draft or first address evidence gaps.
 
+### Readiness Spectrum
+
+The Entry Gate is the authoritative binary check (pass/fail). The Readiness Spectrum provides a continuous score for user feedback — it does not replace the gate.
+
+**readiness_score calculation**:
+
+```
+readiness_score = grounded_inputs / total_required_inputs
+```
+
+- `grounded_inputs` = number of required inputs for this artifact that are grounded (confirmed fact, inspected material, or accepted decision)
+- `total_required_inputs` = total number of required inputs from the Grounding Contract table for this artifact
+- Result: 0.0-1.0
+
+If impact_if_wrong data is available, critical/high impact unverified items reduce the effective readiness:
+
+```
+adjusted_readiness = readiness_score × impact_factor
+```
+
+- `impact_factor` = 1.0 if no critical/high unverified items; 0.8 if any high unverified; 0.6 if any critical unverified
+
+**Readiness Spectrum output format** (shown when user says "readiness" / "准备度" / "还差多少"):
+
+```markdown
+## Readiness Spectrum: [Artifact Name]
+
+### Overall Readiness: 63%
+
+| Required Input | Status | Impact | Gap Action | Fastest Path |
+|---|---|---|---|---|
+| Problem definition | ✅ Grounded | High | — | — |
+| User/scenario hypothesis | ⚠️ Assumption | Critical | 验证目标用户 | 用户画像研究（2 天） |
+| Solution direction | ✅ Grounded | Medium | — | — |
+| MVP hypothesis | ⚠️ Assumption | High | 确认 MVP 范围 | Stakeholder 对齐（1 天） |
+| Success/failure indicators | ❌ Missing | Medium | 定义指标 | 团队讨论（半天） |
+| Risks | ✅ Named | — | — | — |
+| Constraints | ✅ Named | — | — | — |
+| Non-goals | ❌ Missing | Low | 定义非目标 | PM 自行决定 |
+
+### Fastest Validation Path
+1. Stakeholder 对齐 MVP 范围（1 天）→ 从 63% 到 75%
+2. 用户画像研究（2 天）→ 从 75% 到 88%
+3. 团队讨论 success/failure indicators（半天）→ 从 88% 到 100%
+
+**预计从当前到 PRD-ready：3.5 天**
+```
+
+**Restrictions**:
+- The readiness score is advisory. It does not bypass the Entry Gate's binary check.
+- The readiness score does not replace the one-question-per-turn rule.
+- The fastest validation path is an estimate, not a commitment.
+
+**Scope**: The Readiness Spectrum is automatically computed for any artifact that has a Grounding Contract entry (see table below). Individual child-skill adapters do not need to repeat the readiness calculation — it is computed by the main workflow using the Grounding Contract table.
+
 ## Grounding Contract
 
 An artifact is grounded only when the main workflow can name the evidence status for each required input.
@@ -85,6 +140,8 @@ Each artifact has a recommended minimum evidence maturity level. These are guide
 "Insufficient (any)" means the artifact can be produced at any evidence maturity level. No minimum maturity check is applied.
 
 When the user requests an artifact below its recommended maturity level, show the current maturity and the gap, then ask whether to proceed with a labeled draft or first address the evidence gaps.
+
+When the Risk Map shows items with `impact_if_wrong` of "critical" or "high" that are still unverified, warn the user before producing any Planning Artifact. These items should be validated first unless the user explicitly accepts the risk.
 
 ## Routing Matrix
 

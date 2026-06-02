@@ -4,7 +4,7 @@
   "version_meaning": "strict suite version, not current package version",
   "suite": "v0.1.5-strict",
   "suite_version": "v0.1.5-strict",
-  "current_package_version": "v0.2.1-multi-agent-docs",
+  "current_package_version": "v0.3.0-feature-release",
   "source_reference": "https://developers.openai.com/blog/eval-skills",
   "evaluation_model": {
     "purpose": "Pressure test whether the skill triggers correctly, preserves stage gates, grounds artifacts in evidence, maintains child-skill and multi-agent boundaries, and produces actionable evidence through a post-test value gate.",

@@ -136,7 +136,7 @@ Route to final PRD only after the main skill has grounded the problem definition
 
 If any prerequisite is missing, the child skill returns a PRD outline, a missing-evidence list, and the highest-leverage blocking question for the current turn. It must not create backlog detail, implementation tasks, or final requirements from assumptions.
 
-As a Producer Agent, PRD must self-check whether every requirement is labeled as confirmed, assumption, or unknown before recommending audit or acceptance.
+As a Producer Agent, PRD must self-check whether every requirement is labeled as confirmed, assumption, or unknown before recommending audit or acceptance. PRD output includes a Risk Map (assumptions sorted by impact) and Readiness Spectrum (readiness score with gap analysis). For detailed output contracts, see `child-skills/prd/ADAPTER.md`.
 
 ### Roadmap
 

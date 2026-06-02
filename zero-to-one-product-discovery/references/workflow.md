@@ -209,7 +209,7 @@ Do not save on every question-and-answer turn; save only when the workflow state
 
 ```json
 {
-  "version": "0.3.0",
+  "version": "0.4.0",
   "last_updated": "ISO-8601 timestamp",
   "workflow_state": {
     "current_stage": "stage name",
@@ -232,7 +232,10 @@ Do not save on every question-and-answer turn; save only when the workflow state
           "timeline": "when to validate by",
           "status": "not_started | in_progress | validated | invalidated"
         },
-        "source": "stage or material origin"
+        "source": "stage or material origin",
+        "impact_if_wrong": "low | medium | high | critical",
+        "impact_rationale": "one-line explanation of why this impact level",
+        "risk_weighted_priority": 0.0
       }
     ],
     "summary": {
@@ -243,7 +246,10 @@ Do not save on every question-and-answer turn; save only when the workflow state
       "risks": 0,
       "validated": 0,
       "maturity_percentage": 0,
-      "maturity_level": "insufficient | partial | sufficient | strong"
+      "maturity_level": "insufficient | partial | sufficient | strong",
+      "critical_impact_items": 0,
+      "high_impact_items": 0,
+      "highest_risk_item_id": "ev-xxx or null"
     }
   },
   "artifact_status": {
@@ -267,7 +273,36 @@ Do not save on every question-and-answer turn; save only when the workflow state
 
 ### Schema Version Note
 
-Version `0.3.0` introduces structured evidence items and summary counters. This is the initial schema version — no migration from a previous format is needed. If a pre-0.3.0 `workbench.json` is found with the old flat-list format (`confirmed_facts: [...]`), treat it as a fresh start and re-extract evidence from the conversation context.
+Version `0.4.0` introduces impact assessment (impact_if_wrong, impact_rationale, risk_weighted_priority) and risk summary counters. Version `0.3.0` introduced structured evidence items and summary counters. If a pre-0.3.0 `workbench.json` is found with the old flat-list format, treat it as a fresh start. If a 0.3.0 file is found without impact fields, the new fields default to null and risk_weighted_priority defaults to 0.0.
+
+### Pattern Extraction
+
+On completing Implementation Planning, extract discovery patterns from the current project and save to `.z2o-patterns/pattern-index.json`:
+
+1. **Evidence patterns**: which evidence items were validated, which assumptions were confirmed/invalidated, evidence combinations that appeared frequently.
+2. **Decision patterns**: which trade-offs were made, rationale used, decision patterns that repeat across stages.
+3. **Stage gate patterns**: evidence maturity level at each stage transition, which inputs were on the critical path.
+
+Pattern extraction is automatic on stage transition to Implementation Planning. Patterns are project-local (`.z2o-patterns/` directory) and do not enter the installable skill zip.
+
+On starting a new project, check `.z2o-patterns/pattern-index.json` for matching patterns. If a match is found, offer the user the option to enrich the current discovery context. Pattern matching is advisory.
+
+Each pattern entry in the index has this shape:
+
+```json
+{
+  "id": "pattern-001",
+  "project": "project name",
+  "type": "evidence | decision | stage_gate",
+  "description": "one-line description of the pattern",
+  "metadata": {
+    "evidence_items": ["item descriptions or types"],
+    "stage": "stage where pattern was observed",
+    "outcome": "what happened when this pattern was followed or ignored"
+  },
+  "created_at": "ISO-8601"
+}
+```
 
 ### What Not To Store
 
@@ -310,6 +345,22 @@ maturity_percentage = verified_facts / total_evidence_items × 100
 - `verified_facts` = items where type is `fact` AND validation_status is `verified`.
 - `total_evidence_items` = all items regardless of type or validation status.
 - `partially_validated` items count toward the denominator but not the numerator. They are not mature until fully verified.
+
+### Risk-Weighted Priority Calculation
+
+Each evidence item with `impact_if_wrong` gets a `risk_weighted_priority` score:
+
+```
+risk_weighted_priority = impact_score × (1 - confidence_score)
+```
+
+- `impact_score`: low=0.25, medium=0.5, high=0.75, critical=1.0
+- `confidence_score`: derived from validation_status: verified=1.0, partially_validated=0.5, unverified=0.0
+- Result: 0.0-1.0. Higher = should be validated first.
+
+Items with `impact_if_wrong` of "critical" and `validation_status` of "unverified" get the highest priority (1.0) and should be validated before any other work proceeds.
+
+Set `highest_risk_item_id` in the summary to the `id` of the evidence item with the highest `risk_weighted_priority`. Set to null if no items have `impact_if_wrong`.
 
 Display with four-level labels to avoid number anxiety:
 
@@ -357,6 +408,21 @@ Display format: `Evidence Maturity: Partial (42%)` — label for intuition, perc
 |---|---|---|---|
 | Target user is 25-35 | User persona research | Not started | Before PRD |
 | Revenue model is subscription | Pricing experiment | Not started | Before Roadmap |
+
+### Risk Map (按 risk_weighted_priority 降序)
+| # | Assumption | Impact | Confidence | Risk Score | Validation Plan |
+|---|---|---|---|---|---|
+| 1 | Target user is 25-35 | Critical | Unverified | 1.00 | User persona research |
+| 2 | Revenue model is subscription | High | Unverified | 0.75 | Pricing experiment |
+
+### Recommended Validation Order
+1. 先验证 #1（Critical + Unverified）→ User persona research
+2. 再验证 #2（High + Unverified）→ Pricing experiment
+
+### Readiness Spectrum (最近的 Planning Artifact)
+- PRD Readiness: 63%
+- Missing: user/scenario hypothesis (validated), success/failure indicators, non-goals
+- Fastest path to PRD-ready: 3.5 天
 ```
 
 ### Data Source

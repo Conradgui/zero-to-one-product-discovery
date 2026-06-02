@@ -65,6 +65,9 @@ Do not use for meta-work on this skill, skill authoring, external source integra
 - Persist Runtime Workbench state to `.z2o-state/workbench.json` on every stage transition, substantial artifact acceptance or downgrade, or explicit user save request. On new session start, check for persisted state and offer to resume if the state is less than 7 days old. Do not store full artifact text in the persisted state; store only summaries, evidence snapshot, artifact status, and decision log. Exclude `.z2o-state/` from the installable skill zip.
 - Track evidence maturity using structured items in the workbench state (schema defined in `workflow.md` State Persistence). On every stage transition, append a one-line evidence summary. On user request, show the full Evidence Maturity Dashboard.
 - When identifying an assumption, suggest a validation plan (experiment, success criteria, timeline) unless the user explicitly declines. Do not force validation — the suggestion is advisory. Bind the validation plan to the assumption in the workbench state so the dashboard can track it.
+- When identifying an assumption, also assess its impact if wrong (low/medium/high/critical) and provide a one-line rationale. Calculate risk_weighted_priority = impact_score × (1 - confidence_score). On user request, show the Risk Map sorted by risk_weighted_priority descending.
+- When routing to any Planning Artifact, calculate and show the readiness_score (grounded_inputs / total_required_inputs). Show the Readiness Spectrum with gap analysis and fastest validation path when the user says "readiness" / "准备度" / "还差多少". The readiness score is advisory and does not bypass the Entry Gate.
+- On completing Implementation Planning, extract discovery patterns (evidence patterns, decision patterns, stage gate patterns) and save to `.z2o-patterns/`. On starting a new project, check `.z2o-patterns/` for matching patterns and offer to enrich the current discovery context. Pattern matching is advisory — the user decides whether to apply patterns.
 
 ## Orchestration Model
 
@@ -143,6 +146,37 @@ Maturity calculation: only verified facts count as mature. `maturity_percentage 
 
 The dashboard is read-only. It does not modify evidence state. It does not replace the one-question-per-turn rule. Unverified assumptions are never counted as "mature" even if accepted by the user.
 
+### Risk Map
+
+The Risk Map shows assumptions sorted by impact if wrong, helping the user prioritize which assumptions to validate first.
+
+Show the risk map when the user says "risk map" / "风险地图" / "哪些假设最危险" / "先验证什么".
+
+Each assumption has an `impact_if_wrong` level (low/medium/high/critical) and a `risk_weighted_priority` score. The risk map displays items sorted by risk_weighted_priority descending, with a recommended validation order.
+
+PRD artifacts automatically include a Risk Map at the end. The risk map does not replace the one-question-per-turn rule.
+
+The risk map is read-only. It does not modify evidence state.
+
+### Pattern Library
+
+The Pattern Library stores discovery patterns from completed projects and applies them to new projects.
+
+**Pattern extraction**: On completing Implementation Planning, extract three types of patterns from the current project:
+- **Evidence patterns**: which evidence items were validated, which assumptions were confirmed/invalidated, which evidence combinations appeared frequently
+- **Decision patterns**: which trade-offs were made, what rationale was used, which decision patterns repeat
+- **Stage gate patterns**: what evidence maturity level each stage passed at, which inputs were on the critical path
+
+Save extracted patterns to `.z2o-patterns/pattern-index.json`.
+
+**Pattern matching**: On starting a new project (Diagnostic Start), check `.z2o-patterns/` for matching patterns based on the user's initial description. If a match is found, show: "发现相似项目 pattern：[项目名]。是否参考其 evidence/decision/stage gate pattern？" The user decides whether to apply.
+
+**Restrictions**:
+- Pattern matching is advisory. The user decides whether to apply patterns.
+- Patterns do not bypass stage gates or the Entry Gate.
+- Patterns are project-local (`.z2o-patterns/` directory, not in the installable skill zip).
+- Patterns do not contain full artifact text — only metadata and structure.
+
 ## Diagnostic Start Output
 
 Keep this stage pure. Do not include candidate users, user scenarios, MVP scope, technology choices, PRD outline, Roadmap, Milestones, or ADR candidates unless the user explicitly asks for a deeper mode.
@@ -196,6 +230,7 @@ Load references only when needed:
 - `references/design-reference-protocol.md`: how to analyze visual, interaction, brand, or website references without copying them.
 - `references/source-attribution.md`: external source, license, and adaptation boundary records.
 - `.z2o-state/workbench.json`: persisted Runtime Workbench state from previous sessions. Load on new session start to check for resumable discovery context. If absent or older than 7 days, start fresh.
+- `.z2o-patterns/pattern-index.json`: cross-project discovery pattern library. Load on Diagnostic Start to check for matching patterns from completed projects. If absent, skip pattern matching.
 
 ## Handoff
 
