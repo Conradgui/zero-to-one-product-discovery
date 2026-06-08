@@ -1,0 +1,319 @@
+{
+  "task_id": "BM_004_v2_child_skill_activation",
+  "task_name": "子 Skill 激活后的克制规划测试",
+  "description": "用户逐步提供目标用户、痛点、MVP 范围、非目标、成功指标、访谈摘要和竞品差异，并明确授权进入规划。测试 Tool 在完整加载 Z2O child-skill adapters 与 routing references 后，是否能按 Controller / Producer / Auditor contract 产出更可审计的 scoped PRD + Roadmap。",
+  "baseline_mode": "multi_turn_bare_model",
+  "turn_count": 10,
+  "product_meaning": "验证 Z2O 的优势是否来自专业子 skill contract、routing guardrail 和可复盘 producer/auditor 输出，而不只是同模型普通 PRD 文案能力。",
+  "tool": {
+    "ok": true,
+    "turns": 10,
+    "expected_turns": 10,
+    "elapsed_seconds": 235.9,
+    "provider": "deepseek",
+    "model": "deepseek-v4-flash",
+    "dimension_scores": {
+      "stage_gate": 0.0,
+      "evidence_grounding": 0.0,
+      "risk_prioritization": 10.0,
+      "auditability": 0.0,
+      "boundary_safety": 5.0,
+      "actionability": 10.0,
+      "context_economy": 10.0,
+      "child_skill_contract": 8.0
+    },
+    "overall_score": 53.6,
+    "raw_score_before_penalty": 53.6,
+    "penalty": 0.0,
+    "process_score": 100.0,
+    "final_artifact_score": 50.0,
+    "checks": [
+      {
+        "id": "turn7_prd_contract",
+        "description": "第 7 轮体现 PRD Producer contract",
+        "dimension": "child_skill_contract",
+        "scope": "turn:7",
+        "points": 3.0,
+        "passed": true,
+        "detail": "matched=['PRD Producer', 'Agent Return Packet', 'Evidence Maturity Summary', 'Risk Map', 'Readiness Spectrum', 'Decision Log', 'readiness signal', 'Context Resume Packet']"
+      },
+      {
+        "id": "turn8_roadmap_contract",
+        "description": "第 8 轮体现 Roadmap Producer contract",
+        "dimension": "child_skill_contract",
+        "scope": "turn:8",
+        "points": 3.0,
+        "passed": true,
+        "detail": "matched=['Roadmap Producer', 'Agent Return Packet', 'Now', 'Next', 'Later', 'validation signal', 'dependency', 'risk']"
+      },
+      {
+        "id": "turn9_auditor_contract",
+        "description": "第 9 轮体现 Review/Auditor contract",
+        "dimension": "child_skill_contract",
+        "scope": "turn:9",
+        "points": 3.0,
+        "passed": true,
+        "detail": "matched=['Review', 'verdict', 'boundary', 'evidence', 'consistency', 'Controller', 'blocker']"
+      },
+      {
+        "id": "final_controller_producer_auditor",
+        "description": "最终输出体现 Controller / Producer / Auditor 分工",
+        "dimension": "child_skill_contract",
+        "scope": "final",
+        "points": 3.0,
+        "passed": false,
+        "detail": "matched=['Controller']"
+      },
+      {
+        "id": "final_evidence_maturity",
+        "description": "最终输出包含 Evidence Maturity Summary",
+        "dimension": "evidence_grounding",
+        "scope": "final",
+        "points": 2.0,
+        "passed": false,
+        "detail": "matched=['Evidence Maturity Summary', 'maturity']"
+      },
+      {
+        "id": "final_risk_map",
+        "description": "最终输出包含按 impact/confidence/validation priority 组织的 Risk Map",
+        "dimension": "risk_prioritization",
+        "scope": "final",
+        "points": 2.0,
+        "passed": true,
+        "detail": "matched=['Risk Map', 'validation', 'priority', 'risk_weighted']"
+      },
+      {
+        "id": "final_readiness_spectrum",
+        "description": "最终输出包含 Readiness Spectrum / readiness_score / gap analysis",
+        "dimension": "stage_gate",
+        "scope": "final",
+        "points": 2.0,
+        "passed": false,
+        "detail": "matched=['Readiness Spectrum']"
+      },
+      {
+        "id": "final_roadmap_phase_contract",
+        "description": "Roadmap 每阶段包含 goal、validation signal、dependency、risk、non-goal",
+        "dimension": "child_skill_contract",
+        "scope": "final",
+        "points": 3.0,
+        "passed": true,
+        "detail": "matched=['Goal', 'Validation Signal', 'Dependency', 'Risk', 'Non-goal', 'Now', 'Next', 'Later']"
+      },
+      {
+        "id": "final_context_resume_packet",
+        "description": "最终输出包含 Context Resume Packet",
+        "dimension": "auditability",
+        "scope": "final",
+        "points": 2.0,
+        "passed": false,
+        "detail": "matched=[]"
+      },
+      {
+        "id": "final_preserves_non_goals",
+        "description": "最终输出保留非目标边界",
+        "dimension": "boundary_safety",
+        "scope": "final",
+        "points": 2.0,
+        "passed": false,
+        "detail": "matched=['非目标']"
+      },
+      {
+        "id": "no_implementation_plan_or_stack",
+        "description": "最终不进入完整实施计划或技术栈锁定",
+        "dimension": "boundary_safety",
+        "scope": "final",
+        "points": 2.0,
+        "passed": true,
+        "detail": "forbidden_found=[]"
+      },
+      {
+        "id": "final_scoped_artifacts",
+        "description": "最终包含 scoped PRD outline 与 Roadmap outline",
+        "dimension": "actionability",
+        "scope": "final",
+        "points": 2.0,
+        "passed": true,
+        "detail": "matched=['PRD outline', 'Roadmap outline', 'Now', 'Next', 'Later']"
+      },
+      {
+        "id": "not_template_dump",
+        "description": "最终输出不是泛化大而全模板",
+        "dimension": "context_economy",
+        "scope": "final",
+        "points": 2.0,
+        "passed": true,
+        "detail": "matched=['scope', '范围', '非目标', 'evidence gate']"
+      }
+    ],
+    "hard_failures": []
+  },
+  "baseline": {
+    "ok": true,
+    "turns": 10,
+    "expected_turns": 10,
+    "elapsed_seconds": 281.1,
+    "provider": "deepseek",
+    "model": "deepseek-v4-flash",
+    "dimension_scores": {
+      "stage_gate": 0.0,
+      "evidence_grounding": 0.0,
+      "risk_prioritization": 0.0,
+      "auditability": 0.0,
+      "boundary_safety": 5.0,
+      "actionability": 10.0,
+      "context_economy": 10.0,
+      "child_skill_contract": 10.0
+    },
+    "overall_score": 46.0,
+    "raw_score_before_penalty": 46.0,
+    "penalty": 0.0,
+    "process_score": null,
+    "final_artifact_score": 50.0,
+    "checks": [
+      {
+        "id": "final_controller_producer_auditor",
+        "description": "最终输出体现 Controller / Producer / Auditor 分工",
+        "dimension": "child_skill_contract",
+        "scope": "final",
+        "points": 3.0,
+        "passed": true,
+        "detail": "matched=['Controller', 'Roadmap Producer', 'Auditor', 'verdict']"
+      },
+      {
+        "id": "final_evidence_maturity",
+        "description": "最终输出包含 Evidence Maturity Summary",
+        "dimension": "evidence_grounding",
+        "scope": "final",
+        "points": 2.0,
+        "passed": false,
+        "detail": "matched=['Evidence Maturity Summary', 'maturity']"
+      },
+      {
+        "id": "final_risk_map",
+        "description": "最终输出包含按 impact/confidence/validation priority 组织的 Risk Map",
+        "dimension": "risk_prioritization",
+        "scope": "final",
+        "points": 2.0,
+        "passed": false,
+        "detail": "matched=['Risk Map', 'validation']"
+      },
+      {
+        "id": "final_readiness_spectrum",
+        "description": "最终输出包含 Readiness Spectrum / readiness_score / gap analysis",
+        "dimension": "stage_gate",
+        "scope": "final",
+        "points": 2.0,
+        "passed": false,
+        "detail": "matched=['Readiness Spectrum']"
+      },
+      {
+        "id": "final_roadmap_phase_contract",
+        "description": "Roadmap 每阶段包含 goal、validation signal、dependency、risk、non-goal",
+        "dimension": "child_skill_contract",
+        "scope": "final",
+        "points": 3.0,
+        "passed": true,
+        "detail": "matched=['Goal', 'Validation Signal', 'Dependency', 'Risk', 'Non-goal', 'Now', 'Next', 'Later']"
+      },
+      {
+        "id": "final_context_resume_packet",
+        "description": "最终输出包含 Context Resume Packet",
+        "dimension": "auditability",
+        "scope": "final",
+        "points": 2.0,
+        "passed": false,
+        "detail": "matched=['Context Resume Packet']"
+      },
+      {
+        "id": "final_preserves_non_goals",
+        "description": "最终输出保留非目标边界",
+        "dimension": "boundary_safety",
+        "scope": "final",
+        "points": 2.0,
+        "passed": false,
+        "detail": "matched=['非目标']"
+      },
+      {
+        "id": "no_implementation_plan_or_stack",
+        "description": "最终不进入完整实施计划或技术栈锁定",
+        "dimension": "boundary_safety",
+        "scope": "final",
+        "points": 2.0,
+        "passed": true,
+        "detail": "forbidden_found=[]"
+      },
+      {
+        "id": "final_scoped_artifacts",
+        "description": "最终包含 scoped PRD outline 与 Roadmap outline",
+        "dimension": "actionability",
+        "scope": "final",
+        "points": 2.0,
+        "passed": true,
+        "detail": "matched=['scoped PRD', 'PRD outline', 'Roadmap outline', 'Now', 'Next', 'Later']"
+      },
+      {
+        "id": "not_template_dump",
+        "description": "最终输出不是泛化大而全模板",
+        "dimension": "context_economy",
+        "scope": "final",
+        "points": 2.0,
+        "passed": true,
+        "detail": "matched=['scope', '范围', '非目标', 'evidence gate', 'Context Resume Packet']"
+      }
+    ],
+    "hard_failures": []
+  },
+  "delta": 7.6,
+  "llm_blind_judge": {
+    "skipped": false,
+    "provider": "deepseek",
+    "model": "deepseek-v4-flash",
+    "usage": {
+      "prompt_tokens": 3494,
+      "completion_tokens": 1253,
+      "total_tokens": 4747,
+      "prompt_tokens_details": {
+        "cached_tokens": 0
+      },
+      "completion_tokens_details": {
+        "reasoning_tokens": 1037
+      },
+      "prompt_cache_hit_tokens": 0,
+      "prompt_cache_miss_tokens": 3494
+    },
+    "mapping": {
+      "B": "tool",
+      "A": "baseline"
+    },
+    "scores": {
+      "A": {
+        "stage_gate": 5,
+        "evidence_grounding": 5,
+        "risk_prioritization": 5,
+        "auditability": 5,
+        "boundary_safety": 5,
+        "actionability": 5,
+        "context_economy": 4,
+        "summary": "Z2O合约结构完善，证据门控清晰"
+      },
+      "B": {
+        "stage_gate": 3,
+        "evidence_grounding": 4,
+        "risk_prioritization": 2,
+        "auditability": 2,
+        "boundary_safety": 4,
+        "actionability": 3,
+        "context_economy": 3,
+        "summary": "传统PRD风格，缺少风险决策日志"
+      },
+      "winner": "A",
+      "reason": "A完整包含RiskMap/DecisionLog/ReadinessSpectrum等核心审计结构，B仅简要概述"
+    }
+  },
+  "raw_files": {
+    "task": "/Users/conrad/Desktop/archive/AI学习/OmniWed/zero-to-one-product-discovery/benchmarks/tasks/task_BM_004_v2.json",
+    "tool": "benchmarks/results/BM004_v2_child_skill_activation_20260607/BM_004_v2_tool.json",
+    "baseline": "benchmarks/results/BM004_v2_child_skill_activation_20260607/BM_004_v2_baseline.json"
+  }
+}

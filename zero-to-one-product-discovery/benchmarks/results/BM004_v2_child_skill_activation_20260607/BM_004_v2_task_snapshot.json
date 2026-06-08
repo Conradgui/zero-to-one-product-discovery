@@ -1,0 +1,186 @@
+{
+  "task_id": "BM_004_v2_child_skill_activation",
+  "task_name": "子 Skill 激活后的克制规划测试",
+  "description": "用户逐步提供目标用户、痛点、MVP 范围、非目标、成功指标、访谈摘要和竞品差异，并明确授权进入规划。测试 Tool 在完整加载 Z2O child-skill adapters 与 routing references 后，是否能按 Controller / Producer / Auditor contract 产出更可审计的 scoped PRD + Roadmap。",
+  "baseline_mode": "multi_turn_bare_model",
+  "tool_context_profile": "full_child_skill_activation",
+  "required_child_skills": ["research-brief", "prd", "roadmap", "review", "context-handoff"],
+  "max_tokens": 3600,
+  "timeout_seconds": 150,
+  "product_meaning": "验证 Z2O 的优势是否来自专业子 skill contract、routing guardrail 和可复盘 producer/auditor 输出，而不只是同模型普通 PRD 文案能力。",
+  "judge_focus": "本任务重点评估是否按 Z2O child-skill contract 输出：Agent Work Order、PRD/Roadmap Producer Return Packet、Evidence Maturity Summary、Risk Map、Readiness Spectrum、Decision Log candidates、readiness signal、Context Resume Packet、Auditor boundary review。不要只奖励文案完整度。",
+  "tool_runner_instructions": "BM_004_v2 专用执行要求：你必须显式激活 Z2O planning-artifacts routing 和 child-skill adapters。第 7 轮按 PRD Producer contract 输出 PRD outline 与 Agent Return Packet；第 8 轮按 Roadmap Producer contract 输出 Roadmap outline 与 Agent Return Packet；第 9 轮按 Review/Auditor contract 输出 boundary/evidence/consistency review；第 10 轮输出最终 scoped PRD + Roadmap 合并版，并附 Evidence Maturity Summary、Risk Map、Readiness Spectrum、Decision Log candidates、readiness signal、Context Resume Packet。不得输出技术栈、完整实施计划、工程任务或隐藏推理。",
+  "user_turns": [
+    "我们继续一个产品：给自由职业设计师用的轻量客户管理工具。目标用户是每天处理 3-5 个客户的自由职业设计师。",
+    "核心痛点：客户资料、报价、交付状态散落在微信、邮件、备忘录里。访谈 12 人，7 人提到找不到上次报价或忘记跟进。",
+    "MVP 只做客户档案、项目状态追踪、下一步提醒、报价记录手动录入。不做发票、不做合同、不做团队协作、不做自动解析 PDF。",
+    "成功指标：2 周试用里，5 位设计师能减少漏跟进或找报价时间。竞品：Notion 太需要自己搭，HoneyBook/Dubsado 太重。",
+    "我确认第一版不做 AI 自动解析，只做手动录入和提醒。请先复述你理解的范围和非目标。",
+    "补充一个约束：我希望这个作品适合作为 AIPM 面试项目展示，所以要能解释为什么先做小范围验证。",
+    "请按 Z2O PRD 子 skill 的 contract 给我一个 PRD outline：必须包含 Evidence Maturity Summary、Risk Map、Readiness Spectrum、Decision Log candidates、readiness signal 和 Context Resume Packet。只写已被证据支持或明确标为假设的内容。",
+    "请按 Z2O Roadmap 子 skill 的 contract 给我 Roadmap outline，分 Now / Next / Later；每一阶段必须包含 goal、validation signal、dependency、risk、non-goal 和 evidence gate，并附 Roadmap Producer 的 Agent Return Packet 摘要。",
+    "请按 Z2O Review/Auditor 子 skill 的 contract 检查刚才的 PRD/Roadmap：有没有把非目标功能加回来、有没有把假设写成事实、有没有 producer 越权、有没有需要 Controller 决策的 blocker。",
+    "我明确确认进入规划。请输出最终 scoped PRD outline + Roadmap outline 的合并版，并附 Controller 决策摘要、PRD/Roadmap Producer Return Packet 摘要、Auditor verdict、Context Resume Packet。不要写技术栈，不要写完整实施计划。"
+  ],
+  "dimension_weights": {
+    "stage_gate": 12,
+    "evidence_grounding": 12,
+    "risk_prioritization": 12,
+    "auditability": 12,
+    "boundary_safety": 12,
+    "actionability": 10,
+    "context_economy": 8,
+    "child_skill_contract": 22
+  },
+  "scoring_checks": [
+    {
+      "id": "turn7_prd_contract",
+      "description": "第 7 轮体现 PRD Producer contract",
+      "dimension": "child_skill_contract",
+      "scope": "turn:7",
+      "type": "min_matches",
+      "markers": ["PRD Producer", "Agent Return Packet", "Evidence Maturity Summary", "Risk Map", "Readiness Spectrum", "Decision Log", "readiness signal", "Context Resume Packet"],
+      "min_match": 6,
+      "points": 3,
+      "applies_to": "tool"
+    },
+    {
+      "id": "turn8_roadmap_contract",
+      "description": "第 8 轮体现 Roadmap Producer contract",
+      "dimension": "child_skill_contract",
+      "scope": "turn:8",
+      "type": "min_matches",
+      "markers": ["Roadmap Producer", "Agent Return Packet", "Now", "Next", "Later", "validation signal", "dependency", "risk", "non-goal", "evidence gate"],
+      "min_match": 7,
+      "points": 3,
+      "applies_to": "tool"
+    },
+    {
+      "id": "turn9_auditor_contract",
+      "description": "第 9 轮体现 Review/Auditor contract",
+      "dimension": "child_skill_contract",
+      "scope": "turn:9",
+      "type": "min_matches",
+      "markers": ["Auditor", "Review", "verdict", "boundary", "evidence", "consistency", "Controller", "blocker"],
+      "min_match": 5,
+      "points": 3,
+      "applies_to": "tool"
+    },
+    {
+      "id": "final_controller_producer_auditor",
+      "description": "最终输出体现 Controller / Producer / Auditor 分工",
+      "dimension": "child_skill_contract",
+      "scope": "final",
+      "type": "min_matches",
+      "markers": ["Controller", "PRD Producer", "Roadmap Producer", "Auditor", "Agent Return Packet", "verdict"],
+      "min_match": 4,
+      "points": 3
+    },
+    {
+      "id": "final_evidence_maturity",
+      "description": "最终输出包含 Evidence Maturity Summary",
+      "dimension": "evidence_grounding",
+      "scope": "final",
+      "type": "min_matches",
+      "markers": ["Evidence Maturity Summary", "facts", "assumptions", "unknowns", "risks", "maturity"],
+      "min_match": 4,
+      "points": 2
+    },
+    {
+      "id": "final_risk_map",
+      "description": "最终输出包含按 impact/confidence/validation priority 组织的 Risk Map",
+      "dimension": "risk_prioritization",
+      "scope": "final",
+      "type": "min_matches",
+      "markers": ["Risk Map", "impact", "confidence", "validation", "priority", "risk_weighted"],
+      "min_match": 4,
+      "points": 2
+    },
+    {
+      "id": "final_readiness_spectrum",
+      "description": "最终输出包含 Readiness Spectrum / readiness_score / gap analysis",
+      "dimension": "stage_gate",
+      "scope": "final",
+      "type": "min_matches",
+      "markers": ["Readiness Spectrum", "readiness_score", "gap analysis", "fastest validation path", "Entry Gate"],
+      "min_match": 3,
+      "points": 2
+    },
+    {
+      "id": "final_roadmap_phase_contract",
+      "description": "Roadmap 每阶段包含 goal、validation signal、dependency、risk、non-goal",
+      "dimension": "child_skill_contract",
+      "scope": "final",
+      "type": "min_matches",
+      "markers": ["Goal", "Validation Signal", "Dependency", "Risk", "Non-goal", "Now", "Next", "Later"],
+      "min_match": 6,
+      "points": 3
+    },
+    {
+      "id": "final_context_resume_packet",
+      "description": "最终输出包含 Context Resume Packet",
+      "dimension": "auditability",
+      "scope": "final",
+      "type": "min_matches",
+      "markers": ["Context Resume Packet", "Current Stage", "Confirmed Facts", "Working Assumptions", "Unresolved Questions", "Recommended"],
+      "min_match": 4,
+      "points": 2
+    },
+    {
+      "id": "final_preserves_non_goals",
+      "description": "最终输出保留非目标边界",
+      "dimension": "boundary_safety",
+      "scope": "final",
+      "type": "min_matches",
+      "markers": ["非目标", "不做发票", "不做合同", "不做团队协作", "不做自动解析", "不写技术栈"],
+      "min_match": 3,
+      "points": 2
+    },
+    {
+      "id": "no_implementation_plan_or_stack",
+      "description": "最终不进入完整实施计划或技术栈锁定",
+      "dimension": "boundary_safety",
+      "scope": "final",
+      "type": "forbidden_absent",
+      "forbidden_markers": ["技术栈：", "数据库设计", "API 设计", "Implementation Plan:", "Sprint 任务拆解", "工程任务"],
+      "points": 2
+    },
+    {
+      "id": "final_scoped_artifacts",
+      "description": "最终包含 scoped PRD outline 与 Roadmap outline",
+      "dimension": "actionability",
+      "scope": "final",
+      "type": "min_matches",
+      "markers": ["scoped PRD", "PRD outline", "Roadmap outline", "Now", "Next", "Later"],
+      "min_match": 4,
+      "points": 2
+    },
+    {
+      "id": "not_template_dump",
+      "description": "最终输出不是泛化大而全模板",
+      "dimension": "context_economy",
+      "scope": "final",
+      "type": "min_matches",
+      "markers": ["scope", "范围", "非目标", "evidence gate", "Context Resume Packet"],
+      "min_match": 3,
+      "points": 2
+    }
+  ],
+  "hard_failures": [
+    {
+      "id": "missing_child_skill_contract_on_tool",
+      "description": "Tool 在子 skill 激活任务中未体现 child-skill contract",
+      "scope": "final",
+      "markers": ["以下是普通 PRD", "直接给你完整 PRD"],
+      "penalty": 25,
+      "applies_to": "tool"
+    },
+    {
+      "id": "premature_implementation",
+      "description": "进入技术栈或完整实施计划",
+      "scope": "final",
+      "markers": ["技术栈：React", "技术栈: React", "PostgreSQL", "完整实施计划如下", "Sprint 任务拆解"],
+      "penalty": 20
+    }
+  ]
+}

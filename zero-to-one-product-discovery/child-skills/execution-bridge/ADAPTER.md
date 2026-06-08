@@ -1,13 +1,15 @@
 ---
 name: execution-bridge
-description: Use when the main workflow has a review-ready Implementation Plan and the user needs to convert it into executable downstream formats (GitHub Issues, Claude Code tasks, or Jira tickets).
+description: Use when the main workflow has a review-ready Implementation Plan and the user needs a host-executable dry-run handoff for GitHub Issues, Claude Code tasks, or Jira tickets.
 ---
 
 # Execution Bridge
 
 ## Role
 
-Convert a review-ready Implementation Plan into executable downstream formats while preserving evidence labels, acceptance criteria, and verification commands.
+Convert a review-ready Implementation Plan into host-executable downstream handoff formats while preserving evidence labels, acceptance criteria, and verification commands.
+
+Execution Bridge prepares payloads and instructions for the host agent. It does not directly create GitHub Issues, Jira tickets, project items, branches, pull requests, or external tasks.
 
 ## Required Input
 
@@ -15,12 +17,15 @@ Convert a review-ready Implementation Plan into executable downstream formats wh
 - Target format: GitHub Issues, Claude Code tasks, or Jira tickets.
 - Repository context when relevant: repo URL, project board, labels, assignees.
 - Evidence snapshot: which inputs are facts, assumptions, or unknowns.
+- Explicit user approval is required before any host agent performs external side effects.
 
 ## Output Contract
 
-For each task in the Implementation Plan, produce one output unit in the target format:
+For each task in the Implementation Plan, produce one output unit in the target format.
 
-### GitHub Issues Format
+Default mode is `dry_run`. If the host agent later creates external issues after explicit user approval, record only external refs (issue number, URL, created_at) back into the workbench.
+
+### GitHub Issues Host Handoff
 
 ```markdown
 ## Title
@@ -48,7 +53,24 @@ For each task in the Implementation Plan, produce one output unit in the target 
 
 ## Dependencies
 [Blocking tasks or external dependencies]
+
+## Host Execution
+- Mode: dry_run
+- Requires explicit user approval: yes
+- Suggested command:
+  `gh issue create --repo <owner/repo> --title "<title>" --body-file <body-file> --label <label>`
 ```
+
+Also produce `github-issues.json` following `evals/execution-handoff.schema.json` and one Markdown body file per issue:
+
+```text
+execution/github-issues.md
+execution/github-issues.json
+execution/github-issue-bodies/001-<task-slug>.md
+execution/host-execution-checklist.md
+```
+
+GitHub Issues are the P0 host-executable target. Claude Code tasks and Jira tickets remain format conversions unless a future host runtime provides approved connectors.
 
 ### Claude Code Tasks Format
 
@@ -110,10 +132,13 @@ evidence-[status], priority-[level], component-[name]
 - Do not invent tasks, acceptance criteria, or verification commands that are not in the Implementation Plan.
 - Do not assign tasks to specific people unless the user provides assignment information.
 - If the Implementation Plan has gaps, report them as blockers rather than filling them with assumptions.
+- Do not perform network calls, GitHub API calls, Jira API calls, telemetry, analytics, or `gh issue create` execution from inside Z2O.
+- Do not claim GitHub Issues or Jira tickets were created unless the host agent actually executed them after explicit user approval.
+- Do not treat external issue status as internal product evidence. Store only external refs in the workbench.
 
 ## Readiness Signal
 
-Return `ready_for_next_stage` when all tasks are converted to the target format.
+Return `ready_for_next_stage` when all tasks are converted to the target handoff format and host execution remains dry-run or separately approved.
 
 Return `needs_more_evidence` if the Implementation Plan has gaps that prevent conversion (missing acceptance criteria, missing verification commands, unclear task boundaries).
 
@@ -128,4 +153,6 @@ After conversion, include:
 - Number of tasks converted.
 - Evidence distribution: how many tasks are fact-grounded vs assumption-labeled.
 - Gaps found in the Implementation Plan during conversion.
+- Handoff mode: dry_run or host_executed.
+- External refs recorded, if host execution was separately approved and completed.
 - Recommended next action.

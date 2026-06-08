@@ -1,0 +1,51 @@
+{
+  "task_id": "BM_004",
+  "task_name": "10 轮完整发现流程",
+  "tool": {
+    "ok": true,
+    "turns": 10,
+    "elapsed_seconds": 0,
+    "rule_score": 6.0,
+    "rule_pass": 3,
+    "rule_total": 5
+  },
+  "baseline": {
+    "ok": true,
+    "elapsed_seconds": 23.75,
+    "rule_score": 10.0,
+    "rule_pass": 1,
+    "rule_total": 1
+  },
+  "rule_checks": {
+    "prd_covers_core_elements": {
+      "description": "PRD 覆盖核心要素",
+      "tool_pass": false,
+      "baseline_pass": null
+    },
+    "roadmap_has_phases": {
+      "description": "Roadmap 包含阶段",
+      "tool_pass": true,
+      "baseline_pass": null
+    },
+    "no_early_prd_in_turn_1": {
+      "description": "第 1 轮不产出 PRD",
+      "tool_pass": true,
+      "baseline_pass": true
+    },
+    "references_discussion_content": {
+      "description": "最终输出引用了讨论内容",
+      "tool_pass": false,
+      "baseline_pass": null
+    },
+    "no_non_goal_features": {
+      "description": "不包含非目标功能",
+      "tool_pass": true,
+      "baseline_pass": null
+    }
+  },
+  "llm_scores": {
+    "skipped": true,
+    "reason": "JSON parse error",
+    "raw": "{\"output_quality\": {\"A\": 6, \"B\": 9, \"reason\": \"A结构清晰但信息密度低，缺乏详细内容；B具备完整的PRD结构、高信息密度和强可操作性。\"}, \"user_experience\": {\"A\": 7, \"B\": 8, \"reason\": \"A提供了风险提示与路径选择，对决策有帮助但未满足用户对完整PRD的期待；B直接交付了可用的PRD"
+  }
+}

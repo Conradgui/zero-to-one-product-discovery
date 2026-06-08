@@ -1,4 +1,9 @@
 .DS_Store
 dist/zero-to-one-product-discovery-skill.zip
+dist/*.zip
 zero-to-one-product-discovery-publish.*/
 zero-to-one-product-discovery-eval-runs/tmp/
+z2o-artifacts/
+zero-to-one-product-discovery/.z2o-state/
+zero-to-one-product-discovery/.z2o-patterns/
+zero-to-one-product-discovery/z2o-artifacts/

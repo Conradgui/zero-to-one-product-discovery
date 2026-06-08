@@ -1,0 +1,144 @@
+{
+  "task_id": "BM_003",
+  "task_name": "风险优先级与验证路径测试",
+  "description": "用户有初步访谈证据，但解决方案范围和付费意愿仍不确定。测试系统是否能按影响和验证成本排序风险，并给出 readiness gate。",
+  "baseline_mode": "multi_turn_bare_model",
+  "max_tokens": 2400,
+  "timeout_seconds": 90,
+  "product_meaning": "展示工具是否能帮助 PM 判断先验证什么，而不是只生成一张漂亮风险表。",
+  "user_turns": [
+    "我访谈了 12 位自由职业设计师，7 位提到客户资料散落。你先判断这算事实、假设还是风险。",
+    "我猜他们愿意为完整客户管理工具付费，但我还不知道他们真正要提醒、档案、报价记录，还是完整 CRM。请给证据成熟度和最高风险。",
+    "请按优先级给我 3 个最短验证动作，并判断现在能不能进入 PRD/Roadmap。",
+    "如果不能进入，请给出进入 PRD 前必须满足的 readiness gate。",
+    "如果我只想先做一个提醒功能，你觉得会不会比完整 CRM 更安全？",
+    "请把提醒、客户档案、报价记录、完整 CRM 四个方向按风险和验证成本排序。",
+    "我只有一周时间做验证，请给我最小验证计划，不要写完整产品方案。",
+    "验证结束后，什么样的数据可以支持进入 PRD？什么样的数据应该让我们停止？"
+  ],
+  "dimension_weights": {
+    "stage_gate": 15,
+    "evidence_grounding": 15,
+    "risk_prioritization": 15,
+    "auditability": 15,
+    "boundary_safety": 15,
+    "actionability": 15,
+    "context_economy": 10
+  },
+  "scoring_checks": [
+    {
+      "id": "initial_fact_is_bounded",
+      "description": "把 7/12 访谈当作初步事实，但不夸大为成熟市场证据",
+      "dimension": "evidence_grounding",
+      "scope": "turn:1",
+      "type": "min_matches",
+      "markers": ["事实", "初步", "不能证明", "不足以", "样本", "待验证"],
+      "min_match": 2,
+      "points": 2
+    },
+    {
+      "id": "paid_crm_is_high_risk",
+      "description": "把愿意为完整 CRM 付费标为高风险假设",
+      "dimension": "risk_prioritization",
+      "scope": "turn:2",
+      "type": "min_matches",
+      "markers": ["付费", "完整 CRM", "高风险", "最高风险", "假设"],
+      "min_match": 3,
+      "points": 2
+    },
+    {
+      "id": "validation_actions_prioritized",
+      "description": "给出按优先级排列的最短验证动作",
+      "dimension": "actionability",
+      "scope": "turn:3",
+      "type": "min_matches",
+      "markers": ["优先级", "1", "2", "3", "验证", "最短"],
+      "min_match": 4,
+      "points": 2
+    },
+    {
+      "id": "readiness_gate_defined",
+      "description": "定义进入 PRD/Roadmap 前的 readiness gate",
+      "dimension": "stage_gate",
+      "scope": "turn:4",
+      "type": "min_matches",
+      "markers": ["readiness gate", "进入 PRD 前", "必须满足", "条件", "门槛"],
+      "min_match": 2,
+      "points": 2
+    },
+    {
+      "id": "dynamic_scope_adjustment",
+      "description": "在用户提出提醒功能后动态调整风险排序",
+      "dimension": "risk_prioritization",
+      "scope": "turns:5-6",
+      "type": "min_matches",
+      "markers": ["提醒", "更安全", "风险更低", "验证成本", "完整 CRM"],
+      "min_match": 3,
+      "points": 2
+    },
+    {
+      "id": "stop_continue_conditions",
+      "description": "最终给出 continue/stop 条件",
+      "dimension": "stage_gate",
+      "scope": "final",
+      "type": "min_matches",
+      "markers": ["支持进入 PRD", "停止", "继续", "stop", "continue", "不应继续"],
+      "min_match": 2,
+      "points": 2
+    },
+    {
+      "id": "one_week_plan_is_minimal",
+      "description": "一周计划保持最小验证，不写完整产品方案",
+      "dimension": "boundary_safety",
+      "scope": "turn:7",
+      "type": "min_matches",
+      "markers": ["一周", "最小验证", "不写完整", "验证计划", "访谈", "原型"],
+      "min_match": 3,
+      "points": 2
+    },
+    {
+      "id": "evidence_refs_used",
+      "description": "引用 12 位访谈、7 位反馈等证据来源",
+      "dimension": "auditability",
+      "scope": "all",
+      "type": "min_matches",
+      "markers": ["12", "7", "访谈", "证据", "样本"],
+      "min_match": 3,
+      "points": 2
+    },
+    {
+      "id": "no_full_product_plan",
+      "description": "不提前输出完整 PRD、Roadmap 或技术方案",
+      "dimension": "boundary_safety",
+      "scope": "all",
+      "type": "forbidden_absent",
+      "forbidden_markers": ["以下是完整 PRD", "最终 Roadmap", "技术栈", "数据库设计", "实施计划如下"],
+      "points": 2
+    },
+    {
+      "id": "concise_validation_focus",
+      "description": "输出聚焦验证路径，不堆砌通用产品模板",
+      "dimension": "context_economy",
+      "scope": "all",
+      "type": "forbidden_absent",
+      "forbidden_markers": ["完整商业模式", "详细功能列表", "团队协作模块", "后台管理系统"],
+      "points": 2
+    }
+  ],
+  "hard_failures": [
+    {
+      "id": "problem_equals_solution",
+      "description": "把客户资料散落直接等同于完整 CRM 方案已验证",
+      "scope": "all",
+      "markers": ["已经验证完整 CRM", "证明完整 CRM 需求成立", "可以直接进入完整 CRM"],
+      "penalty": 25
+    },
+    {
+      "id": "premature_final_prd",
+      "description": "证据不足时直接进入最终 PRD/Roadmap",
+      "scope": "all",
+      "markers": ["以下是完整 PRD", "最终 PRD 如下", "完整 Roadmap 如下"],
+      "penalty": 25
+    }
+  ]
+}

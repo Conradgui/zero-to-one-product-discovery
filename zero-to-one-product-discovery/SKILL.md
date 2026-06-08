@@ -50,7 +50,10 @@ Do not use for meta-work on this skill, skill authoring, external source integra
 - Child skills do not call other child skills. They may recommend a next route, but this main workflow performs all routing.
 - In multi-agent work, treat the workflow rules as the authority, the Controller Agent as the executor, Producer Agents as bounded artifact creators, and the Auditor Agent as an independent gate. Do not collapse these roles into one unchecked output.
 - Use a lightweight Runtime Workbench for current decision state only. Do not store full transcripts, complete artifacts, or long history in the workbench.
-- Route core producer work stage-serially by default: Research when evidence must be synthesized, PRD after grounding, Roadmap after PRD readiness, ADR only for durable technical decisions, and Implementation Plan only after review-ready planning artifacts.
+- Treat Agent Work Order, Agent Return Packet, Audit Report, Runtime Workbench, Pattern Index, Artifact Manifest, Execution Handoff, Revision Index, and Revision Record schemas in `evals/` as the strict validation layer for release checks and future runtime adapters. Keep Markdown templates as the readable protocol. Treat `evals/controller-actions.json` as the single source of truth for Controller action names.
+- The Controller is the only routing authority. Controller action names must come from `evals/controller-actions.json`; do not maintain a separate action enum in docs, schemas, or scripts.
+- Producer status values (`ready_for_review`, `ready_for_next_stage`, `needs_more_evidence`, `needs_main_skill_decision`, `blocked`) are signals, not decisions. The Controller maps them to allowed actions after checking stage gates, user gates, and audit requirements.
+- Route core producer work stage-serially by default: Research when evidence must be synthesized, PRD after grounding, Roadmap after PRD readiness, ADR only for durable technical decisions, Implementation Plan only after review-ready planning artifacts, Execution Bridge only after a review-ready Implementation Plan, Artifact Export only for accepted/review-ready artifacts with explicit ready/not-ready markers, and Revision Trace only after stable artifacts have been exported.
 - Audit substantial producer output before accepting it as final or review-ready. User-visible audit should be a concise Audit Report, not the auditor's full internal reasoning.
 - Treat external command-level mini-hubs as benchmarks unless they are explicitly wrapped by local routing rules.
 - Every child-skill handoff must include current stage, confirmed facts, working assumptions, unresolved questions, key risks, existing materials, out-of-scope boundaries, and expected output mode.
@@ -62,7 +65,10 @@ Do not use for meta-work on this skill, skill authoring, external source integra
 - Treat strong recommendations as candidate directions until the user accepts them. Do not upgrade a suggested segment, MVP angle, or positioning choice into PRD facts before a user gate.
 - In PRD Drafts, keep unaccepted target users, MVP scope, positioning, and workflow recommendations explicitly labeled as `candidate`, `assumption`, or `recommended option`. Do not place them in confirmed-fact sections such as Target Users, MVP Scope, or Positioning unless the user has accepted them or provided direct evidence.
 - Keep project evidence and runtime packaging separate: promoted `zero-to-one-product-discovery-eval-runs/current/<version>/<run-id>/` records may be committed to the GitHub repository as public validation evidence, but they are never part of the installable skill zip or runtime context.
-- Persist Runtime Workbench state to `.z2o-state/workbench.json` on every stage transition, substantial artifact acceptance or downgrade, or explicit user save request. On new session start, check for persisted state and offer to resume if the state is less than 7 days old. Do not store full artifact text in the persisted state; store only summaries, evidence snapshot, artifact status, and decision log. Exclude `.z2o-state/` from the installable skill zip.
+- Persist Runtime Workbench state to `.z2o-state/workbench.json` on every stage transition, substantial artifact acceptance or downgrade, or explicit user save request. Validate the workbench against `evals/workbench.schema.json` before persistence; when file writes are available, use `scripts/persist_workbench.py` for schema validation, evidence-summary consistency checks, and atomic temp-file replace. On new session start, check for persisted state and offer to resume if the state is less than 7 days old. Do not store full artifact text in the persisted state; store only summaries, evidence snapshot, artifact status, and decision log. Exclude `.z2o-state/` from the installable skill zip.
+- When the user asks "工作台" / "workbench", show the current-state File Workbench dashboard. When the user asks "导出工作台", route Artifact Export to write `workbench/workbench.md` and `workbench/workbench.json` under `z2o-artifacts/<project-slug>/` while keeping full artifacts outside the workbench.
+- When the user asks "导出产物" / "export artifacts" / "生成交付文件", route Artifact Export to create the stable `z2o-artifacts/<project-slug>/` structure. Keep fixed file paths even for missing or not-ready artifacts, but fill them only with `NOT_READY`, blocker, required input, and Controller decision. The manifest must record `source_status`, `content_mode`, and `status_guard` for every artifact entry.
+- When the user asks "生成 revision trace" / "artifact diff" / "产物变更记录", route Revision Trace to create a bounded revision ledger under `z2o-artifacts/<project-slug>/revisions/`. Revision Trace may record hashes, unified diffs, section summaries, Controller decision, evidence refs, decision refs, audit refs, and supplied change rationale. It must not store full transcripts, full artifact history, full agent packets, hidden reasoning, or raw prompt history.
 - Track evidence maturity using structured items in the workbench state (schema defined in `workflow.md` State Persistence). On every stage transition, append a one-line evidence summary. On user request, show the full Evidence Maturity Dashboard.
 - When identifying an assumption, suggest a validation plan (experiment, success criteria, timeline) unless the user explicitly declines. Do not force validation — the suggestion is advisory. Bind the validation plan to the assumption in the workbench state so the dashboard can track it.
 - When identifying an assumption, also assess its impact if wrong (low/medium/high/critical) and provide a one-line rationale. Calculate risk_weighted_priority = impact_score × (1 - confidence_score). On user request, show the Risk Map sorted by risk_weighted_priority descending.
@@ -82,7 +88,9 @@ Use a hub-and-spoke model with lightweight multi-agent roles:
 - PM specialist capabilities: Research Brief, PRD, Roadmap, Milestone, positioning, user stories, story mapping, and product critique.
 - Engineering governance capabilities: ADR, implementation plan, verification plan, review, and ship-readiness gates.
 - Utility capabilities: Acceptance Criteria, Mermaid diagrams, Context Resume Packet, source attribution, and artifact self-review.
-- Execution capabilities: Execution Bridge for converting Implementation Plans into GitHub Issues, Claude Code tasks, or Jira ticket format.
+- Execution capabilities: Execution Bridge for preparing host-executable dry-run handoffs from Implementation Plans into GitHub Issues first, plus Claude Code task and Jira ticket formats. Z2O does not directly create external issues or tickets.
+- Export capabilities: Artifact Export for stable PRD / Roadmap / User Stories / Implementation Plan files, File Workbench views, and Execution Bridge handoff files under `z2o-artifacts/<project-slug>/`.
+- Revision capabilities: Revision Trace for bounded artifact hashes, diffs, section summaries, and Controller-linked rationale under `z2o-artifacts/<project-slug>/revisions/`. Full trace UI and runtime history stores remain future LangGraph/runtime scope.
 - Internal local adapters in `child-skills/`: routeable specialist capability contracts. Ordinary users should experience these as one coherent workflow, not as separate tools.
 - Internal upstream source library in `vendor/`: copied source snapshots and licenses used to improve adapter quality. It is never a routing target.
 
@@ -132,6 +140,8 @@ After receiving a Quick Mode draft, the user may say "给我一份 evidence asse
 
 Quick Mode cannot produce unlabeled final artifacts. It cannot skip the Auditor's evidence check (simplified to inline check). It cannot be used for Implementation Planning. It cannot reopen product strategy decisions that were already accepted in a previous stage.
 
+If a Quick Mode draft is exported before the user returns to Standard Exploration and validates it, the exported artifact must keep a top `QUICK_MODE_DRAFT` marker and the manifest entry must use `content_mode: quick_mode_draft` with `status_guard: quick_mode_banner_required`. Do not present it as final or accepted.
+
 To exit Quick Mode, say "回到标准模式" or "回到探索". The workflow resumes from the stage before Quick Mode was activated.
 
 ### Evidence Maturity Dashboard
@@ -145,6 +155,51 @@ On every stage transition, append a one-line evidence summary without expanding 
 Maturity calculation: only verified facts count as mature. `maturity_percentage = verified_facts / total_evidence_items × 100`. Display with four-level labels: Insufficient (<25%), Partial (25-50%), Sufficient (50-75%), Strong (>75%). Format: `Evidence Maturity: Partial (42%)`.
 
 The dashboard is read-only. It does not modify evidence state. It does not replace the one-question-per-turn rule. Unverified assumptions are never counted as "mature" even if accepted by the user.
+
+### File Workbench
+
+The File Workbench is the user-facing current-state dashboard for day-to-day use.
+
+Show it when the user says "工作台" / "workbench" / "当前状态". Export it when the user says "导出工作台".
+
+Required sections:
+
+- Workflow state.
+- Next controller action.
+- Evidence maturity.
+- Risk map.
+- Readiness spectrum.
+- Artifact status.
+- Audit queue.
+- Blockers.
+- Skipped stages.
+
+Exported views live under `z2o-artifacts/<project-slug>/workbench/`:
+
+- `workbench.md` for human reading.
+- `workbench.json` for machine-readable current state.
+- `evidence-dashboard.md`, `risk-map.md`, and `readiness-spectrum.md` for focused views.
+
+The File Workbench may reference artifact paths and one-line summaries. It must not store full transcripts, full artifact bodies, complete Agent Work Orders, complete Agent Return Packets, complete Audit Reports, or long history.
+
+### Revision Trace
+
+Revision Trace is a bounded ledger for exported artifact changes.
+
+Show or generate it when the user says "生成 revision trace" / "artifact diff" / "产物变更记录" / "产物版本记录".
+
+Revision material lives outside Workbench:
+
+- `revisions/revision-index.json`
+- `revisions/revision-log.md`
+- `revisions/records/<revision-id>.json`
+- `revisions/diffs/<revision-id>/*.diff`
+
+Compare only stable artifact files: `prd.md`, `roadmap.md`, `user-stories.md`, and `implementation-plan.md`. Do not create `prd-v1.md`, `prd-v2.md`, `final-final.md`, or any versioned replacement for stable artifact paths.
+
+Revision Trace may record mechanical hashes, unified diffs, Markdown heading summaries, Controller decision, evidence refs, decision refs, audit refs, and Controller-supplied change rationale. It must not infer semantic rationale from text diffs. Missing metadata is recorded as `change_reason_status: missing`.
+
+Revision count is not evidence maturity, readiness, or quality. Workbench, manifest, artifact status, Controller decision, and evidence refs remain authoritative.
 
 ### Risk Map
 
@@ -221,7 +276,10 @@ Load references only when needed:
 - `references/multi-agent-orchestration.md`: Controller / Producer / Auditor roles, Runtime Workbench, Agent Work Order, Agent Return Packet, Audit Report, execution order, user gates, and Trace Report rules.
 - `agents/README.md`: quick multi-agent role entrypoint and relationship to `openai.yaml`; use when inspecting repository structure or explaining the role model.
 - `agents/multi-agent-orchestration.md`: compact Agent Work Order, Agent Return Packet, Runtime Workbench, and Audit Report templates.
-- `references/artifact-adapters.md`: child-skill contracts for PRD, Roadmap, Milestones, ADRs, User Stories, Acceptance Criteria, Mermaid diagrams, Research Briefs, Implementation Plans, and Reviews.
+- `evals/*-schema.json`: strict contract schemas for Agent Work Order, Agent Return Packet, Audit Report, Runtime Workbench, Pattern Index, Artifact Manifest, Execution Handoff, Revision Index, Revision Record, and eval report files. Use for release checks or future executable runtime adapters; ordinary chat can stay Markdown-first.
+- `evals/controller-actions.json`: Controller action registry. Load when adding, renaming, validating, or documenting Controller actions.
+- `scripts/persist_workbench.py` and `scripts/generate_revision_trace.py`: standard-library file helpers for atomic Workbench persistence and bounded revision ledger generation when the host can write files.
+- `references/artifact-adapters.md`: child-skill contracts for PRD, Roadmap, Milestones, ADRs, User Stories, Acceptance Criteria, Mermaid diagrams, Research Briefs, Implementation Plans, Reviews, Execution Bridge, Artifact Export, and Revision Trace.
 - `references/child-skill-integration-blueprint.md`: external child-skill candidate map, integration modes, install policy, and drift monitoring rules.
 - `references/child-skill-wrappers.md`: active local wrappers for Problem Framing, ADR Governance, and Context Handoff.
 - `child-skills/`: internal specialist capability modules created from copy-first source review. These are routeable by the main workflow; ordinary users should not need to think about this directory.

@@ -1,0 +1,53 @@
+{
+  "task_id": "BM_005",
+  "task_name": "已有 PRD 草稿审查与升级",
+  "tool": {
+    "ok": true,
+    "turns": 3,
+    "elapsed_seconds": 0,
+    "rule_score": 10.0,
+    "rule_pass": 4,
+    "rule_total": 4
+  },
+  "baseline": {
+    "ok": true,
+    "elapsed_seconds": 21.74,
+    "rule_score": 0.0,
+    "rule_pass": 0,
+    "rule_total": 1
+  },
+  "rule_checks": {
+    "references_prd_content": {
+      "description": "引用了 PRD 中的具体内容",
+      "tool_pass": true,
+      "baseline_pass": null
+    },
+    "asks_review_questions": {
+      "description": "提出审查性问题",
+      "tool_pass": true,
+      "baseline_pass": null
+    },
+    "distinguishes_fact_assumption": {
+      "description": "区分事实和假设",
+      "tool_pass": true,
+      "baseline_pass": null
+    },
+    "does_not_directly_accept": {
+      "description": "不直接接受全部内容",
+      "tool_pass": true,
+      "baseline_pass": false
+    }
+  },
+  "llm_scores": {
+    "output_quality": {
+      "A": 9,
+      "B": 6,
+      "reason": "A 紧扣任务要求，识别并标记了未验证的假设，提供结构化大纲和关键决策面，信息密度高且可操作性强；B 虽结构完整但直接输出完整PRD，未能先验证核心假设，偏离了审查目标的逻辑。"
+    },
+    "user_experience": {
+      "A": 9,
+      "B": 4,
+      "reason": "A 对用户有实际帮助，明确指出风险并建议先做用户访谈，失败时给出下一步具体引导；B 让用户误以为PRD已可执行，可能浪费精力在未经验证的假设上，缺乏风险提示。"
+    }
+  }
+}

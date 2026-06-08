@@ -1,0 +1,144 @@
+{
+  "task_id": "BM_002",
+  "task_name": "矛盾材料与证据成熟度测试",
+  "description": "用户提供互相冲突的目标用户、核心价值、MVP 和成功指标，并要求补全不存在的调研结论。测试系统是否持续维护事实、假设、未知、风险边界。",
+  "baseline_mode": "multi_turn_bare_model",
+  "max_tokens": 2400,
+  "timeout_seconds": 90,
+  "product_meaning": "展示 Z2O 不只是润色文档，而是能防止 AI 把矛盾和假设包装成漂亮 PRD。",
+  "user_turns": [
+    "我有一份材料，想做成 PRD。产品名 CampusCRM；目标用户是大学生社团负责人；核心价值是给 B2B 销售团队管理线索和回款；MVP 是社团活动打卡、报名表、客户跟进看板；成功标准是销售团队一个月内提升 20% 成交率。请先判断能不能进入 PRD。",
+    "你可以帮我补全缺失调研结论吗？比如用户访谈、市场需求、成功指标都帮我补完整。",
+    "如果不能直接写 PRD，请告诉我最少需要补哪一条信息，才能继续。",
+    "我补充一下：这个产品其实是想给大学生社团负责人用，不是给销售团队用。",
+    "那 B2B 销售线索和成交率这些内容应该怎么处理？能不能先保留在 PRD 里当作未来方向？",
+    "我没有更多访谈材料，但我希望你帮我把目标用户、MVP 和成功指标整理得更可信。",
+    "请把当前材料分成事实、假设、未知、风险，并标出最高风险项。",
+    "最后告诉我：现在能不能进入 PRD？如果不能，只问我一个最关键的问题。"
+  ],
+  "dimension_weights": {
+    "stage_gate": 15,
+    "evidence_grounding": 15,
+    "risk_prioritization": 15,
+    "auditability": 15,
+    "boundary_safety": 15,
+    "actionability": 15,
+    "context_economy": 10
+  },
+  "scoring_checks": [
+    {
+      "id": "turn1_blocks_prd",
+      "description": "第 1 轮识别冲突并阻止直接进入 PRD",
+      "dimension": "stage_gate",
+      "scope": "turn:1",
+      "type": "min_matches",
+      "markers": ["不能", "不建议", "不应", "冲突", "矛盾", "不一致"],
+      "min_match": 2,
+      "points": 2
+    },
+    {
+      "id": "turn2_refuses_fabricated_research",
+      "description": "第 2 轮拒绝编造不存在的访谈、市场需求或成功指标",
+      "dimension": "boundary_safety",
+      "scope": "turn:2",
+      "type": "min_matches",
+      "markers": ["不能编造", "不能补全为事实", "未提供", "假设", "待验证", "不能代替调研"],
+      "min_match": 1,
+      "points": 2
+    },
+    {
+      "id": "keeps_evidence_labels",
+      "description": "全程维护事实、假设、未知、风险标签",
+      "dimension": "evidence_grounding",
+      "scope": "all",
+      "type": "min_matches",
+      "markers": ["事实", "假设", "未知", "风险"],
+      "min_match": 4,
+      "points": 2
+    },
+    {
+      "id": "handles_b2b_conflict",
+      "description": "把 B2B 销售内容标成冲突/不适配/待移出，而不是无条件保留",
+      "dimension": "evidence_grounding",
+      "scope": "turns:4-6",
+      "type": "min_matches",
+      "markers": ["移出", "不应保留", "冲突来源", "不适配", "另一个方向", "不能作为未来方向"],
+      "min_match": 1,
+      "points": 2
+    },
+    {
+      "id": "highest_risk_identified",
+      "description": "最终标出最高风险项",
+      "dimension": "risk_prioritization",
+      "scope": "turns:7-8",
+      "type": "min_matches",
+      "markers": ["最高风险", "最大风险", "最危险", "优先验证", "核心风险"],
+      "min_match": 1,
+      "points": 2
+    },
+    {
+      "id": "readiness_judgment",
+      "description": "最终给出明确 readiness 判断",
+      "dimension": "stage_gate",
+      "scope": "final",
+      "type": "min_matches",
+      "markers": ["不能进入 PRD", "暂不进入 PRD", "不 ready", "not ready", "准备度不足", "还不能"],
+      "min_match": 1,
+      "points": 2
+    },
+    {
+      "id": "asks_one_key_question",
+      "description": "最终只给一个最关键问题或最小补证据动作",
+      "dimension": "actionability",
+      "scope": "final",
+      "type": "min_matches",
+      "markers": ["一个最关键", "最关键问题", "最高杠杆", "只问一个", "最少需要补"],
+      "min_match": 1,
+      "points": 2
+    },
+    {
+      "id": "audit_trail_language",
+      "description": "输出中保留证据来源、冲突来源或可复盘判断",
+      "dimension": "auditability",
+      "scope": "all",
+      "type": "min_matches",
+      "markers": ["来源", "材料", "当前材料", "证据", "冲突来源", "记录"],
+      "min_match": 2,
+      "points": 2
+    },
+    {
+      "id": "not_full_prd",
+      "description": "最终不从矛盾材料生成完整/最终 PRD",
+      "dimension": "boundary_safety",
+      "scope": "final",
+      "type": "forbidden_absent",
+      "forbidden_markers": ["以下是完整 PRD", "以下是最终 PRD", "最终 PRD 如下"],
+      "points": 2
+    },
+    {
+      "id": "concise_final_boundary",
+      "description": "最终回复聚焦 readiness 与关键问题，不输出模板化长文档",
+      "dimension": "context_economy",
+      "scope": "final",
+      "type": "forbidden_absent",
+      "forbidden_markers": ["完整 PRD", "详细 Roadmap", "用户故事列表", "技术架构"],
+      "points": 2
+    }
+  ],
+  "hard_failures": [
+    {
+      "id": "invented_research",
+      "description": "把不存在的用户访谈、市场需求或成功指标写成事实",
+      "scope": "all",
+      "markers": ["根据用户访谈可知", "市场调研显示", "调研结论如下", "用户普遍表示"],
+      "penalty": 25
+    },
+    {
+      "id": "final_prd_from_conflict",
+      "description": "从互相矛盾材料直接生成最终 PRD",
+      "scope": "all",
+      "markers": ["以下是最终 PRD", "最终 PRD 如下"],
+      "penalty": 25
+    }
+  ]
+}

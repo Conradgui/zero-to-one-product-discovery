@@ -170,6 +170,9 @@ flowchart TD
     N -->|needs_more_evidence| D
     N -->|needs_main_skill_decision| I
     N -->|blocked| E
+    J --> O{Handoff or export requested?}
+    O -->|Execution handoff| P[Execution Bridge dry-run handoff]
+    O -->|Artifact export| Q[Artifact Export file package]
 ```
 
 ## Child-Skill Routing
@@ -189,7 +192,7 @@ The main workflow must always decide:
 - Whether a Producer Agent output needs Audit Report or controller-documented review before acceptance.
 - What one question, if any, should be asked next.
 
-Default producer order is Research -> PRD -> Roadmap -> ADR qualification -> Implementation Plan. Keep production stage-serial unless the task is a review-only pass over the same accepted workbench state.
+Default producer order is Research -> PRD -> Roadmap -> ADR qualification -> Implementation Plan -> Execution Bridge -> Artifact Export -> Revision Trace. Execution Bridge is available only after a review-ready Implementation Plan exists and a target execution format is requested. Artifact Export is available when the user asks "导出产物", "export artifacts", "生成交付文件", or "导出工作台"; it preserves stable file paths and marks unready artifacts as `NOT_READY` instead of inventing content. Revision Trace is available only after stable artifacts have been exported. Keep production stage-serial unless the task is a review-only pass over the same accepted workbench state.
 
 ## State Persistence
 
@@ -205,11 +208,13 @@ Save on every:
 
 Do not save on every question-and-answer turn; save only when the workflow state meaningfully changes.
 
+Before writing, validate the workbench against `evals/workbench.schema.json` and verify that `evidence_snapshot.summary` is derived from `evidence_snapshot.items`. When the host can write files, use `scripts/persist_workbench.py` so invalid state cannot overwrite the last good workbench and writes happen through same-directory temp file plus atomic replace.
+
 ### What To Store
 
 ```json
 {
-  "version": "0.4.0",
+  "version": "0.4.0-rc.4",
   "last_updated": "ISO-8601 timestamp",
   "workflow_state": {
     "current_stage": "stage name",
@@ -273,7 +278,7 @@ Do not save on every question-and-answer turn; save only when the workflow state
 
 ### Schema Version Note
 
-Version `0.4.0` introduces impact assessment (impact_if_wrong, impact_rationale, risk_weighted_priority) and risk summary counters. Version `0.3.0` introduced structured evidence items and summary counters. If a pre-0.3.0 `workbench.json` is found with the old flat-list format, treat it as a fresh start. If a 0.3.0 file is found without impact fields, the new fields default to null and risk_weighted_priority defaults to 0.0.
+Version `0.4.0-rc.4` keeps the v0.4 workbench shape and adds atomic Workbench persistence plus evidence summary consistency checks. Version `0.4.0-rc.3` added bounded Revision Index / Revision Record schemas. Version `0.4.0-rc.2` added Artifact Manifest / Execution Handoff release-check schemas. Version `0.4.0-rc.1` added release-check schemas in `evals/workbench.schema.json` and `evals/pattern-index.schema.json`. Version `0.4.0` introduced impact assessment (impact_if_wrong, impact_rationale, risk_weighted_priority) and risk summary counters. Version `0.3.0` introduced structured evidence items and summary counters. If a pre-0.3.0 `workbench.json` is found with the old flat-list format, treat it as a fresh start. If a 0.3.0 file is found without impact fields, the new fields default to null and risk_weighted_priority defaults to 0.0.
 
 ### Pattern Extraction
 
@@ -283,7 +288,7 @@ On completing Implementation Planning, extract discovery patterns from the curre
 2. **Decision patterns**: which trade-offs were made, rationale used, decision patterns that repeat across stages.
 3. **Stage gate patterns**: evidence maturity level at each stage transition, which inputs were on the critical path.
 
-Pattern extraction is automatic on stage transition to Implementation Planning. Patterns are project-local (`.z2o-patterns/` directory) and do not enter the installable skill zip.
+Pattern extraction is automatic on completion of Implementation Planning. Patterns are project-local runtime state (`.z2o-patterns/` directory) and do not enter the installable skill zip. The installable skill carries only `evals/pattern-index.schema.json`, not a live pattern index.
 
 On starting a new project, check `.z2o-patterns/pattern-index.json` for matching patterns. If a match is found, offer the user the option to enrich the current discovery context. Pattern matching is advisory.
 
@@ -323,7 +328,112 @@ On new session start:
 
 ### Packaging Boundary
 
-`.z2o-state/` must be excluded from the installable skill zip. Users may choose to track it in their own `.gitignore` or version control.
+`.z2o-state/`, `.z2o-patterns/`, `z2o-artifacts/`, and `zero-to-one-product-discovery-eval-runs/` must be excluded from the installable skill zip. Users may choose to track runtime/export files in their own project `.gitignore` or version control, but they are project state and not part of the portable skill package.
+
+## File Workbench Export
+
+The File Workbench is the stable current-state view for day-to-day use. It is a dashboard/control surface, not an archive.
+
+Show it inline when the user says "工作台" / "workbench" / "当前状态". Export it through Artifact Export when the user says "导出工作台".
+
+Exported files:
+
+```text
+z2o-artifacts/<project-slug>/workbench/
+├── workbench.md
+├── workbench.json
+├── evidence-dashboard.md
+├── risk-map.md
+└── readiness-spectrum.md
+```
+
+Required workbench sections:
+
+1. Workflow state.
+2. Next controller action.
+3. Evidence maturity.
+4. Risk map.
+5. Readiness spectrum.
+6. Artifact status.
+7. Audit queue.
+8. Blockers.
+9. Skipped stages.
+
+Workbench export may include artifact path references and concise summaries only. It must not include full transcripts, full artifact bodies, complete Agent Work Orders, complete Agent Return Packets, complete Audit Reports, or long history.
+
+## Artifact Export
+
+Route Artifact Export when the user says "导出产物", "export artifacts", "生成交付文件", or "导出工作台".
+
+Default output root:
+
+```text
+z2o-artifacts/<project-slug>/
+```
+
+Stable file structure:
+
+```text
+manifest.json
+README.md
+prd.md
+roadmap.md
+user-stories.md
+implementation-plan.md
+workbench/workbench.md
+workbench/workbench.json
+workbench/evidence-dashboard.md
+workbench/risk-map.md
+workbench/readiness-spectrum.md
+execution/github-issues.md
+execution/github-issues.json
+execution/github-issue-bodies/001-<task-slug>.md
+execution/host-execution-checklist.md
+revisions/revision-index.json
+revisions/revision-log.md
+revisions/records/rev-<timestamp>.json
+revisions/diffs/rev-<timestamp>/<artifact>.diff
+```
+
+Missing or unready artifacts keep their fixed file path and contain only `NOT_READY`, artifact status, blocker, required input, and Controller decision. Do not invent PRD sections, roadmap phases, user stories, implementation tasks, GitHub issue bodies, or evidence to fill a stable file.
+
+Each manifest artifact entry must include `source_status`, `content_mode`, and `status_guard`. If artifact status says `accepted` but the available content is only an outline, draft, or conflicted artifact, export `NOT_READY` or block with `status_guard: blocked_status_content_mismatch`.
+
+If the exported content comes from Quick Mode and has not been validated after returning to Standard Exploration, the exported Markdown must start with `QUICK_MODE_DRAFT`, preserve `[Fact]` / `[Assumption]` / `[Unknown]` labels, and use `content_mode: quick_mode_draft` with `status_guard: quick_mode_banner_required`.
+
+## Revision Trace
+
+Route Revision Trace when the user says "生成 revision trace", "artifact diff", "产物变更记录", or "产物版本记录".
+
+Revision Trace is a bounded artifact ledger outside Runtime Workbench. It compares stable artifact files only:
+
+- `prd.md`
+- `roadmap.md`
+- `user-stories.md`
+- `implementation-plan.md`
+
+Output lives under:
+
+```text
+z2o-artifacts/<project-slug>/revisions/
+├── revision-index.json
+├── revision-log.md
+├── records/
+│   └── rev-<timestamp>.json
+└── diffs/
+    └── rev-<timestamp>/
+        └── <artifact>.diff
+```
+
+Allowed record fields are artifact hashes, changed artifact list, mechanical Markdown heading summary, unified diff paths, Controller decision, Controller-supplied change reason, evidence refs, decision refs, and audit refs. If Controller metadata is missing, set `change_reason_status: missing`; do not infer semantic product rationale from text diffs.
+
+Revision Trace must not:
+
+- Store full transcripts, raw prompt history, hidden reasoning, full Agent Work Orders, full Agent Return Packets, full Audit Reports, or long discussion history.
+- Put revision history into Workbench.
+- Replace stable files with `prd-v1.md`, `prd-v2.md`, or `final-final.md`.
+- Treat revision count as readiness, evidence maturity, or quality.
+- Treat diffs as source of truth over Workbench, manifest, artifact status, Controller decision, or evidence refs.
 
 ## Evidence Maturity Dashboard
 

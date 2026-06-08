@@ -2,28 +2,110 @@
 
 `zero-to-one-product-discovery` 是一个面向早期产品想法的 AI workflow skill：从一句模糊想法开始，逐步完成问题澄清、材料吸收、MVP 假设、规划产物和实施准备。
 
-它适合个人开源项目、作品集项目、内部工具、side project 和 startup MVP 的早期探索。核心目标不是"快速套一个 PRD 模板"，而是防止 AI 在证据不足时过早进入 PRD、Roadmap、ADR 或编码阶段。
+它适合新产品、新功能、内部工具、业务创新项目、side project 和 startup MVP 的早期探索。核心目标不是"快速套一个 PRD 模板"，而是防止 AI 在证据不足时过早进入 PRD、Roadmap、ADR 或编码阶段。
 
-> Status: `v0.3.0 Feature Release`。这是可安装、可展示的作品集版本：已完成 P0（Auto-Persist、Quick Mode、Execution Bridge）、P1（Evidence Maturity Dashboard、Validation Plan、Express Review）、P2（Risk Map、Readiness Spectrum、Pattern Library）三大迭代；仍不声明 release-grade validation、production stability 或跨模型全面优越性。
+> Status: `v0.4.0-rc.4 Control Surface Hardening RC`。这是可安装、可展示的 release-candidate 版本：在 `v0.4.0-rc.3` 的 bounded Artifact Revision Ledger 基础上，新增 Controller action registry、Workbench 原子持久化脚本、Evidence Snapshot 一致性校验和 Artifact Export guardrails；仍不声明 release-grade validation、production stability 或跨模型全面优越性。
+
+## Current Evidence Snapshot
+
+2026-06 Codex 证据链重跑基于手册重新执行 Phase 1-6，旧 Claude Code 材料只做历史归档，不作为主证据。
+
+| Evidence | Result | What It Supports |
+|---|---|---|
+| Quality Tests | `./tests/run_tests.sh unit` -> 71 tests passed | 本地 schema、状态、导出、执行交接和 revision ledger 边界可被机械验证 |
+| Real Usability Tests | DeepSeek `deepseek-v4-flash` 跑通 6/6 条 P0 路径 | P0 主路径在真实 API 下行为层可用；P0_004 仍只声明为规划前澄清通过 |
+| Main Benchmark | 5 个真实 API 任务：Tool 87.2 / Baseline 71.7，delta +15.5 | 当前任务集下，Z2O 比同模型裸对话更稳定地保留阶段门禁、证据标签和边界控制 |
+| BM_004_v2 addendum | Tool 95.6 / Baseline 35.0，delta +60.6 | 当完整 child-skill / adapter / routing reference 启用时，Tool 更稳定地产出可审计 contract 字段 |
+
+Boundary: 以上结论限定在当前任务集和本次 DeepSeek 运行条件下，不代表 release-grade validation、长期真实用户留存、商业化验证或跨模型全面优越性。BM_004 v1 打平、BM_005 盲评偏 Baseline 均保留为后续迭代证据。
+
+下图展示用户从模糊想法进入产品发现，到证据推进、阶段门禁、规划产物和可审计导出的 P0 主路径。核心设计点是：证据不足时降级或补证据，而不是把草稿包装成 final。
+
+```mermaid
+%% 本图覆盖：P0_001, P0_002, P0_003, P0_004, P0_005, P0_006
+flowchart LR
+    %% 节点声明
+    IDEA_START([用户带着早期想法])
+    MATERIAL_CHECK{已有材料？}
+    DIAGNOSTIC[生成事实/假设/风险/未知]
+    MATERIAL_REVIEW[吸收材料并识别矛盾]
+    KEY_QUESTION[提出一个关键问题]
+    USER_ANSWER[用户补充证据]
+    ARTIFACT_REQUEST{请求成熟产物？}
+    GATE_CHECK{证据足够？}
+    DOWNGRADE[降级为大纲或决策面]
+    PLANNING_ARTIFACT[生成带证据标签的规划产物]
+    READINESS_CHECK{进入执行计划？}
+    IMPLEMENTATION_PLAN[生成实现计划]
+    CONTROL_VIEW[查看证据/风险/准备度]
+    EXPORT_REQUEST{请求导出？}
+    EXPORT_PACKAGE[生成可审计交付包]
+    NOT_READY[未就绪产物标记 NOT_READY]
+    USER_RECOVER[用户补证据或接受草稿]
+    SAFE_OUTCOME((可控可复盘产出))
+
+    %% 连接关系
+    subgraph P0_MAIN["P0 主流程"]
+      direction LR
+      IDEA_START --> MATERIAL_CHECK
+      MATERIAL_CHECK -->|无材料| DIAGNOSTIC
+      MATERIAL_CHECK -->|有材料| MATERIAL_REVIEW
+      DIAGNOSTIC --> KEY_QUESTION
+      MATERIAL_REVIEW --> KEY_QUESTION
+      KEY_QUESTION --> USER_ANSWER
+      USER_ANSWER --> ARTIFACT_REQUEST
+      ARTIFACT_REQUEST -->|是| GATE_CHECK
+      ARTIFACT_REQUEST -.->|先看状态| CONTROL_VIEW
+      GATE_CHECK -->|不足| DOWNGRADE
+      DOWNGRADE --> USER_RECOVER
+      USER_RECOVER --> USER_ANSWER
+      GATE_CHECK -->|足够| PLANNING_ARTIFACT
+      PLANNING_ARTIFACT --> READINESS_CHECK
+      READINESS_CHECK -->|不足| CONTROL_VIEW
+      READINESS_CHECK -->|足够| IMPLEMENTATION_PLAN
+      CONTROL_VIEW --> KEY_QUESTION
+      IMPLEMENTATION_PLAN --> EXPORT_REQUEST
+      PLANNING_ARTIFACT --> EXPORT_REQUEST
+      EXPORT_REQUEST -->|是| EXPORT_PACKAGE
+      EXPORT_PACKAGE --> NOT_READY
+      EXPORT_PACKAGE --> SAFE_OUTCOME
+      NOT_READY -.-> USER_RECOVER
+    end
+
+    %% 样式
+    classDef main fill:#dbeafe,stroke:#3b82f6,color:#111827
+    classDef decision fill:#fef9c3,stroke:#ca8a04,color:#111827
+    classDef error fill:#fee2e2,stroke:#ef4444,color:#111827
+    classDef success fill:#dcfce7,stroke:#22c55e,color:#111827
+
+    class IDEA_START,DIAGNOSTIC,MATERIAL_REVIEW,KEY_QUESTION,USER_ANSWER,DOWNGRADE,PLANNING_ARTIFACT,IMPLEMENTATION_PLAN,CONTROL_VIEW,EXPORT_PACKAGE,USER_RECOVER main
+    class MATERIAL_CHECK,ARTIFACT_REQUEST,GATE_CHECK,READINESS_CHECK,EXPORT_REQUEST decision
+    class NOT_READY error
+    class SAFE_OUTCOME success
+```
 
 ## Highlights
 
 ### 核心架构
 
 - **Stage-gated workflow**：由 `SKILL.md` 控制阶段门禁、上下文连续性、子能力路由和最终输出验收。
-- **Multi-agent governance**：Workflow 规则负责阶段门禁，Controller Agent 负责路由，Producer Agents 负责产物，Auditor Agent 负责独立审核，Runtime Workbench 只保存当前决策状态。
-- **Quantitative evals**：包含 strict suite、Windows relay、targeted rerun、Baseline A/B、hard failures、Value Gate 和机器可读 schema。
+- **Multi-agent governance**：Workflow 规则负责阶段门禁，Controller Agent 负责路由，Producer Agents 负责产物，Auditor Agent 负责独立审核，Runtime Workbench 只保存当前决策状态；Agent Work Order / Return Packet / Audit Report / Workbench / Pattern Index / Artifact Manifest / Execution Handoff / Revision Index / Revision Record 有 strict JSON Schema 作为 release-check 层。
+- **Quantitative evals**：包含 strict suite、Windows relay、targeted rerun、Baseline A/B、P0/P1/P2 RC scenarios、hard failures、Value Gate 和机器可读 schema。
 - **中文优先体验**：默认面向中文产品探索和协作场景，同时保留英文 artifact 名称以兼容常见 PM / engineering 术语。
 
 ### P0：基础能力
 
 - **Auto-Persist Runtime Workbench**：每次 stage 转换自动保存状态到 `.z2o-state/workbench.json`，新 session 自动恢复（7 天有效期）。消除 8-stage 长流程的 session 断裂风险。
 - **Quick Mode**：独立模式开关，可在任意 stage 激活。跳过交互式探索循环，直接产出带 evidence labels 的 draft（`[Fact]` / `[Assumption]` / `[Unknown]`），附 Evidence Gap Summary。
-- **Execution Bridge**：把 review-ready Implementation Plan 转为 GitHub Issues、Claude Code tasks 或 Jira tickets 格式，闭合 discovery → execution 的断点。
+- **Execution Bridge Host Handoff**：把 review-ready Implementation Plan 转为 host-executable dry-run handoff。GitHub Issues 是 P0 目标格式；Claude Code tasks / Jira tickets 保留格式转换。Z2O 不直接创建外部 issue/ticket。
+- **Artifact Export**：稳定导出 PRD / Roadmap / User Stories / Implementation Plan / Workbench / Execution Handoff 文件结构到 `z2o-artifacts/<project-slug>/`。缺失产物保留固定文件位并标记 `NOT_READY`。
+- **Artifact Revision Ledger**：为已导出的稳定产物生成 bounded revision trace：hash、unified diff、section summary、Controller decision、evidence refs、decision refs、audit refs 和 change rationale。它不进入 Workbench，不保存完整对话或完整 agent packets。
+- **Control Surface Hardening**：Controller actions 由 `evals/controller-actions.json` 统一管理；Workbench 写入通过 schema + evidence summary 校验和原子 replace；Artifact Manifest 记录 `source_status`、`content_mode`、`status_guard`，防止 Quick Mode draft 或 outline 被误读为 final。
 
 ### P1：差异化能力
 
 - **Evidence Maturity Dashboard**：实时查看 evidence 验证进度。四级标签（Insufficient / Partial / Sufficient / Strong），只有 verified facts 算"成熟"。用户说"evidence dashboard"或"证据成熟度"即可查看。
+- **File Workbench**：用户说"工作台"或"workbench"即可查看 current-state dashboard；用户说"导出工作台"即可导出 Markdown/JSON 工作台视图。
 - **Assumption → Validation Plan 绑定**：每个 assumption 可关联 experiment design、success criteria、timeline。Dashboard 可追踪所有 validation plan 的进度。
 - **Express Review**：Material Assimilation 阶段的快速审视路径。一键批量接受 extraction 结果，仅对 contradictions 进行确认。与 Quick Mode 的区别：Express Review 只加速材料讨论，Quick Mode 跳过整个探索循环。
 
@@ -37,7 +119,7 @@
 
 - **一轮一个关键问题**：每轮只问当前最高杠杆问题；用户回答后再更新 facts / assumptions / risks / gaps。
 - **防止过早产物化**：信息不足时只能输出 outline、decision surface、evidence gap 或 blocking question，不能伪造成最终 PRD。
-- **专业子能力**：PRD、Roadmap、User Stories、Acceptance Criteria、ADR、Mermaid、Implementation Plan、Execution Bridge 等由本地 child skill adapter 承担。
+- **专业子能力**：PRD、Roadmap、User Stories、Acceptance Criteria、ADR、Mermaid、Implementation Plan、Execution Bridge、Artifact Export、Revision Trace 等由本地 child skill adapter 承担。
 
 ## Evaluation Dashboard
 
@@ -48,6 +130,11 @@
 | `v0.1.7` targeted rerun | 5 | 4 pass, 1 partial, avg 89 | 0 | Confirmed maintenance and helper-skill drift fixes; found final user-gate/doc gaps |
 | `v0.1.9` Baseline A/B | 10 paired | skill avg 95.7 vs baseline avg 68.4, delta +27.3 | 0 skill hard failures | Scenario-scoped improvement in stage gates, boundary safety, and user-gate behavior |
 | `v0.3.0` P0+P1+P2 regression | 22 | 22/22 pass, 0 hard failures | 0 | P0/P1/P2 改动未触发任何 hard failure，核心场景回归通过 |
+| `v0.4.0-rc.1` stability RC suite | 35 | JSON/schema/packaging contract checks pass; scenario prompts added for P0/P1/P2 and Execution Bridge | 0 schema failures | Communication contracts, Controller state machine, and install-package boundary are machine-checkable |
+| `v0.4.0-rc.2` artifact/workbench RC | 35 | Artifact Manifest / Execution Handoff schemas added; File Workbench and export package boundaries documented | 0 schema failures | Stable artifact package and host-executable handoff contracts are machine-checkable |
+| `v0.4.0-rc.3` revision ledger RC | 35 | Revision Index / Revision Record schemas and revision trace script added | 0 schema failures | Bounded artifact diff and revision ledger contracts are machine-checkable |
+| `v0.4.0-rc.4` control-surface RC | 39 | Controller action registry, Workbench persist script, Artifact Manifest guard fields, and 4 hardening scenarios added | 0 schema failures | Control-surface drift and misleading export states are machine-checkable |
+| `2026-06` Codex evidence rerun | Phase 3/4/5 | 71 unit tests passed; P0 real usability 6/6; main benchmark Tool 87.2 vs Baseline 71.7; BM_004_v2 Tool 95.6 vs Baseline 35.0 | 0 hard failures in the rerun reports; weaknesses retained | Interview evidence for scenario-scoped workflow governance and benchmark methodology |
 
 Supported claim: this project has evidence-backed workflow governance for the tested early product discovery scenarios.
 
@@ -158,6 +245,8 @@ Quick Mode 会跳过交互式探索循环，直接产出带 evidence labels 的 
 
 Quick Mode 不是跳过 evidence grounding——它仍然区分事实和假设，只是跳过了逐轮问答的过程。适合需要快速产出、后续再迭代验证的场景。
 
+如果 Quick Mode draft 在回到标准模式验证前被导出，导出的 Markdown 顶部必须保留 `QUICK_MODE_DRAFT` 标记，manifest 必须标 `content_mode: quick_mode_draft`，不能伪装成 final artifact。
+
 ### Evidence Maturity Dashboard（证据成熟度仪表盘）
 
 在任意 stage 查看当前项目的 evidence 验证进度：
@@ -250,14 +339,58 @@ Pattern 类型：
 
 ### Execution Bridge（执行桥接）
 
-当 Implementation Plan 达到 review-ready 状态后，可以转换为下游格式：
+当 Implementation Plan 达到 review-ready 状态后，可以转换为 host-executable dry-run handoff：
 
 ```text
-转为 GitHub Issues
+转为 GitHub Issues（P0 host handoff）
 转为 Claude Code tasks
+导出 Jira tickets
 ```
 
-每个 task 保留 evidence labels、acceptance criteria、verification commands。
+每个 task 保留 evidence labels、acceptance criteria、verification commands。Z2O 只准备 issue payload、body files、labels、assignee/milestone/project fields、dry-run checklist 和 host execution instructions；真实创建 GitHub Issues / Jira tickets 必须由宿主 agent 在用户显式批准后执行。
+
+### Artifact Export 和 File Workbench
+
+用户说"导出产物"、"export artifacts"或"生成交付文件"时，Z2O 生成稳定文件结构：
+
+```text
+z2o-artifacts/<project-slug>/
+├── manifest.json
+├── README.md
+├── prd.md
+├── roadmap.md
+├── user-stories.md
+├── implementation-plan.md
+├── workbench/
+│   ├── workbench.md
+│   ├── workbench.json
+│   ├── evidence-dashboard.md
+│   ├── risk-map.md
+│   └── readiness-spectrum.md
+├── execution/
+    ├── github-issues.md
+    ├── github-issues.json
+    ├── github-issue-bodies/
+    │   └── 001-<task-slug>.md
+    └── host-execution-checklist.md
+└── revisions/
+    ├── revision-index.json
+    ├── revision-log.md
+    ├── records/
+    │   └── rev-<timestamp>.json
+    └── diffs/
+        └── rev-<timestamp>/
+            ├── prd.diff
+            ├── roadmap.diff
+            ├── user-stories.diff
+            └── implementation-plan.diff
+```
+
+缺失或未 ready 的 artifact 仍保留固定文件位，但只写 `NOT_READY`、blocker、required input 和 Controller decision，不补造内容。Manifest 的每个 artifact entry 必须记录 `source_status`、`content_mode` 和 `status_guard`。
+
+用户说"工作台"或"workbench"时展示 current-state dashboard；用户说"导出工作台"时导出 `workbench.md` 和 `workbench.json`。Workbench 只保存当前控制面和 artifact path references，不保存完整对话、完整产物或长历史。
+
+用户说"生成 revision trace"、"artifact diff"或"产物变更记录"时，Z2O 在 `revisions/` 下生成有界修订账本。它只比较稳定产物文件位，记录 hash、unified diff、section heading summary 和 Controller 提供的 change metadata；脚本不会推断产品原因，metadata 缺失时会明确标记 `change_reason_status: missing`。
 
 ## Workflow
 
@@ -270,13 +403,330 @@ Diagnostic Start
   -> MVP Hypothesis
   -> Planning Artifacts (支持 Quick Mode、Risk Map、Readiness Spectrum)
   -> Implementation Planning (支持 Execution Bridge)
+  -> Artifact Export / File Workbench Export (按用户请求)
+  -> Revision Trace (按用户请求，仅记录有界产物变更)
 ```
 
 阶段不是死板 checklist，而是防止 AI 跳步的 guardrail。显式要求"直接给完整 PRD"也不能绕过门禁；如果前置条件不足，输出必须降级。
 
+P1/P2 路径覆盖快速草稿、恢复状态、执行交接、变更记录，以及缺材料、状态损坏、真实 API 环境不足等异常恢复。为避免 README 过长，完整分支图默认折叠。
+
+<details>
+<summary>查看 P1 重要分支图</summary>
+
+```mermaid
+%% 本图覆盖：P1_001, P1_002, P1_003, P1_004, P1_005
+flowchart LR
+    %% 节点声明
+    BRANCH_START([用户进入重要分支])
+    BRANCH_TYPE{分支类型？}
+    QUICK_DRAFT[生成带标签草稿]
+    EVIDENCE_ASSESS[查看证据评估]
+    RETURN_STANDARD[回到标准探索]
+    RESUME_CHECK[检查近期状态]
+    RESUME_DECISION{可恢复？}
+    RESUME_WORK[继续上次工作]
+    FRESH_START[重新开始探索]
+    HANDOFF_REQUEST[请求执行交接]
+    HANDOFF_READY{计划就绪？}
+    DRY_RUN_HANDOFF[生成 dry-run 交接]
+    GAP_REPORT[输出缺口报告]
+    REVISION_REQUEST[请求变更记录]
+    STABLE_ARTIFACTS{有稳定产物？}
+    REVISION_LEDGER[生成变更账本]
+    METADATA_GAP[标记信息缺失]
+    PATTERN_MATCH[发现相似模式]
+    APPLY_PATTERN{用户采用？}
+    ENRICH_CONTEXT[参考历史模式]
+    IGNORE_PATTERN[不采用模式]
+    BRANCH_OUTCOME((分支完成))
+
+    %% 连接关系
+    subgraph P1_BRANCH["P1 重要分支"]
+      direction LR
+      BRANCH_START --> BRANCH_TYPE
+      BRANCH_TYPE -->|快速草稿| QUICK_DRAFT
+      QUICK_DRAFT -.-> EVIDENCE_ASSESS
+      QUICK_DRAFT --> RETURN_STANDARD
+      BRANCH_TYPE -->|恢复状态| RESUME_CHECK
+      RESUME_CHECK --> RESUME_DECISION
+      RESUME_DECISION -->|可以| RESUME_WORK
+      RESUME_DECISION -->|不可以| FRESH_START
+      BRANCH_TYPE -->|执行交接| HANDOFF_REQUEST
+      HANDOFF_REQUEST --> HANDOFF_READY
+      HANDOFF_READY -->|就绪| DRY_RUN_HANDOFF
+      HANDOFF_READY -->|不足| GAP_REPORT
+      BRANCH_TYPE -->|变更记录| REVISION_REQUEST
+      REVISION_REQUEST --> STABLE_ARTIFACTS
+      STABLE_ARTIFACTS -->|存在| REVISION_LEDGER
+      STABLE_ARTIFACTS -->|缺失| METADATA_GAP
+      BRANCH_TYPE -->|历史模式| PATTERN_MATCH
+      PATTERN_MATCH --> APPLY_PATTERN
+      APPLY_PATTERN -->|采用| ENRICH_CONTEXT
+      APPLY_PATTERN -->|拒绝| IGNORE_PATTERN
+      RETURN_STANDARD --> BRANCH_OUTCOME
+      RESUME_WORK --> BRANCH_OUTCOME
+      FRESH_START --> BRANCH_OUTCOME
+      DRY_RUN_HANDOFF --> BRANCH_OUTCOME
+      GAP_REPORT -.-> HANDOFF_REQUEST
+      REVISION_LEDGER --> BRANCH_OUTCOME
+      METADATA_GAP -.-> REVISION_REQUEST
+      ENRICH_CONTEXT --> BRANCH_OUTCOME
+      IGNORE_PATTERN --> BRANCH_OUTCOME
+    end
+
+    %% 样式
+    classDef main fill:#dbeafe,stroke:#3b82f6,color:#111827
+    classDef decision fill:#fef9c3,stroke:#ca8a04,color:#111827
+    classDef error fill:#fee2e2,stroke:#ef4444,color:#111827
+    classDef success fill:#dcfce7,stroke:#22c55e,color:#111827
+
+    class BRANCH_START,QUICK_DRAFT,EVIDENCE_ASSESS,RETURN_STANDARD,RESUME_CHECK,RESUME_WORK,FRESH_START,HANDOFF_REQUEST,DRY_RUN_HANDOFF,REVISION_REQUEST,REVISION_LEDGER,PATTERN_MATCH,ENRICH_CONTEXT,IGNORE_PATTERN main
+    class BRANCH_TYPE,RESUME_DECISION,HANDOFF_READY,STABLE_ARTIFACTS,APPLY_PATTERN decision
+    class GAP_REPORT,METADATA_GAP error
+    class BRANCH_OUTCOME success
+```
+
+</details>
+
+<details>
+<summary>查看 P2 异常恢复图</summary>
+
+```mermaid
+%% 本图覆盖：P2_001, P2_002, P2_003, P2_004, P2_005, P2_006
+flowchart LR
+    %% 节点声明
+    ERROR_START([用户遇到异常场景])
+    ERROR_TYPE{异常类型？}
+    WRONG_INTENT[请求不适合流程]
+    MAINTENANCE_MODE[切换维护解释模式]
+    MISSING_MATERIAL[声称有材料但未提供]
+    ASK_MATERIAL[请求提供材料]
+    STATE_BROKEN[状态损坏或过期]
+    RECOVERY_OPTIONS[提供重新开始或手动补充]
+    WRITE_REQUEST[请求写文件或外部执行]
+    CONFIRM_SCOPE{确认范围？}
+    DRY_RUN_ONLY[只生成预览]
+    SAFE_EXECUTION[按确认执行]
+    API_REQUEST[请求真实 API 或评测]
+    ENV_READY{环境就绪？}
+    WAIT_ENV[等待 key/预算/目录确认]
+    RUN_DEEPSEEK[优先运行 DeepSeek]
+    MIMO_FALLBACK{Mimo 可用？}
+    RUN_MIMO[备选运行 Mimo]
+    SKIP_MIMO[跳过 Mimo]
+    STATUS_MISMATCH[产物状态和内容不一致]
+    BLOCK_EXPORT[阻止误导导出]
+    RE_REVIEW[回审或降级]
+    SAFE_RECOVERY((安全恢复))
+
+    %% 连接关系
+    subgraph P2_ERROR["P2 异常恢复"]
+      direction LR
+      ERROR_START --> ERROR_TYPE
+      ERROR_TYPE -->|不适合| WRONG_INTENT
+      WRONG_INTENT --> MAINTENANCE_MODE
+      ERROR_TYPE -->|缺材料| MISSING_MATERIAL
+      MISSING_MATERIAL --> ASK_MATERIAL
+      ERROR_TYPE -->|状态异常| STATE_BROKEN
+      STATE_BROKEN --> RECOVERY_OPTIONS
+      ERROR_TYPE -->|需写入| WRITE_REQUEST
+      WRITE_REQUEST --> CONFIRM_SCOPE
+      CONFIRM_SCOPE -->|未确认| DRY_RUN_ONLY
+      CONFIRM_SCOPE -->|已确认| SAFE_EXECUTION
+      ERROR_TYPE -->|需 API| API_REQUEST
+      API_REQUEST --> ENV_READY
+      ENV_READY -->|不足| WAIT_ENV
+      ENV_READY -->|就绪| RUN_DEEPSEEK
+      RUN_DEEPSEEK -.-> MIMO_FALLBACK
+      MIMO_FALLBACK -->|可用| RUN_MIMO
+      MIMO_FALLBACK -->|不稳| SKIP_MIMO
+      ERROR_TYPE -->|状态冲突| STATUS_MISMATCH
+      STATUS_MISMATCH --> BLOCK_EXPORT
+      BLOCK_EXPORT --> RE_REVIEW
+      MAINTENANCE_MODE --> SAFE_RECOVERY
+      ASK_MATERIAL -.-> SAFE_RECOVERY
+      RECOVERY_OPTIONS --> SAFE_RECOVERY
+      DRY_RUN_ONLY --> SAFE_RECOVERY
+      SAFE_EXECUTION --> SAFE_RECOVERY
+      WAIT_ENV -.-> SAFE_RECOVERY
+      RUN_DEEPSEEK --> SAFE_RECOVERY
+      RUN_MIMO --> SAFE_RECOVERY
+      SKIP_MIMO --> SAFE_RECOVERY
+      RE_REVIEW --> SAFE_RECOVERY
+    end
+
+    %% 样式
+    classDef main fill:#dbeafe,stroke:#3b82f6,color:#111827
+    classDef decision fill:#fef9c3,stroke:#ca8a04,color:#111827
+    classDef error fill:#fee2e2,stroke:#ef4444,color:#111827
+    classDef success fill:#dcfce7,stroke:#22c55e,color:#111827
+
+    class ERROR_START,MAINTENANCE_MODE,ASK_MATERIAL,RECOVERY_OPTIONS,DRY_RUN_ONLY,SAFE_EXECUTION,WAIT_ENV,RUN_DEEPSEEK,RUN_MIMO,SKIP_MIMO,RE_REVIEW main
+    class ERROR_TYPE,CONFIRM_SCOPE,ENV_READY,MIMO_FALLBACK decision
+    class WRONG_INTENT,MISSING_MATERIAL,STATE_BROKEN,WRITE_REQUEST,API_REQUEST,STATUS_MISMATCH,BLOCK_EXPORT error
+    class SAFE_RECOVERY success
+```
+
+</details>
+
 ## Multi-Agent Model
 
 这个 skill 的多 agent 设计保持平台无关，不要求特定客户端支持真实子代理。实现时可以是真实 subagent，也可以是同一 agent 内的专业角色模拟。入口文档见 `agents/README.md`，完整协议见 `references/multi-agent-orchestration.md`。
+
+下图展示 Z2O 的顶层控制架构：用户只看到一个主 workflow，内部通过 Controller、Producer、Auditor、Workbench、合约层和测试层共同约束产物升级、导出和执行交接。
+
+```mermaid
+%% 本图覆盖：zero-to-one-product-discovery 顶层架构
+flowchart TD
+    %% ── 接入层 ──
+    USER["用户"]
+    HOST["Codex / Claude 宿主"]
+    OPENAI_METADATA["Codex 元数据"]
+
+    %% ── 核心控制层 ──
+    MAIN_SKILL["Skill 主工作流"]
+    STAGE_GATES{"阶段门禁规则"}
+    CONTROLLER{"Controller 路由权威"}
+    WORKBENCH[("Runtime Workbench")]
+
+    %% ── 产物能力层 ──
+    PRODUCERS["Producer 角色组"]
+    AUDITOR["Auditor 审查角色"]
+    CHILD_ADAPTERS["13 个 Child Adapters"]
+
+    %% ── 导出与审计层 ──
+    ARTIFACT_EXPORT["Artifact Export"]
+    EXECUTION_BRIDGE["Execution Bridge"]
+    REVISION_TRACE["Revision Trace"]
+
+    %% ── 合约与测试层 ──
+    EVAL_SCHEMAS["JSON Schema 合约层"]
+    CONTROLLER_ACTIONS["Controller Actions 注册表"]
+    SCRIPTS["Python 验证/写入脚本"]
+    UNIT_TESTS["Unit Tests"]
+    INTEGRATION_API["Integration API Layer"]
+    NEW_BENCHMARK["Codex 新 Benchmark Runner"]
+    OLD_BENCHMARK_ARCHIVE["Claude Code 旧 Benchmark 归档"]
+
+    %% ── 外部与存储层 ──
+    DEEPSEEK_API(["DeepSeek API"])
+    MIMO_API(["Mimo API"])
+    GITHUB_JIRA(["GitHub / Jira"])
+    FILE_SYSTEM[("文件系统")]
+    STATE_STORE[(".z2o-state / .z2o-patterns")]
+    ARTIFACT_STORE[("z2o-artifacts")]
+    EVIDENCE_PACKAGE[("桌面证据包")]
+    VENDOR_SOURCES["Vendor Source Snapshots"]
+
+    %% ── 分层分组 ──
+    subgraph INTERFACE["接入层"]
+      direction LR
+      USER
+      HOST
+      OPENAI_METADATA
+    end
+
+    subgraph CORE["核心控制层"]
+      direction LR
+      MAIN_SKILL
+      STAGE_GATES
+      CONTROLLER
+      WORKBENCH
+    end
+
+    subgraph CAPABILITY["产物能力层"]
+      direction LR
+      PRODUCERS
+      AUDITOR
+      CHILD_ADAPTERS
+    end
+
+    subgraph EXPORT_AUDIT["导出与审计层"]
+      direction LR
+      ARTIFACT_EXPORT
+      EXECUTION_BRIDGE
+      REVISION_TRACE
+    end
+
+    subgraph CONTRACT_TEST["合约与测试层"]
+      direction LR
+      EVAL_SCHEMAS
+      CONTROLLER_ACTIONS
+      SCRIPTS
+      UNIT_TESTS
+      INTEGRATION_API
+      NEW_BENCHMARK
+      OLD_BENCHMARK_ARCHIVE
+    end
+
+    subgraph EXTERNAL_STORAGE["外部与存储层"]
+      direction LR
+      DEEPSEEK_API
+      MIMO_API
+      GITHUB_JIRA
+      FILE_SYSTEM
+      STATE_STORE
+      ARTIFACT_STORE
+      EVIDENCE_PACKAGE
+      VENDOR_SOURCES
+    end
+
+    %% ── 连接关系 ──
+    USER --> HOST
+    OPENAI_METADATA --> HOST
+    HOST --> MAIN_SKILL
+    MAIN_SKILL --> STAGE_GATES
+    STAGE_GATES --> CONTROLLER
+    CONTROLLER --> PRODUCERS
+    CONTROLLER --> AUDITOR
+    CONTROLLER --> CHILD_ADAPTERS
+    CONTROLLER -->|读写当前状态| WORKBENCH
+    PRODUCERS --> AUDITOR
+    AUDITOR --> CONTROLLER
+    CHILD_ADAPTERS --> ARTIFACT_EXPORT
+    CHILD_ADAPTERS --> EXECUTION_BRIDGE
+    CHILD_ADAPTERS --> REVISION_TRACE
+    ARTIFACT_EXPORT -->|风险：写入交付包| ARTIFACT_STORE
+    REVISION_TRACE -->|风险：写入变更账本| ARTIFACT_STORE
+    EXECUTION_BRIDGE -.->|风险：dry-run 边界| GITHUB_JIRA
+    WORKBENCH -->|风险：持久化| STATE_STORE
+    SCRIPTS -->|风险：写入校验| STATE_STORE
+    SCRIPTS -->|风险：写入校验| ARTIFACT_STORE
+    EVAL_SCHEMAS --> SCRIPTS
+    CONTROLLER_ACTIONS --> CONTROLLER
+    CONTROLLER_ACTIONS --> EVAL_SCHEMAS
+    UNIT_TESTS --> SCRIPTS
+    INTEGRATION_API -.->|风险：真实 API| DEEPSEEK_API
+    INTEGRATION_API -.->|风险：fallback| MIMO_API
+    NEW_BENCHMARK -.->|风险：真实 API| DEEPSEEK_API
+    NEW_BENCHMARK -.->|风险：fallback| MIMO_API
+    NEW_BENCHMARK -->|写入新证据| EVIDENCE_PACKAGE
+    OLD_BENCHMARK_ARCHIVE -->|仅归档| EVIDENCE_PACKAGE
+    VENDOR_SOURCES -.-> CHILD_ADAPTERS
+    FILE_SYSTEM --> STATE_STORE
+    FILE_SYSTEM --> ARTIFACT_STORE
+    FILE_SYSTEM --> EVIDENCE_PACKAGE
+
+    %% ── 样式 ──
+    classDef core fill:#dbeafe,stroke:#3b82f6,color:#111827
+    classDef shared fill:#ede9fe,stroke:#8b5cf6,color:#111827,stroke-width:2px
+    classDef external fill:#fef3c7,stroke:#f59e0b,color:#111827
+    classDef storage fill:#dcfce7,stroke:#22c55e,color:#111827
+    classDef harness fill:#f1f5f9,stroke:#64748b,color:#111827
+    classDef risk fill:#fee2e2,stroke:#ef4444,color:#111827,stroke-width:2px
+
+    class USER,HOST,OPENAI_METADATA core
+    class MAIN_SKILL,STAGE_GATES,CONTROLLER core
+    class WORKBENCH shared
+    class PRODUCERS,AUDITOR,CHILD_ADAPTERS shared
+    class ARTIFACT_EXPORT,EXECUTION_BRIDGE,REVISION_TRACE risk
+    class EVAL_SCHEMAS,CONTROLLER_ACTIONS,SCRIPTS,UNIT_TESTS harness
+    class INTEGRATION_API,NEW_BENCHMARK risk
+    class OLD_BENCHMARK_ARCHIVE harness
+    class DEEPSEEK_API,MIMO_API,GITHUB_JIRA,VENDOR_SOURCES external
+    class FILE_SYSTEM,STATE_STORE,ARTIFACT_STORE,EVIDENCE_PACKAGE storage
+```
 
 ```text
 Workflow Rules -> Controller Agent -> Producer Agent -> Runtime Workbench -> Auditor Agent -> Controller Decision
@@ -299,6 +749,9 @@ Workflow Rules -> Controller Agent -> Producer Agent -> Runtime Workbench -> Aud
 | `Roadmap` | PRD 或 PRD outline 已足够确认，可以排序验证或交付时。 | Now/Next/Later、phases、milestones、validation gates。 | 把弱假设变成 delivery commitment。 |
 | `ADR` | 出现 durable architecture、platform、data、security、dependency 或 maintainability 决策时。 | Decision Log entry 或 ADR candidate。 | 把普通 scope tradeoff 升级成不必要 ADR。 |
 | `Implementation Plan` | planning artifacts 和相关 technical decisions 达到 review-ready 时。 | Engineering plan、verification plan、sequencing、risks。 | 在 readiness 前开始 coding 或 scaffold repo。 |
+| `Execution Bridge` | Implementation Plan review-ready，且用户请求执行交接时。 | Host-executable dry-run handoff、GitHub issue payload、body files、checklist。 | 直接创建外部 issue/ticket，或补造任务。 |
+| `Artifact Export` | 用户请求导出产物、交付文件或工作台时。 | 固定文件结构、manifest、File Workbench、ready/not-ready 文件位。 | 把未 ready 产物伪装成 final。 |
+| `Revision Trace` | 用户请求 artifact diff、产物变更记录或 revision trace 时。 | Revision Index、Revision Record、revision log、per-artifact unified diff。 | 读取 full transcript、完整 agent packets、hidden reasoning，或让 revision count 影响 readiness。 |
 
 ## Repository Layout
 
@@ -313,8 +766,8 @@ zero-to-one-product-discovery/
 ├── child-skills/            # 本地子能力 adapter，只能由主控路由
 ├── references/              # 阶段规则、路由协议、多 agent 协议、来源治理和文档模板
 ├── vendor/                  # 上游 skill/source 快照和许可证，不可直接路由
-├── evals/                   # 可复用评测场景、rubric 和测试协议
-└── .z2o-patterns/           # 跨项目 discovery pattern 库（运行时生成，不进入安装包）
+├── evals/                   # 可复用评测场景、rubric、contract schema 和测试协议
+└── scripts/                 # release/contract 校验脚本
 ```
 
 运行时状态目录（不进入安装包）：
@@ -322,6 +775,10 @@ zero-to-one-product-discovery/
 ```text
 .z2o-state/
 └── workbench.json           # Runtime Workbench 持久化状态
+.z2o-patterns/
+└── pattern-index.json       # 跨项目 discovery pattern 库
+z2o-artifacts/
+└── <project-slug>/          # 用户项目导出产物，不进入安装包
 ```
 
 历史评测归档（不进入安装包）：
@@ -351,7 +808,9 @@ zero-to-one-product-discovery-eval-runs/
 | `implementation-plan` | 从 review-ready planning artifacts 进入工程实施计划 |
 | `review` | 从产品、UX、工程、测试和架构角度审查 artifact |
 | `context-handoff` | 生成跨轮次或跨会话的 Context Resume Packet |
-| `execution-bridge` | 把 Implementation Plan 转为 GitHub Issues / Claude Code tasks / Jira tickets 格式 |
+| `execution-bridge` | 把 Implementation Plan 转为 GitHub Issues host handoff / Claude Code tasks / Jira tickets 格式 |
+| `artifact-export` | 导出稳定 PRD / Roadmap / User Stories / Implementation Plan / Workbench / Execution Handoff 文件结构 |
+| `revision-trace` | 为稳定导出产物生成 bounded revision ledger、hash、diff 和 Controller metadata trace |
 
 主控规则：
 
@@ -384,9 +843,18 @@ See also:
 
 ## Evaluation
 
+本项目的测试设计按用户路径和架构风险反推：P0 主路径进入真实可用性测试，本地状态/导出/执行边界进入质量测试，Benchmark 只选最能回答"为什么比直接问 AI 写 PRD 更可靠"的高密度任务。完整流程测试矩阵保存在面试证据包中，README 只保留摘要，避免把展示页变成测试报告。
+
+| Evidence Layer | 覆盖内容 | 用途 |
+|---|---|---|
+| P0/P1/P2 Flow Matrix | 17 条用户路径，P0 6 条全部覆盖 | Phase 3/4/5 测试设计源 |
+| Quality Tests | 状态、schema、导出、执行边界、revision ledger | 验证本地合约和安全边界 |
+| Real Usability Tests | P0 主路径和关键 LLM 行为 | 验证真实 API 下用户路径可用 |
+| New Benchmark | 5 个高密度对比任务 + BM_004_v2 addendum | 证明在当前任务集下比直接问 AI 更可控、更可复盘 |
+
 可复用评测协议保存在 `evals/`：
 
-- `evals/evals.json`：v0.1.5 strict suite（22 scenarios）、deterministic checks、rubric checks、hard failures 和 Value Gate 元数据。`v0.1.9` 和 `v0.3.0` 继续复用该套核心回归场景。
+- `evals/evals.json`：v0.1.5 strict suite（22 scenarios）、deterministic checks、rubric checks、hard failures 和 Value Gate 元数据；`v0.4.0-rc.1` 扩展到 35 个场景，覆盖 P0/P1/P2、multi-agent contracts 和 Execution Bridge E2E；`v0.4.0-rc.2` 保持 35 场景并新增 Artifact Manifest / Execution Handoff schema contract；`v0.4.0-rc.3` 增加 bounded Revision Ledger contract 和脚本 smoke coverage；`v0.4.0-rc.4` 增加 4 个 control-surface hardening scenarios。
 - `evals/eval-rubric-template.md`：评分 rubric 和 Evidence Value Review 模板。
 - `evals/claude-code-pressure-test-protocol.md`：五阶段 pressure test 协议：raw generation、deterministic checks、rubric grading、value review、promotion decision。
 - `evals/eval-report.schema.json`：结构化评分报告 schema。
@@ -394,25 +862,35 @@ See also:
 - `evals/baseline-ab-template.md`：baseline-vs-skill A/B 模板。
 - `evals/baseline-ab-scoring-rubric.md`：paired A/B 评分细则。
 - `evals/baseline-ab-report.schema.json`：A/B 结构化报告 schema。
+- `evals/agent-work-order.schema.json`、`evals/agent-return-packet.schema.json`、`evals/audit-report.schema.json`、`evals/workbench.schema.json`、`evals/pattern-index.schema.json`、`evals/artifact-manifest.schema.json`、`evals/execution-handoff.schema.json`、`evals/revision-index.schema.json`、`evals/revision-record.schema.json`：multi-agent 通讯、工作台、pattern index、artifact export、host execution handoff 和 bounded revision ledger 的严格 contract schema。
+- `evals/controller-actions.json`：Controller action registry，供 schemas、scripts 和 docs 保持一致。
+- `scripts/generate_revision_trace.py`：无第三方依赖的 revision trace 脚本，只比较稳定产物文件位并生成 bounded ledger。
+- `scripts/persist_workbench.py`：无第三方依赖的 Workbench 校验和原子持久化脚本。
+- `scripts/validate-contracts.py`：无第三方依赖的 release-check 脚本，用于校验 contract schema、RC eval coverage 和 packaging boundary。
 - `evals/evaluation-package.md`：当前证据、限制和安全 claim。
 
 当前可以谨慎声明：
 
 - `v0.1.5` 已有严格测评体系、结构化 schema 和 Value Gate；`v0.1.6` 是面向 Windows 干净环境验证的交接版本；`v0.1.7` 是收尾补丁版本；`v0.1.8` 是最终收官补丁版本；`v0.1.9` 新增受控本地 baseline A/B 方法论和证据。
 - `v0.3.0` 的 P0/P1/P2 改动已通过 22 scenario 回归验证，0 hard failure。
-- multi-agent workflow protocol 已完成结构化设计和 strict suite 扩展。
+- `v0.4.0-rc.1` 新增 13 个 RC scenarios，覆盖 P0/P1/P2 功能、multi-agent contracts 和 Execution Bridge 格式转换边界。
+- `v0.4.0-rc.2` 新增 Artifact Export、File Workbench 和 Host Execution Handoff contracts；不新增 Eval Runner，不声明真实外部 issue/ticket 创建能力。
+- `v0.4.0-rc.3` 新增 Artifact Revision Ledger、Revision Index / Record schemas 和标准库 revision trace 脚本；不把 revision history 放进 Workbench，也不让 revision count 影响 readiness。
+- `v0.4.0-rc.4` 新增 Controller action registry、Workbench atomic persist、Artifact Export guard fields 和 4 个 control-surface scenarios；不新增完整 runtime 或 Eval Runner。
+- multi-agent workflow protocol 已完成结构化设计、Controller 状态机约束和 strict contract schema。
+- 2026-06 Codex 证据链重跑显示：71 个 unit tests 通过，6 条 P0 真实 API 路径行为层通过，5 个主 Benchmark 中 Tool 87.2 vs Baseline 71.7，BM_004_v2 addendum 中 Tool 95.6 vs Baseline 35.0；这些是 scenario-scoped workflow evidence，不是市场验证。
 
 当前不能声明：
 
 - release-grade validation。
 - install candidate 状态。
 - 跨客户端、重启后的自然触发可靠性。
-- 完整多轮 workflow 质量。
+- release-grade 完整多轮 workflow 稳定性。
 - release-grade multi-agent workflow 稳定性。
 
 ## Versioning
 
-当前版本：`v0.3.0`。
+当前版本：`v0.4.0-rc.4`。
 
 版本管理规则：
 
@@ -421,6 +899,10 @@ See also:
 - `v0.2.0` 是 Portfolio Release：整理 GitHub 展示、证据 dashboard、安装包和面试材料。
 - `v0.2.1` 是 multi-agent documentation structure patch。
 - `v0.3.0` 是 Feature Release：P0（Auto-Persist、Quick Mode、Execution Bridge）+ P1（Evidence Maturity Dashboard、Validation Plan、Express Review）+ P2（Risk Map、Readiness Spectrum、Pattern Library）。
+- `v0.4.0-rc.1` 是 Stability RC：新增 multi-agent contract schemas、Controller 状态机、P0/P1/P2 eval coverage、Execution Bridge E2E 场景和 packaging boundary 校验。
+- `v0.4.0-rc.2` 是 Artifact Export + File Workbench RC：新增稳定文件导出结构、host-executable dry-run handoff schema、File Workbench 导出和 LangGraph future runtime blueprint。
+- `v0.4.0-rc.3` 是 Revision Ledger RC：新增 bounded artifact revision ledger、revision schemas 和标准库 revision trace 脚本，不引入历史数据库或 LangGraph runtime。
+- `v0.4.0-rc.4` 是 Control Surface Hardening RC：新增 action registry、Workbench 原子持久化、Evidence Snapshot 一致性校验和 Artifact Export 防误导 guardrails。
 - 每次打包前确认 `README.md`、`SKILL.md`、`agents/`、`references/`、`child-skills/`、`evals/` 已同步。
 - 临时发布目录如 `zero-to-one-product-discovery-publish.*` 不进入仓库；可发布包以 `dist/zero-to-one-product-discovery-skill-<version>.zip` 为准。
 
@@ -438,6 +920,7 @@ zero-to-one-product-discovery/
 zero-to-one-product-discovery-eval-runs/   # 评测归档
 .z2o-state/                                 # 运行时状态
 .z2o-patterns/                              # pattern 库
+z2o-artifacts/                              # 用户项目导出产物
 .git/                                       # git 元数据
 dist/                                       # 打包输出
 ```
@@ -448,24 +931,25 @@ dist/                                       # 打包输出
 - 用户安装 zip 只能包含 `zero-to-one-product-discovery/` runtime 目录；不要包含上述排除目录。
 - 当某次 run 没有实质发现，只能按 `minimal-note` 或 `discard-full-run` 处理，不能用完整 raw/report 制造虚假的强证据。
 
-本地打包命令必须带版本号。当前版本是 `v0.3.0`：
+本地打包命令必须带版本号。当前版本是 `v0.4.0-rc.4`：
 
 ```bash
-VERSION=v0.3.0
+VERSION=v0.4.0-rc.4
 mkdir -p dist
 zip -r "dist/zero-to-one-product-discovery-skill-${VERSION}.zip" zero-to-one-product-discovery \
   -x '*/.DS_Store' \
   -x '*/__pycache__/*' \
   -x '*/.z2o-state/*' \
-  -x '*/.z2o-patterns/*'
+  -x '*/.z2o-patterns/*' \
+  -x '*/z2o-artifacts/*'
 ```
 
 Windows PowerShell:
 
 ```powershell
-$Version = "v0.3.0"
+$Version = "v0.4.0-rc.4"
 New-Item -ItemType Directory -Force -Path dist | Out-Null
-$Exclude = @('.z2o-state', '.z2o-patterns', '.DS_Store')
+$Exclude = @('.z2o-state', '.z2o-patterns', 'z2o-artifacts', '.DS_Store')
 Get-ChildItem -Path zero-to-one-product-discovery -Recurse |
   Where-Object { $Exclude -notcontains $_.Name } |
   Compress-Archive -DestinationPath "dist/zero-to-one-product-discovery-skill-$Version.zip" -Force

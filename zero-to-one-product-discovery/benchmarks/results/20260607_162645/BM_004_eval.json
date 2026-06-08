@@ -1,0 +1,308 @@
+{
+  "task_id": "BM_004",
+  "task_name": "证据足够后的克制规划测试",
+  "description": "用户逐步提供目标用户、痛点、MVP 范围、非目标、成功指标、访谈摘要和竞品差异，并明确授权进入规划。测试系统是否能产出 scoped PRD outline + Roadmap outline，而不引入未提供假设。",
+  "baseline_mode": "multi_turn_bare_model",
+  "turn_count": 10,
+  "product_meaning": "验证 Z2O 不是只会保守拦截，而是在证据足够时能推进到可展示、可复盘的规划产物。",
+  "tool": {
+    "ok": true,
+    "turns": 10,
+    "expected_turns": 10,
+    "elapsed_seconds": 164.29,
+    "provider": "deepseek",
+    "model": "deepseek-v4-flash",
+    "dimension_scores": {
+      "stage_gate": 10.0,
+      "evidence_grounding": 10.0,
+      "risk_prioritization": 10.0,
+      "auditability": 10.0,
+      "boundary_safety": 5.0,
+      "actionability": 10.0,
+      "context_economy": 10.0
+    },
+    "overall_score": 92.5,
+    "raw_score_before_penalty": 92.5,
+    "penalty": 0.0,
+    "process_score": 100.0,
+    "final_artifact_score": 85.7,
+    "checks": [
+      {
+        "id": "turn5_restates_scope",
+        "description": "第 5 轮正确复述范围和非目标",
+        "dimension": "evidence_grounding",
+        "scope": "turn:5",
+        "points": 2.0,
+        "passed": true,
+        "detail": "matched=['客户档案', '项目状态', '提醒', '报价', '团队协作', '自动解析']"
+      },
+      {
+        "id": "turn7_prd_outline",
+        "description": "第 7 轮产出 PRD outline，且区分证据支持和假设",
+        "dimension": "actionability",
+        "scope": "turn:7",
+        "points": 2.0,
+        "passed": true,
+        "detail": "matched=['PRD', 'outline', '目标用户', 'MVP', '成功指标', '假设', '证据']"
+      },
+      {
+        "id": "turn8_roadmap_with_gates",
+        "description": "第 8 轮产出 Now/Next/Later Roadmap 和 evidence gate",
+        "dimension": "risk_prioritization",
+        "scope": "turn:8",
+        "points": 2.0,
+        "passed": true,
+        "detail": "matched=['Now', 'Next', 'Later', 'evidence gate', '验证', '阶段']"
+      },
+      {
+        "id": "turn9_self_audit",
+        "description": "第 9 轮自检非目标外溢和事实/假设混淆",
+        "dimension": "auditability",
+        "scope": "turn:9",
+        "points": 2.0,
+        "passed": true,
+        "detail": "matched=['非目标', '假设', '事实']"
+      },
+      {
+        "id": "final_contains_prd_and_roadmap",
+        "description": "最终合并版同时包含 scoped PRD outline 和 Roadmap outline",
+        "dimension": "actionability",
+        "scope": "final",
+        "points": 2.0,
+        "passed": true,
+        "detail": "matched=['PRD outline', 'Roadmap', 'Now', 'Next', 'Later']"
+      },
+      {
+        "id": "final_references_evidence",
+        "description": "最终输出引用前置证据：12 人访谈、7 人反馈、2 周试用、5 位设计师",
+        "dimension": "evidence_grounding",
+        "scope": "final",
+        "points": 2.0,
+        "passed": true,
+        "detail": "matched=['12', '7', '2 周', '5 位', '访谈', '证据']"
+      },
+      {
+        "id": "final_preserves_non_goals",
+        "description": "最终输出保留非目标边界",
+        "dimension": "boundary_safety",
+        "scope": "final",
+        "points": 2.0,
+        "passed": false,
+        "detail": "matched=['非目标']"
+      },
+      {
+        "id": "no_implementation_plan",
+        "description": "最终不进入完整实施计划或技术栈锁定",
+        "dimension": "boundary_safety",
+        "scope": "final",
+        "points": 2.0,
+        "passed": true,
+        "detail": "forbidden_found=[]"
+      },
+      {
+        "id": "stage_gate_allows_planning_after_authorization",
+        "description": "最终在用户明确授权后进入规划，而不是继续只追问",
+        "dimension": "stage_gate",
+        "scope": "final",
+        "points": 2.0,
+        "passed": true,
+        "detail": "matched=['合并版']"
+      },
+      {
+        "id": "scoped_not_template_dump",
+        "description": "最终是 scoped outline，不是泛化大而全模板",
+        "dimension": "context_economy",
+        "scope": "final",
+        "points": 2.0,
+        "passed": true,
+        "detail": "matched=['scope', '范围', '非目标', 'evidence gate', '小范围验证']"
+      },
+      {
+        "id": "auditability_has_gate_language",
+        "description": "Roadmap 阶段含 evidence gate 或 readiness 语言",
+        "dimension": "auditability",
+        "scope": "final",
+        "points": 2.0,
+        "passed": true,
+        "detail": "matched=['evidence gate', 'readiness', '验证', '证据']"
+      }
+    ],
+    "hard_failures": []
+  },
+  "baseline": {
+    "ok": true,
+    "turns": 10,
+    "expected_turns": 10,
+    "elapsed_seconds": 198.95,
+    "provider": "deepseek",
+    "model": "deepseek-v4-flash",
+    "dimension_scores": {
+      "stage_gate": 10.0,
+      "evidence_grounding": 10.0,
+      "risk_prioritization": 10.0,
+      "auditability": 10.0,
+      "boundary_safety": 5.0,
+      "actionability": 10.0,
+      "context_economy": 10.0
+    },
+    "overall_score": 92.5,
+    "raw_score_before_penalty": 92.5,
+    "penalty": 0.0,
+    "process_score": 100.0,
+    "final_artifact_score": 85.7,
+    "checks": [
+      {
+        "id": "turn5_restates_scope",
+        "description": "第 5 轮正确复述范围和非目标",
+        "dimension": "evidence_grounding",
+        "scope": "turn:5",
+        "points": 2.0,
+        "passed": true,
+        "detail": "matched=['客户档案', '项目状态', '提醒', '报价', '不做发票', '不做合同', '团队协作', '自动解析']"
+      },
+      {
+        "id": "turn7_prd_outline",
+        "description": "第 7 轮产出 PRD outline，且区分证据支持和假设",
+        "dimension": "actionability",
+        "scope": "turn:7",
+        "points": 2.0,
+        "passed": true,
+        "detail": "matched=['PRD', '目标用户', 'MVP', '成功指标', '假设', '证据']"
+      },
+      {
+        "id": "turn8_roadmap_with_gates",
+        "description": "第 8 轮产出 Now/Next/Later Roadmap 和 evidence gate",
+        "dimension": "risk_prioritization",
+        "scope": "turn:8",
+        "points": 2.0,
+        "passed": true,
+        "detail": "matched=['Now', 'Next', 'Later', 'evidence gate', '验证', '阶段']"
+      },
+      {
+        "id": "turn9_self_audit",
+        "description": "第 9 轮自检非目标外溢和事实/假设混淆",
+        "dimension": "auditability",
+        "scope": "turn:9",
+        "points": 2.0,
+        "passed": true,
+        "detail": "matched=['非目标', '假设', '事实']"
+      },
+      {
+        "id": "final_contains_prd_and_roadmap",
+        "description": "最终合并版同时包含 scoped PRD outline 和 Roadmap outline",
+        "dimension": "actionability",
+        "scope": "final",
+        "points": 2.0,
+        "passed": true,
+        "detail": "matched=['scoped PRD', 'Roadmap', 'Now', 'Next', 'Later']"
+      },
+      {
+        "id": "final_references_evidence",
+        "description": "最终输出引用前置证据：12 人访谈、7 人反馈、2 周试用、5 位设计师",
+        "dimension": "evidence_grounding",
+        "scope": "final",
+        "points": 2.0,
+        "passed": true,
+        "detail": "matched=['12', '7', '2 周', '5 位', '访谈', '证据']"
+      },
+      {
+        "id": "final_preserves_non_goals",
+        "description": "最终输出保留非目标边界",
+        "dimension": "boundary_safety",
+        "scope": "final",
+        "points": 2.0,
+        "passed": false,
+        "detail": "matched=['非目标']"
+      },
+      {
+        "id": "no_implementation_plan",
+        "description": "最终不进入完整实施计划或技术栈锁定",
+        "dimension": "boundary_safety",
+        "scope": "final",
+        "points": 2.0,
+        "passed": true,
+        "detail": "forbidden_found=[]"
+      },
+      {
+        "id": "stage_gate_allows_planning_after_authorization",
+        "description": "最终在用户明确授权后进入规划，而不是继续只追问",
+        "dimension": "stage_gate",
+        "scope": "final",
+        "points": 2.0,
+        "passed": true,
+        "detail": "matched=['合并版']"
+      },
+      {
+        "id": "scoped_not_template_dump",
+        "description": "最终是 scoped outline，不是泛化大而全模板",
+        "dimension": "context_economy",
+        "scope": "final",
+        "points": 2.0,
+        "passed": true,
+        "detail": "matched=['scope', '范围', '非目标', 'evidence gate']"
+      },
+      {
+        "id": "auditability_has_gate_language",
+        "description": "Roadmap 阶段含 evidence gate 或 readiness 语言",
+        "dimension": "auditability",
+        "scope": "final",
+        "points": 2.0,
+        "passed": true,
+        "detail": "matched=['evidence gate', '验证', '证据']"
+      }
+    ],
+    "hard_failures": []
+  },
+  "delta": 0.0,
+  "llm_blind_judge": {
+    "skipped": false,
+    "provider": "deepseek",
+    "model": "deepseek-v4-flash",
+    "usage": {
+      "prompt_tokens": 3343,
+      "completion_tokens": 2167,
+      "total_tokens": 5510,
+      "prompt_tokens_details": {
+        "cached_tokens": 0
+      },
+      "completion_tokens_details": {
+        "reasoning_tokens": 1985
+      },
+      "prompt_cache_hit_tokens": 0,
+      "prompt_cache_miss_tokens": 3343
+    },
+    "mapping": {
+      "B": "tool",
+      "A": "baseline"
+    },
+    "scores": {
+      "A": {
+        "stage_gate": 9,
+        "evidence_grounding": 9,
+        "risk_prioritization": 6,
+        "auditability": 9,
+        "boundary_safety": 9,
+        "actionability": 9,
+        "context_economy": 8,
+        "summary": "详细量化证据门且功能具体"
+      },
+      "B": {
+        "stage_gate": 6,
+        "evidence_grounding": 7,
+        "risk_prioritization": 9,
+        "auditability": 7,
+        "boundary_safety": 8,
+        "actionability": 7,
+        "context_economy": 8,
+        "summary": "风险矩阵清晰但证据门模糊"
+      },
+      "winner": "A",
+      "reason": "A证据门量化更明确，边界安全更严格，可执行性更强"
+    }
+  },
+  "raw_files": {
+    "task": "benchmarks/tasks/task_BM_004.json",
+    "tool": "benchmarks/results/20260607_162645/BM_004_tool.json",
+    "baseline": "benchmarks/results/20260607_162645/BM_004_baseline.json"
+  }
+}

@@ -1,0 +1,290 @@
+{
+  "task_id": "BM_003",
+  "task_name": "风险优先级与验证路径测试",
+  "description": "用户有初步访谈证据，但解决方案范围和付费意愿仍不确定。测试系统是否能按影响和验证成本排序风险，并给出 readiness gate。",
+  "baseline_mode": "multi_turn_bare_model",
+  "turn_count": 8,
+  "product_meaning": "展示工具是否能帮助 PM 判断先验证什么，而不是只生成一张漂亮风险表。",
+  "tool": {
+    "ok": true,
+    "turns": 8,
+    "expected_turns": 8,
+    "elapsed_seconds": 103.44,
+    "provider": "deepseek",
+    "model": "deepseek-v4-flash",
+    "dimension_scores": {
+      "stage_gate": 10.0,
+      "evidence_grounding": 0.0,
+      "risk_prioritization": 10.0,
+      "auditability": 10.0,
+      "boundary_safety": 10.0,
+      "actionability": 10.0,
+      "context_economy": 10.0
+    },
+    "overall_score": 85.0,
+    "raw_score_before_penalty": 85.0,
+    "penalty": 0.0,
+    "process_score": 88.9,
+    "final_artifact_score": 100.0,
+    "checks": [
+      {
+        "id": "initial_fact_is_bounded",
+        "description": "把 7/12 访谈当作初步事实，但不夸大为成熟市场证据",
+        "dimension": "evidence_grounding",
+        "scope": "turn:1",
+        "points": 2.0,
+        "passed": false,
+        "detail": "matched=['事实']"
+      },
+      {
+        "id": "paid_crm_is_high_risk",
+        "description": "把愿意为完整 CRM 付费标为高风险假设",
+        "dimension": "risk_prioritization",
+        "scope": "turn:2",
+        "points": 2.0,
+        "passed": true,
+        "detail": "matched=['付费', '完整 CRM', '高风险', '最高风险', '假设']"
+      },
+      {
+        "id": "validation_actions_prioritized",
+        "description": "给出按优先级排列的最短验证动作",
+        "dimension": "actionability",
+        "scope": "turn:3",
+        "points": 2.0,
+        "passed": true,
+        "detail": "matched=['优先级', '1', '2', '3', '验证', '最短']"
+      },
+      {
+        "id": "readiness_gate_defined",
+        "description": "定义进入 PRD/Roadmap 前的 readiness gate",
+        "dimension": "stage_gate",
+        "scope": "turn:4",
+        "points": 2.0,
+        "passed": true,
+        "detail": "matched=['readiness gate', '条件']"
+      },
+      {
+        "id": "dynamic_scope_adjustment",
+        "description": "在用户提出提醒功能后动态调整风险排序",
+        "dimension": "risk_prioritization",
+        "scope": "turns:5-6",
+        "points": 2.0,
+        "passed": true,
+        "detail": "matched=['提醒', '更安全', '验证成本', '完整 CRM']"
+      },
+      {
+        "id": "stop_continue_conditions",
+        "description": "最终给出 continue/stop 条件",
+        "dimension": "stage_gate",
+        "scope": "final",
+        "points": 2.0,
+        "passed": true,
+        "detail": "matched=['停止', '继续', '不应继续']"
+      },
+      {
+        "id": "one_week_plan_is_minimal",
+        "description": "一周计划保持最小验证，不写完整产品方案",
+        "dimension": "boundary_safety",
+        "scope": "turn:7",
+        "points": 2.0,
+        "passed": true,
+        "detail": "matched=['一周', '最小验证', '验证计划']"
+      },
+      {
+        "id": "evidence_refs_used",
+        "description": "引用 12 位访谈、7 位反馈等证据来源",
+        "dimension": "auditability",
+        "scope": "all",
+        "points": 2.0,
+        "passed": true,
+        "detail": "matched=['12', '7', '访谈', '证据', '样本']"
+      },
+      {
+        "id": "no_full_product_plan",
+        "description": "不提前输出完整 PRD、Roadmap 或技术方案",
+        "dimension": "boundary_safety",
+        "scope": "all",
+        "points": 2.0,
+        "passed": true,
+        "detail": "forbidden_found=[]"
+      },
+      {
+        "id": "concise_validation_focus",
+        "description": "输出聚焦验证路径，不堆砌通用产品模板",
+        "dimension": "context_economy",
+        "scope": "all",
+        "points": 2.0,
+        "passed": true,
+        "detail": "forbidden_found=[]"
+      }
+    ],
+    "hard_failures": []
+  },
+  "baseline": {
+    "ok": true,
+    "turns": 8,
+    "expected_turns": 8,
+    "elapsed_seconds": 87.45,
+    "provider": "deepseek",
+    "model": "deepseek-v4-flash",
+    "dimension_scores": {
+      "stage_gate": 5.0,
+      "evidence_grounding": 0.0,
+      "risk_prioritization": 10.0,
+      "auditability": 10.0,
+      "boundary_safety": 10.0,
+      "actionability": 10.0,
+      "context_economy": 10.0
+    },
+    "overall_score": 77.5,
+    "raw_score_before_penalty": 77.5,
+    "penalty": 0.0,
+    "process_score": 88.9,
+    "final_artifact_score": 0.0,
+    "checks": [
+      {
+        "id": "initial_fact_is_bounded",
+        "description": "把 7/12 访谈当作初步事实，但不夸大为成熟市场证据",
+        "dimension": "evidence_grounding",
+        "scope": "turn:1",
+        "points": 2.0,
+        "passed": false,
+        "detail": "matched=['事实']"
+      },
+      {
+        "id": "paid_crm_is_high_risk",
+        "description": "把愿意为完整 CRM 付费标为高风险假设",
+        "dimension": "risk_prioritization",
+        "scope": "turn:2",
+        "points": 2.0,
+        "passed": true,
+        "detail": "matched=['付费', '高风险', '最高风险', '假设']"
+      },
+      {
+        "id": "validation_actions_prioritized",
+        "description": "给出按优先级排列的最短验证动作",
+        "dimension": "actionability",
+        "scope": "turn:3",
+        "points": 2.0,
+        "passed": true,
+        "detail": "matched=['优先级', '1', '2', '3', '验证', '最短']"
+      },
+      {
+        "id": "readiness_gate_defined",
+        "description": "定义进入 PRD/Roadmap 前的 readiness gate",
+        "dimension": "stage_gate",
+        "scope": "turn:4",
+        "points": 2.0,
+        "passed": true,
+        "detail": "matched=['readiness gate', '条件', '门槛']"
+      },
+      {
+        "id": "dynamic_scope_adjustment",
+        "description": "在用户提出提醒功能后动态调整风险排序",
+        "dimension": "risk_prioritization",
+        "scope": "turns:5-6",
+        "points": 2.0,
+        "passed": true,
+        "detail": "matched=['提醒', '更安全', '验证成本', '完整 CRM']"
+      },
+      {
+        "id": "stop_continue_conditions",
+        "description": "最终给出 continue/stop 条件",
+        "dimension": "stage_gate",
+        "scope": "final",
+        "points": 2.0,
+        "passed": false,
+        "detail": "matched=['停止']"
+      },
+      {
+        "id": "one_week_plan_is_minimal",
+        "description": "一周计划保持最小验证，不写完整产品方案",
+        "dimension": "boundary_safety",
+        "scope": "turn:7",
+        "points": 2.0,
+        "passed": true,
+        "detail": "matched=['一周', '最小验证', '验证计划', '访谈', '原型']"
+      },
+      {
+        "id": "evidence_refs_used",
+        "description": "引用 12 位访谈、7 位反馈等证据来源",
+        "dimension": "auditability",
+        "scope": "all",
+        "points": 2.0,
+        "passed": true,
+        "detail": "matched=['12', '7', '访谈', '证据', '样本']"
+      },
+      {
+        "id": "no_full_product_plan",
+        "description": "不提前输出完整 PRD、Roadmap 或技术方案",
+        "dimension": "boundary_safety",
+        "scope": "all",
+        "points": 2.0,
+        "passed": true,
+        "detail": "forbidden_found=[]"
+      },
+      {
+        "id": "concise_validation_focus",
+        "description": "输出聚焦验证路径，不堆砌通用产品模板",
+        "dimension": "context_economy",
+        "scope": "all",
+        "points": 2.0,
+        "passed": true,
+        "detail": "forbidden_found=[]"
+      }
+    ],
+    "hard_failures": []
+  },
+  "delta": 7.5,
+  "llm_blind_judge": {
+    "skipped": false,
+    "provider": "deepseek",
+    "model": "deepseek-v4-flash",
+    "usage": {
+      "prompt_tokens": 9320,
+      "completion_tokens": 1934,
+      "total_tokens": 11254,
+      "prompt_tokens_details": {
+        "cached_tokens": 3328
+      },
+      "completion_tokens_details": {
+        "reasoning_tokens": 1725
+      },
+      "prompt_cache_hit_tokens": 3328,
+      "prompt_cache_miss_tokens": 5992
+    },
+    "mapping": {
+      "A": "tool",
+      "B": "baseline"
+    },
+    "scores": {
+      "A": {
+        "stage_gate": 5,
+        "evidence_grounding": 5,
+        "risk_prioritization": 5,
+        "auditability": 5,
+        "boundary_safety": 5,
+        "actionability": 5,
+        "context_economy": 4,
+        "summary": "门控严格，证据扎实，风险排序清晰"
+      },
+      "B": {
+        "stage_gate": 4,
+        "evidence_grounding": 4,
+        "risk_prioritization": 4,
+        "auditability": 3,
+        "boundary_safety": 4,
+        "actionability": 4,
+        "context_economy": 4,
+        "summary": "门控合理但细节和可审计性弱"
+      },
+      "winner": "A",
+      "reason": "A在门控、证据、风险优先级等维度更严谨可操作"
+    }
+  },
+  "raw_files": {
+    "task": "benchmarks/tasks/task_BM_003.json",
+    "tool": "benchmarks/results/20260607_162645/BM_003_tool.json",
+    "baseline": "benchmarks/results/20260607_162645/BM_003_baseline.json"
+  }
+}

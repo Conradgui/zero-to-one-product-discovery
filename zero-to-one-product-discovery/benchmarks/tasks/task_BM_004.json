@@ -1,0 +1,157 @@
+{
+  "task_id": "BM_004",
+  "task_name": "证据足够后的克制规划测试",
+  "description": "用户逐步提供目标用户、痛点、MVP 范围、非目标、成功指标、访谈摘要和竞品差异，并明确授权进入规划。测试系统是否能产出 scoped PRD outline + Roadmap outline，而不引入未提供假设。",
+  "baseline_mode": "multi_turn_bare_model",
+  "max_tokens": 3000,
+  "timeout_seconds": 120,
+  "product_meaning": "验证 Z2O 不是只会保守拦截，而是在证据足够时能推进到可展示、可复盘的规划产物。",
+  "user_turns": [
+    "我们继续一个产品：给自由职业设计师用的轻量客户管理工具。目标用户是每天处理 3-5 个客户的自由职业设计师。",
+    "核心痛点：客户资料、报价、交付状态散落在微信、邮件、备忘录里。访谈 12 人，7 人提到找不到上次报价或忘记跟进。",
+    "MVP 只做客户档案、项目状态追踪、下一步提醒、报价记录手动录入。不做发票、不做合同、不做团队协作、不做自动解析 PDF。",
+    "成功指标：2 周试用里，5 位设计师能减少漏跟进或找报价时间。竞品：Notion 太需要自己搭，HoneyBook/Dubsado 太重。",
+    "我确认第一版不做 AI 自动解析，只做手动录入和提醒。请先复述你理解的范围和非目标。",
+    "补充一个约束：我希望这个作品适合作为 AIPM 面试项目展示，所以要能解释为什么先做小范围验证。",
+    "请给我一个 PRD outline，但只写已被证据支持或明确标为假设的内容。",
+    "请给我 Roadmap outline，分 Now / Next / Later，并说明每一阶段的 evidence gate。",
+    "请检查刚才的 PRD/Roadmap 有没有把非目标功能加回来，或者有没有把假设写成事实。",
+    "我明确确认进入规划。请输出最终 scoped PRD outline + Roadmap outline 的合并版，不要写技术栈，不要写完整实施计划。"
+  ],
+  "dimension_weights": {
+    "stage_gate": 15,
+    "evidence_grounding": 15,
+    "risk_prioritization": 15,
+    "auditability": 15,
+    "boundary_safety": 15,
+    "actionability": 15,
+    "context_economy": 10
+  },
+  "scoring_checks": [
+    {
+      "id": "turn5_restates_scope",
+      "description": "第 5 轮正确复述范围和非目标",
+      "dimension": "evidence_grounding",
+      "scope": "turn:5",
+      "type": "min_matches",
+      "markers": ["客户档案", "项目状态", "提醒", "报价", "不做发票", "不做合同", "团队协作", "自动解析"],
+      "min_match": 5,
+      "points": 2
+    },
+    {
+      "id": "turn7_prd_outline",
+      "description": "第 7 轮产出 PRD outline，且区分证据支持和假设",
+      "dimension": "actionability",
+      "scope": "turn:7",
+      "type": "min_matches",
+      "markers": ["PRD", "outline", "目标用户", "MVP", "成功指标", "假设", "证据"],
+      "min_match": 4,
+      "points": 2
+    },
+    {
+      "id": "turn8_roadmap_with_gates",
+      "description": "第 8 轮产出 Now/Next/Later Roadmap 和 evidence gate",
+      "dimension": "risk_prioritization",
+      "scope": "turn:8",
+      "type": "min_matches",
+      "markers": ["Now", "Next", "Later", "evidence gate", "验证", "阶段"],
+      "min_match": 4,
+      "points": 2
+    },
+    {
+      "id": "turn9_self_audit",
+      "description": "第 9 轮自检非目标外溢和事实/假设混淆",
+      "dimension": "auditability",
+      "scope": "turn:9",
+      "type": "min_matches",
+      "markers": ["自检", "非目标", "假设", "事实", "没有加回", "未引入"],
+      "min_match": 3,
+      "points": 2
+    },
+    {
+      "id": "final_contains_prd_and_roadmap",
+      "description": "最终合并版同时包含 scoped PRD outline 和 Roadmap outline",
+      "dimension": "actionability",
+      "scope": "final",
+      "type": "min_matches",
+      "markers": ["scoped PRD", "PRD outline", "Roadmap", "Now", "Next", "Later"],
+      "min_match": 3,
+      "points": 2
+    },
+    {
+      "id": "final_references_evidence",
+      "description": "最终输出引用前置证据：12 人访谈、7 人反馈、2 周试用、5 位设计师",
+      "dimension": "evidence_grounding",
+      "scope": "final",
+      "type": "min_matches",
+      "markers": ["12", "7", "2 周", "5 位", "访谈", "证据"],
+      "min_match": 3,
+      "points": 2
+    },
+    {
+      "id": "final_preserves_non_goals",
+      "description": "最终输出保留非目标边界",
+      "dimension": "boundary_safety",
+      "scope": "final",
+      "type": "min_matches",
+      "markers": ["非目标", "不做发票", "不做合同", "不做团队协作", "不做自动解析", "不写技术栈"],
+      "min_match": 3,
+      "points": 2
+    },
+    {
+      "id": "no_implementation_plan",
+      "description": "最终不进入完整实施计划或技术栈锁定",
+      "dimension": "boundary_safety",
+      "scope": "final",
+      "type": "forbidden_absent",
+      "forbidden_markers": ["技术栈：", "数据库设计", "API 设计", "Implementation Plan:", "Sprint 任务拆解"],
+      "points": 2
+    },
+    {
+      "id": "stage_gate_allows_planning_after_authorization",
+      "description": "最终在用户明确授权后进入规划，而不是继续只追问",
+      "dimension": "stage_gate",
+      "scope": "final",
+      "type": "min_matches",
+      "markers": ["已确认", "进入规划", "可以进入", "合并版", "基于已提供材料"],
+      "min_match": 1,
+      "points": 2
+    },
+    {
+      "id": "scoped_not_template_dump",
+      "description": "最终是 scoped outline，不是泛化大而全模板",
+      "dimension": "context_economy",
+      "scope": "final",
+      "type": "min_matches",
+      "markers": ["scope", "范围", "非目标", "evidence gate", "小范围验证"],
+      "min_match": 2,
+      "points": 2
+    },
+    {
+      "id": "auditability_has_gate_language",
+      "description": "Roadmap 阶段含 evidence gate 或 readiness 语言",
+      "dimension": "auditability",
+      "scope": "final",
+      "type": "min_matches",
+      "markers": ["evidence gate", "readiness", "验证", "证据", "进入条件"],
+      "min_match": 2,
+      "points": 2
+    }
+  ],
+  "hard_failures": [
+    {
+      "id": "still_only_questions_after_authorized",
+      "description": "第 10 轮明确授权后仍只追问、不产出规划材料",
+      "scope": "final",
+      "markers": ["我还需要先问", "还不能进入规划", "请先回答一个问题"],
+      "penalty": 20
+    },
+    {
+      "id": "invented_tech_or_business",
+      "description": "引入用户未提供的技术栈、商业模式或完整实施计划",
+      "scope": "final",
+      "markers": ["技术栈：React", "技术栈: React", "Node.js +", "PostgreSQL", "订阅制商业模式", "完整实施计划如下"],
+      "penalty": 20
+    }
+  ]
+}

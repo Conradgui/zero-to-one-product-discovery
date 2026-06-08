@@ -161,7 +161,9 @@ When the Risk Map shows items with `impact_if_wrong` of "critical" or "high" tha
 | Planning artifacts are confirmed and engineering handoff is needed | Implementation Plan contract | Decision-complete implementation plan | Reopening product strategy without a contradiction |
 | Artifact or plan needs critique | Review contract | Findings, blockers, risks, suggested changes | Style-only objections as blockers |
 | Quick Mode activated with sufficient materials and user requests artifact draft | Respective artifact contract in Quick Mode | Draft artifact with `[Fact]` / `[Assumption]` / `[Unknown]` labels and Evidence Gap Summary | Unlabeled final artifacts, Implementation Planning |
-| Review-ready Implementation Plan exists and user requests execution handoff | Execution Bridge contract | Converted tasks in target format with evidence labels | Modifying Implementation Plan content, bypassing Implementation Planning |
+| Review-ready Implementation Plan exists and user requests execution handoff | Execution Bridge contract | Host-executable dry-run handoff with evidence labels | Modifying Implementation Plan content, bypassing Implementation Planning, creating external issues directly |
+| Accepted, review-ready, or explicitly marked Quick Mode draft artifacts exist and user requests export/package/workbench | Artifact Export contract | Stable file package with ready/not-ready markers, Quick Mode draft markers, and manifest guard fields | Inventing missing artifact content, dropping Quick Mode labels, storing full transcript in Workbench, packaging export state in skill zip |
+| Stable artifacts have been exported and user requests artifact diff or revision history | Revision Trace contract | Bounded revision ledger with hashes, diff files, and Controller-linked rationale | Storing full transcript/history, replacing stable artifact paths, treating revision count as maturity |
 
 ### Quick Mode Grounding Rules
 
@@ -172,6 +174,7 @@ When Quick Mode is active, the grounding contract is relaxed but not eliminated:
 - The Entry Gate is evaluated but does not block — instead, ungrounded inputs are labeled and listed in the Evidence Gap Summary.
 - The Grounding Contract table still applies: if an input is missing, the corresponding section is labeled `[Unknown]` rather than omitted or invented.
 - Implementation Planning is excluded from Quick Mode. It requires review-ready planning artifacts regardless of mode.
+- If a Quick Mode draft is exported before Standard Exploration validates it, the file keeps a `QUICK_MODE_DRAFT` top marker and the manifest uses `content_mode: quick_mode_draft`.
 
 ## Agent Work Order / Child Skill Handoff Packet
 

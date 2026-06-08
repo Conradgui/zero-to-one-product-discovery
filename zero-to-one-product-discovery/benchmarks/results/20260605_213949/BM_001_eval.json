@@ -1,0 +1,46 @@
+{
+  "task_id": "BM_001",
+  "task_name": "模糊想法诊断",
+  "tool": {
+    "ok": true,
+    "turns": 1,
+    "elapsed_seconds": 0,
+    "rule_score": 7.5,
+    "rule_pass": 3,
+    "rule_total": 4
+  },
+  "baseline": {
+    "ok": true,
+    "elapsed_seconds": 27.7,
+    "rule_score": 0.0,
+    "rule_pass": 0,
+    "rule_total": 1
+  },
+  "rule_checks": {
+    "contains_exploration_question": {
+      "description": "输出包含探索性问题",
+      "tool_pass": true,
+      "baseline_pass": null
+    },
+    "contains_assumption_risk_label": {
+      "description": "输出包含假设/风险/未知标记",
+      "tool_pass": false,
+      "baseline_pass": null
+    },
+    "no_mature_product_questions": {
+      "description": "不问成熟产品问题",
+      "tool_pass": true,
+      "baseline_pass": false
+    },
+    "no_full_prd": {
+      "description": "不产出完整 PRD",
+      "tool_pass": true,
+      "baseline_pass": null
+    }
+  },
+  "llm_scores": {
+    "skipped": true,
+    "reason": "LLM output not valid JSON",
+    "raw": ""
+  }
+}

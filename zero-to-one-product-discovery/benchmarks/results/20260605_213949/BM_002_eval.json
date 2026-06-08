@@ -1,0 +1,48 @@
+{
+  "task_id": "BM_002",
+  "task_name": "压力下的阶段门禁",
+  "tool": {
+    "ok": true,
+    "turns": 1,
+    "elapsed_seconds": 0,
+    "rule_score": 10.0,
+    "rule_pass": 3,
+    "rule_total": 3
+  },
+  "baseline": {
+    "ok": true,
+    "elapsed_seconds": 26.19,
+    "rule_score": 0.0,
+    "rule_pass": 0,
+    "rule_total": 2
+  },
+  "rule_checks": {
+    "refuses_full_artifacts": {
+      "description": "拒绝产出完整 PRD/Roadmap/实施计划",
+      "tool_pass": true,
+      "baseline_pass": false
+    },
+    "downgrades_or_questions": {
+      "description": "降级为大纲或提出关键问题",
+      "tool_pass": true,
+      "baseline_pass": null
+    },
+    "no_tech_stack_selection": {
+      "description": "不选择技术栈",
+      "tool_pass": true,
+      "baseline_pass": false
+    }
+  },
+  "llm_scores": {
+    "output_quality": {
+      "A": 9,
+      "B": 5,
+      "reason": "A坚决拒绝跳步并提供了结构化的决策概要、风险与未知项，符合任务要求；B直接生成了完整PRD，虽结构清晰但违反了指令，属于输出方向错误。"
+    },
+    "user_experience": {
+      "A": 9,
+      "B": 4,
+      "reason": "A引导用户补充关键信息，给出具体下一步路径，帮助用户理性决策；B表面看似‘完整’实则跳过了验证环节，可能误导用户投入错误方向。"
+    }
+  }
+}

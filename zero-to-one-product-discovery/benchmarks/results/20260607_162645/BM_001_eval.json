@@ -1,0 +1,236 @@
+{
+  "task_id": "BM_001",
+  "task_name": "阶段门禁压力测试",
+  "description": "用户只有一句早期想法，却强压要求完整 PRD、Roadmap、用户故事、技术栈和实施计划。测试系统是否拒绝伪 final，并降级为证据缺口或决策面。",
+  "baseline_mode": "single_turn_pressure",
+  "turn_count": 1,
+  "product_meaning": "回答面试官最常问的问题：为什么这个工具比直接问 AI 写 PRD 更可靠。",
+  "tool": {
+    "ok": true,
+    "turns": 1,
+    "expected_turns": 1,
+    "elapsed_seconds": 26.42,
+    "provider": "deepseek",
+    "model": "deepseek-v4-flash",
+    "dimension_scores": {
+      "stage_gate": 10.0,
+      "evidence_grounding": 10.0,
+      "risk_prioritization": 0.0,
+      "auditability": 10.0,
+      "boundary_safety": 10.0,
+      "actionability": 10.0,
+      "context_economy": 10.0
+    },
+    "overall_score": 85.0,
+    "raw_score_before_penalty": 85.0,
+    "penalty": 0.0,
+    "process_score": null,
+    "final_artifact_score": 85.7,
+    "checks": [
+      {
+        "id": "downgrade_instead_of_final",
+        "description": "把请求降级为 outline、决策面、证据缺口或阻塞问题",
+        "dimension": "stage_gate",
+        "scope": "final",
+        "points": 2.0,
+        "passed": true,
+        "detail": "matched=['大纲']"
+      },
+      {
+        "id": "separates_evidence_states",
+        "description": "区分事实、假设、未知或风险",
+        "dimension": "evidence_grounding",
+        "scope": "final",
+        "points": 2.0,
+        "passed": true,
+        "detail": "matched=['假设', '未知', '证据']"
+      },
+      {
+        "id": "names_core_risk",
+        "description": "指出早期想法的核心风险或最危险假设",
+        "dimension": "risk_prioritization",
+        "scope": "final",
+        "points": 2.0,
+        "passed": false,
+        "detail": "matched=[]"
+      },
+      {
+        "id": "mentions_auditability",
+        "description": "说明需要证据、验证或可追踪输入后再产物化",
+        "dimension": "auditability",
+        "scope": "final",
+        "points": 2.0,
+        "passed": true,
+        "detail": "matched=['证据', '验证', '访谈', '来源']"
+      },
+      {
+        "id": "no_final_artifact_heading",
+        "description": "不把输出包装成完整/最终产物",
+        "dimension": "boundary_safety",
+        "scope": "final",
+        "points": 2.0,
+        "passed": true,
+        "detail": "forbidden_found=[]"
+      },
+      {
+        "id": "one_high_leverage_next_step",
+        "description": "给出一个最高杠杆问题或最小验证动作",
+        "dimension": "actionability",
+        "scope": "final",
+        "points": 2.0,
+        "passed": true,
+        "detail": "matched=['先验证']"
+      },
+      {
+        "id": "not_template_dump",
+        "description": "避免输出长篇模板化 PRD/roadmap/backlog",
+        "dimension": "context_economy",
+        "scope": "final",
+        "points": 2.0,
+        "passed": true,
+        "detail": "forbidden_found=[]"
+      }
+    ],
+    "hard_failures": []
+  },
+  "baseline": {
+    "ok": true,
+    "turns": 1,
+    "expected_turns": 1,
+    "elapsed_seconds": 25.34,
+    "provider": "deepseek",
+    "model": "deepseek-v4-flash",
+    "dimension_scores": {
+      "stage_gate": 0.0,
+      "evidence_grounding": 0.0,
+      "risk_prioritization": 0.0,
+      "auditability": 10.0,
+      "boundary_safety": 10.0,
+      "actionability": 10.0,
+      "context_economy": 10.0
+    },
+    "overall_score": 55.0,
+    "raw_score_before_penalty": 55.0,
+    "penalty": 0.0,
+    "process_score": null,
+    "final_artifact_score": 57.1,
+    "checks": [
+      {
+        "id": "downgrade_instead_of_final",
+        "description": "把请求降级为 outline、决策面、证据缺口或阻塞问题",
+        "dimension": "stage_gate",
+        "scope": "final",
+        "points": 2.0,
+        "passed": false,
+        "detail": "matched=[]"
+      },
+      {
+        "id": "separates_evidence_states",
+        "description": "区分事实、假设、未知或风险",
+        "dimension": "evidence_grounding",
+        "scope": "final",
+        "points": 2.0,
+        "passed": false,
+        "detail": "matched=['假设', '风险']"
+      },
+      {
+        "id": "names_core_risk",
+        "description": "指出早期想法的核心风险或最危险假设",
+        "dimension": "risk_prioritization",
+        "scope": "final",
+        "points": 2.0,
+        "passed": false,
+        "detail": "matched=[]"
+      },
+      {
+        "id": "mentions_auditability",
+        "description": "说明需要证据、验证或可追踪输入后再产物化",
+        "dimension": "auditability",
+        "scope": "final",
+        "points": 2.0,
+        "passed": true,
+        "detail": "matched=['来源']"
+      },
+      {
+        "id": "no_final_artifact_heading",
+        "description": "不把输出包装成完整/最终产物",
+        "dimension": "boundary_safety",
+        "scope": "final",
+        "points": 2.0,
+        "passed": true,
+        "detail": "forbidden_found=[]"
+      },
+      {
+        "id": "one_high_leverage_next_step",
+        "description": "给出一个最高杠杆问题或最小验证动作",
+        "dimension": "actionability",
+        "scope": "final",
+        "points": 2.0,
+        "passed": true,
+        "detail": "matched=['下一步']"
+      },
+      {
+        "id": "not_template_dump",
+        "description": "避免输出长篇模板化 PRD/roadmap/backlog",
+        "dimension": "context_economy",
+        "scope": "final",
+        "points": 2.0,
+        "passed": true,
+        "detail": "forbidden_found=[]"
+      }
+    ],
+    "hard_failures": []
+  },
+  "delta": 30.0,
+  "llm_blind_judge": {
+    "skipped": false,
+    "provider": "deepseek",
+    "model": "deepseek-v4-flash",
+    "usage": {
+      "prompt_tokens": 8540,
+      "completion_tokens": 1049,
+      "total_tokens": 9589,
+      "prompt_tokens_details": {
+        "cached_tokens": 2560
+      },
+      "completion_tokens_details": {
+        "reasoning_tokens": 863
+      },
+      "prompt_cache_hit_tokens": 2560,
+      "prompt_cache_miss_tokens": 5980
+    },
+    "mapping": {
+      "A": "tool",
+      "B": "baseline"
+    },
+    "scores": {
+      "A": {
+        "stage_gate": 9,
+        "evidence_grounding": 9,
+        "risk_prioritization": 8,
+        "auditability": 9,
+        "boundary_safety": 9,
+        "actionability": 7,
+        "context_economy": 8,
+        "summary": "合规降级草案，明确证据缺口"
+      },
+      "B": {
+        "stage_gate": 1,
+        "evidence_grounding": 1,
+        "risk_prioritization": 2,
+        "auditability": 1,
+        "boundary_safety": 2,
+        "actionability": 3,
+        "context_economy": 2,
+        "summary": "直接输出伪final，未拒且无标记"
+      },
+      "winner": "A",
+      "reason": "A严格遵循阶段门禁并标注假设，B违反规则包装成final"
+    }
+  },
+  "raw_files": {
+    "task": "benchmarks/tasks/task_BM_001.json",
+    "tool": "benchmarks/results/20260607_162645/BM_001_tool.json",
+    "baseline": "benchmarks/results/20260607_162645/BM_001_baseline.json"
+  }
+}

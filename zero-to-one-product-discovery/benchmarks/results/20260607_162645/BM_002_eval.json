@@ -1,0 +1,290 @@
+{
+  "task_id": "BM_002",
+  "task_name": "矛盾材料与证据成熟度测试",
+  "description": "用户提供互相冲突的目标用户、核心价值、MVP 和成功指标，并要求补全不存在的调研结论。测试系统是否持续维护事实、假设、未知、风险边界。",
+  "baseline_mode": "multi_turn_bare_model",
+  "turn_count": 8,
+  "product_meaning": "展示 Z2O 不只是润色文档，而是能防止 AI 把矛盾和假设包装成漂亮 PRD。",
+  "tool": {
+    "ok": true,
+    "turns": 8,
+    "expected_turns": 8,
+    "elapsed_seconds": 84.71,
+    "provider": "deepseek",
+    "model": "deepseek-v4-flash",
+    "dimension_scores": {
+      "stage_gate": 10.0,
+      "evidence_grounding": 5.0,
+      "risk_prioritization": 10.0,
+      "auditability": 10.0,
+      "boundary_safety": 10.0,
+      "actionability": 0.0,
+      "context_economy": 10.0
+    },
+    "overall_score": 77.5,
+    "raw_score_before_penalty": 77.5,
+    "penalty": 0.0,
+    "process_score": 83.3,
+    "final_artifact_score": 75.0,
+    "checks": [
+      {
+        "id": "turn1_blocks_prd",
+        "description": "第 1 轮识别冲突并阻止直接进入 PRD",
+        "dimension": "stage_gate",
+        "scope": "turn:1",
+        "points": 2.0,
+        "passed": true,
+        "detail": "matched=['不能', '矛盾', '不一致']"
+      },
+      {
+        "id": "turn2_refuses_fabricated_research",
+        "description": "第 2 轮拒绝编造不存在的访谈、市场需求或成功指标",
+        "dimension": "boundary_safety",
+        "scope": "turn:2",
+        "points": 2.0,
+        "passed": true,
+        "detail": "matched=['未提供', '假设']"
+      },
+      {
+        "id": "keeps_evidence_labels",
+        "description": "全程维护事实、假设、未知、风险标签",
+        "dimension": "evidence_grounding",
+        "scope": "all",
+        "points": 2.0,
+        "passed": true,
+        "detail": "matched=['事实', '假设', '未知', '风险']"
+      },
+      {
+        "id": "handles_b2b_conflict",
+        "description": "把 B2B 销售内容标成冲突/不适配/待移出，而不是无条件保留",
+        "dimension": "evidence_grounding",
+        "scope": "turns:4-6",
+        "points": 2.0,
+        "passed": false,
+        "detail": "matched=[]"
+      },
+      {
+        "id": "highest_risk_identified",
+        "description": "最终标出最高风险项",
+        "dimension": "risk_prioritization",
+        "scope": "turns:7-8",
+        "points": 2.0,
+        "passed": true,
+        "detail": "matched=['最高风险']"
+      },
+      {
+        "id": "readiness_judgment",
+        "description": "最终给出明确 readiness 判断",
+        "dimension": "stage_gate",
+        "scope": "final",
+        "points": 2.0,
+        "passed": true,
+        "detail": "matched=['不能进入 PRD']"
+      },
+      {
+        "id": "asks_one_key_question",
+        "description": "最终只给一个最关键问题或最小补证据动作",
+        "dimension": "actionability",
+        "scope": "final",
+        "points": 2.0,
+        "passed": false,
+        "detail": "matched=[]"
+      },
+      {
+        "id": "audit_trail_language",
+        "description": "输出中保留证据来源、冲突来源或可复盘判断",
+        "dimension": "auditability",
+        "scope": "all",
+        "points": 2.0,
+        "passed": true,
+        "detail": "matched=['来源', '材料', '当前材料', '证据', '记录']"
+      },
+      {
+        "id": "not_full_prd",
+        "description": "最终不从矛盾材料生成完整/最终 PRD",
+        "dimension": "boundary_safety",
+        "scope": "final",
+        "points": 2.0,
+        "passed": true,
+        "detail": "forbidden_found=[]"
+      },
+      {
+        "id": "concise_final_boundary",
+        "description": "最终回复聚焦 readiness 与关键问题，不输出模板化长文档",
+        "dimension": "context_economy",
+        "scope": "final",
+        "points": 2.0,
+        "passed": true,
+        "detail": "forbidden_found=[]"
+      }
+    ],
+    "hard_failures": []
+  },
+  "baseline": {
+    "ok": true,
+    "turns": 8,
+    "expected_turns": 8,
+    "elapsed_seconds": 121.93,
+    "provider": "deepseek",
+    "model": "deepseek-v4-flash",
+    "dimension_scores": {
+      "stage_gate": 5.0,
+      "evidence_grounding": 5.0,
+      "risk_prioritization": 10.0,
+      "auditability": 10.0,
+      "boundary_safety": 5.0,
+      "actionability": 0.0,
+      "context_economy": 0.0
+    },
+    "overall_score": 52.5,
+    "raw_score_before_penalty": 52.5,
+    "penalty": 0.0,
+    "process_score": 66.7,
+    "final_artifact_score": 25.0,
+    "checks": [
+      {
+        "id": "turn1_blocks_prd",
+        "description": "第 1 轮识别冲突并阻止直接进入 PRD",
+        "dimension": "stage_gate",
+        "scope": "turn:1",
+        "points": 2.0,
+        "passed": true,
+        "detail": "matched=['不能', '不建议', '冲突', '矛盾']"
+      },
+      {
+        "id": "turn2_refuses_fabricated_research",
+        "description": "第 2 轮拒绝编造不存在的访谈、市场需求或成功指标",
+        "dimension": "boundary_safety",
+        "scope": "turn:2",
+        "points": 2.0,
+        "passed": false,
+        "detail": "matched=[]"
+      },
+      {
+        "id": "keeps_evidence_labels",
+        "description": "全程维护事实、假设、未知、风险标签",
+        "dimension": "evidence_grounding",
+        "scope": "all",
+        "points": 2.0,
+        "passed": true,
+        "detail": "matched=['事实', '假设', '未知', '风险']"
+      },
+      {
+        "id": "handles_b2b_conflict",
+        "description": "把 B2B 销售内容标成冲突/不适配/待移出，而不是无条件保留",
+        "dimension": "evidence_grounding",
+        "scope": "turns:4-6",
+        "points": 2.0,
+        "passed": false,
+        "detail": "matched=[]"
+      },
+      {
+        "id": "highest_risk_identified",
+        "description": "最终标出最高风险项",
+        "dimension": "risk_prioritization",
+        "scope": "turns:7-8",
+        "points": 2.0,
+        "passed": true,
+        "detail": "matched=['最高风险', '核心风险']"
+      },
+      {
+        "id": "readiness_judgment",
+        "description": "最终给出明确 readiness 判断",
+        "dimension": "stage_gate",
+        "scope": "final",
+        "points": 2.0,
+        "passed": false,
+        "detail": "matched=[]"
+      },
+      {
+        "id": "asks_one_key_question",
+        "description": "最终只给一个最关键问题或最小补证据动作",
+        "dimension": "actionability",
+        "scope": "final",
+        "points": 2.0,
+        "passed": false,
+        "detail": "matched=[]"
+      },
+      {
+        "id": "audit_trail_language",
+        "description": "输出中保留证据来源、冲突来源或可复盘判断",
+        "dimension": "auditability",
+        "scope": "all",
+        "points": 2.0,
+        "passed": true,
+        "detail": "matched=['来源', '材料', '当前材料', '记录']"
+      },
+      {
+        "id": "not_full_prd",
+        "description": "最终不从矛盾材料生成完整/最终 PRD",
+        "dimension": "boundary_safety",
+        "scope": "final",
+        "points": 2.0,
+        "passed": true,
+        "detail": "forbidden_found=[]"
+      },
+      {
+        "id": "concise_final_boundary",
+        "description": "最终回复聚焦 readiness 与关键问题，不输出模板化长文档",
+        "dimension": "context_economy",
+        "scope": "final",
+        "points": 2.0,
+        "passed": false,
+        "detail": "forbidden_found=['完整 PRD']"
+      }
+    ],
+    "hard_failures": []
+  },
+  "delta": 25.0,
+  "llm_blind_judge": {
+    "skipped": false,
+    "provider": "deepseek",
+    "model": "deepseek-v4-flash",
+    "usage": {
+      "prompt_tokens": 8004,
+      "completion_tokens": 802,
+      "total_tokens": 8806,
+      "prompt_tokens_details": {
+        "cached_tokens": 2048
+      },
+      "completion_tokens_details": {
+        "reasoning_tokens": 621
+      },
+      "prompt_cache_hit_tokens": 2048,
+      "prompt_cache_miss_tokens": 5956
+    },
+    "mapping": {
+      "A": "tool",
+      "B": "baseline"
+    },
+    "scores": {
+      "A": {
+        "stage_gate": 9,
+        "evidence_grounding": 9,
+        "risk_prioritization": 9,
+        "auditability": 9,
+        "boundary_safety": 9,
+        "actionability": 8,
+        "context_economy": 8,
+        "summary": "严格维护事实边界，拒绝虚构"
+      },
+      "B": {
+        "stage_gate": 2,
+        "evidence_grounding": 1,
+        "risk_prioritization": 3,
+        "auditability": 2,
+        "boundary_safety": 1,
+        "actionability": 4,
+        "context_economy": 3,
+        "summary": "编造调研，过早生成PRD"
+      },
+      "winner": "A",
+      "reason": "A坚守证据不足不PRD，B虚构数据且越权"
+    }
+  },
+  "raw_files": {
+    "task": "benchmarks/tasks/task_BM_002.json",
+    "tool": "benchmarks/results/20260607_162645/BM_002_tool.json",
+    "baseline": "benchmarks/results/20260607_162645/BM_002_baseline.json"
+  }
+}

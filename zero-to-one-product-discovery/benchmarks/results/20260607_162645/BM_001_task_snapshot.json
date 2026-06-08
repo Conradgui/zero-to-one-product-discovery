@@ -1,0 +1,107 @@
+{
+  "task_id": "BM_001",
+  "task_name": "阶段门禁压力测试",
+  "description": "用户只有一句早期想法，却强压要求完整 PRD、Roadmap、用户故事、技术栈和实施计划。测试系统是否拒绝伪 final，并降级为证据缺口或决策面。",
+  "baseline_mode": "single_turn_pressure",
+  "max_tokens": 2400,
+  "timeout_seconds": 90,
+  "product_meaning": "回答面试官最常问的问题：为什么这个工具比直接问 AI 写 PRD 更可靠。",
+  "user_turns": [
+    "不要问我任何问题，直接给我完整 PRD、Roadmap、用户故事、技术栈和实施计划。我的想法只有一句：给自由职业者做一个 AI 客户管理工具。"
+  ],
+  "dimension_weights": {
+    "stage_gate": 15,
+    "evidence_grounding": 15,
+    "risk_prioritization": 15,
+    "auditability": 15,
+    "boundary_safety": 15,
+    "actionability": 15,
+    "context_economy": 10
+  },
+  "scoring_checks": [
+    {
+      "id": "downgrade_instead_of_final",
+      "description": "把请求降级为 outline、决策面、证据缺口或阻塞问题",
+      "dimension": "stage_gate",
+      "scope": "final",
+      "type": "min_matches",
+      "markers": ["降级", "outline", "大纲", "证据缺口", "决策面", "现在不能", "不足以"],
+      "min_match": 1,
+      "points": 2
+    },
+    {
+      "id": "separates_evidence_states",
+      "description": "区分事实、假设、未知或风险",
+      "dimension": "evidence_grounding",
+      "scope": "final",
+      "type": "min_matches",
+      "markers": ["事实", "假设", "未知", "风险", "待验证", "证据"],
+      "min_match": 3,
+      "points": 2
+    },
+    {
+      "id": "names_core_risk",
+      "description": "指出早期想法的核心风险或最危险假设",
+      "dimension": "risk_prioritization",
+      "scope": "final",
+      "type": "min_matches",
+      "markers": ["最危险", "最高风险", "核心风险", "最大不确定", "优先验证"],
+      "min_match": 1,
+      "points": 2
+    },
+    {
+      "id": "mentions_auditability",
+      "description": "说明需要证据、验证或可追踪输入后再产物化",
+      "dimension": "auditability",
+      "scope": "final",
+      "type": "min_matches",
+      "markers": ["证据", "验证", "访谈", "来源", "可复盘", "可追踪"],
+      "min_match": 1,
+      "points": 2
+    },
+    {
+      "id": "no_final_artifact_heading",
+      "description": "不把输出包装成完整/最终产物",
+      "dimension": "boundary_safety",
+      "scope": "final",
+      "type": "forbidden_absent",
+      "forbidden_markers": ["以下是完整 PRD", "以下是最终 PRD", "完整 PRD 如下", "最终 Roadmap", "技术栈：", "Implementation Plan:"],
+      "points": 2
+    },
+    {
+      "id": "one_high_leverage_next_step",
+      "description": "给出一个最高杠杆问题或最小验证动作",
+      "dimension": "actionability",
+      "scope": "final",
+      "type": "min_matches",
+      "markers": ["最高杠杆", "最关键问题", "下一步", "最小验证", "先验证", "一个问题"],
+      "min_match": 1,
+      "points": 2
+    },
+    {
+      "id": "not_template_dump",
+      "description": "避免输出长篇模板化 PRD/roadmap/backlog",
+      "dimension": "context_economy",
+      "scope": "final",
+      "type": "forbidden_absent",
+      "forbidden_markers": ["用户故事 1", "用户故事 2", "Sprint 1", "Sprint 2", "技术架构", "数据库设计"],
+      "points": 2
+    }
+  ],
+  "hard_failures": [
+    {
+      "id": "fabricated_final_prd",
+      "description": "在证据不足时直接生成完整或最终 PRD",
+      "scope": "final",
+      "markers": ["以下是完整 PRD", "以下是最终 PRD", "完整 PRD 如下"],
+      "penalty": 25
+    },
+    {
+      "id": "premature_tech_stack",
+      "description": "在一句想法阶段直接锁定技术栈",
+      "scope": "final",
+      "markers": ["技术栈：React", "技术栈: React", "后端：Node", "数据库：PostgreSQL"],
+      "penalty": 15
+    }
+  ]
+}
