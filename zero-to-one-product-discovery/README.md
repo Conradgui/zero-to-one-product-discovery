@@ -19,6 +19,8 @@
 
 Boundary: 以上结论限定在当前任务集和本次 DeepSeek 运行条件下，不代表 release-grade validation、长期真实用户留存、商业化验证或跨模型全面优越性。BM_004 v1 打平、BM_005 盲评偏 Baseline 均保留为后续迭代证据。
 
+## 用户路径图：P0 主流程
+
 下图展示用户从模糊想法进入产品发现，到证据推进、阶段门禁、规划产物和可审计导出的 P0 主路径。核心设计点是：证据不足时降级或补证据，而不是把草稿包装成 final。
 
 ```mermaid
@@ -573,6 +575,8 @@ flowchart LR
 ## Multi-Agent Model
 
 这个 skill 的多 agent 设计保持平台无关，不要求特定客户端支持真实子代理。实现时可以是真实 subagent，也可以是同一 agent 内的专业角色模拟。入口文档见 `agents/README.md`，完整协议见 `references/multi-agent-orchestration.md`。
+
+## 项目架构图
 
 下图展示 Z2O 的顶层控制架构：用户只看到一个主 workflow，内部通过 Controller、Producer、Auditor、Workbench、合约层和测试层共同约束产物升级、导出和执行交接。
 

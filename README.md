@@ -2,9 +2,233 @@
 
 `zero-to-one-product-discovery` 是一个面向早期产品想法的 AI workflow skill：从一句模糊想法开始，逐步完成问题澄清、材料吸收、MVP 假设、规划产物和实施准备。
 
-它适合个人开源项目、作品集项目、内部工具、side project 和 startup MVP 的早期探索。核心目标不是"快速套一个 PRD 模板"，而是防止 AI 在证据不足时过早进入 PRD、Roadmap、ADR 或编码阶段。
+它适合新产品、新功能、内部工具、业务创新项目、side project 和 startup MVP 的早期探索。核心目标不是"快速套一个 PRD 模板"，而是防止 AI 在证据不足时过早进入 PRD、Roadmap、ADR 或编码阶段。
 
 > Status: `v0.4.0-rc.4 Control Surface Hardening RC`。这是可安装、可展示的 release-candidate 版本：在 `v0.4.0-rc.3` 的 bounded Artifact Revision Ledger 基础上，新增 Controller action registry、Workbench 原子持久化脚本、Evidence Snapshot 一致性校验和 Artifact Export guardrails；仍不声明 release-grade validation、production stability 或跨模型全面优越性。
+
+## Current Evidence Snapshot
+
+2026-06 Codex 证据链重跑基于手册重新执行 Phase 1-6，旧 Claude Code 材料只做历史归档，不作为主证据。
+
+| Evidence | Result | What It Supports |
+|---|---|---|
+| Quality Tests | `./tests/run_tests.sh unit` -> 71 tests passed | 本地 schema、状态、导出、执行交接和 revision ledger 边界可被机械验证 |
+| Real Usability Tests | DeepSeek `deepseek-v4-flash` 跑通 6/6 条 P0 路径 | P0 主路径在真实 API 下行为层可用；P0_004 仍只声明为规划前澄清通过 |
+| Main Benchmark | 5 个真实 API 任务：Tool 87.2 / Baseline 71.7，delta +15.5 | 当前任务集下，Z2O 比同模型裸对话更稳定地保留阶段门禁、证据标签和边界控制 |
+| BM_004_v2 addendum | Tool 95.6 / Baseline 35.0，delta +60.6 | 当完整 child-skill / adapter / routing reference 启用时，Tool 更稳定地产出可审计 contract 字段 |
+
+Boundary: 以上结论限定在当前任务集和本次 DeepSeek 运行条件下，不代表 release-grade validation、长期真实用户留存、商业化验证或跨模型全面优越性。BM_004 v1 打平、BM_005 盲评偏 Baseline 均保留为后续迭代证据。
+
+## 用户路径图：P0 主流程
+
+下图展示用户从模糊想法进入产品发现，到证据推进、阶段门禁、规划产物和可审计导出的 P0 主路径。核心设计点是：证据不足时降级或补证据，而不是把草稿包装成 final。
+
+```mermaid
+%% 本图覆盖：P0_001, P0_002, P0_003, P0_004, P0_005, P0_006
+flowchart LR
+    IDEA_START([用户带着早期想法])
+    MATERIAL_CHECK{已有材料？}
+    DIAGNOSTIC[生成事实/假设/风险/未知]
+    MATERIAL_REVIEW[吸收材料并识别矛盾]
+    KEY_QUESTION[提出一个关键问题]
+    USER_ANSWER[用户补充证据]
+    ARTIFACT_REQUEST{请求成熟产物？}
+    GATE_CHECK{证据足够？}
+    DOWNGRADE[降级为大纲或决策面]
+    PLANNING_ARTIFACT[生成带证据标签的规划产物]
+    READINESS_CHECK{进入执行计划？}
+    IMPLEMENTATION_PLAN[生成实现计划]
+    CONTROL_VIEW[查看证据/风险/准备度]
+    EXPORT_REQUEST{请求导出？}
+    EXPORT_PACKAGE[生成可审计交付包]
+    NOT_READY[未就绪产物标记 NOT_READY]
+    USER_RECOVER[用户补证据或接受草稿]
+    SAFE_OUTCOME((可控可复盘产出))
+
+    subgraph P0_MAIN["P0 主流程"]
+      direction LR
+      IDEA_START --> MATERIAL_CHECK
+      MATERIAL_CHECK -->|无材料| DIAGNOSTIC
+      MATERIAL_CHECK -->|有材料| MATERIAL_REVIEW
+      DIAGNOSTIC --> KEY_QUESTION
+      MATERIAL_REVIEW --> KEY_QUESTION
+      KEY_QUESTION --> USER_ANSWER
+      USER_ANSWER --> ARTIFACT_REQUEST
+      ARTIFACT_REQUEST -->|是| GATE_CHECK
+      ARTIFACT_REQUEST -.->|先看状态| CONTROL_VIEW
+      GATE_CHECK -->|不足| DOWNGRADE
+      DOWNGRADE --> USER_RECOVER
+      USER_RECOVER --> USER_ANSWER
+      GATE_CHECK -->|足够| PLANNING_ARTIFACT
+      PLANNING_ARTIFACT --> READINESS_CHECK
+      READINESS_CHECK -->|不足| CONTROL_VIEW
+      READINESS_CHECK -->|足够| IMPLEMENTATION_PLAN
+      CONTROL_VIEW --> KEY_QUESTION
+      IMPLEMENTATION_PLAN --> EXPORT_REQUEST
+      PLANNING_ARTIFACT --> EXPORT_REQUEST
+      EXPORT_REQUEST -->|是| EXPORT_PACKAGE
+      EXPORT_PACKAGE --> NOT_READY
+      EXPORT_PACKAGE --> SAFE_OUTCOME
+      NOT_READY -.-> USER_RECOVER
+    end
+
+    classDef main fill:#dbeafe,stroke:#3b82f6,color:#111827
+    classDef decision fill:#fef9c3,stroke:#ca8a04,color:#111827
+    classDef error fill:#fee2e2,stroke:#ef4444,color:#111827
+    classDef success fill:#dcfce7,stroke:#22c55e,color:#111827
+
+    class IDEA_START,DIAGNOSTIC,MATERIAL_REVIEW,KEY_QUESTION,USER_ANSWER,DOWNGRADE,PLANNING_ARTIFACT,IMPLEMENTATION_PLAN,CONTROL_VIEW,EXPORT_PACKAGE,USER_RECOVER main
+    class MATERIAL_CHECK,ARTIFACT_REQUEST,GATE_CHECK,READINESS_CHECK,EXPORT_REQUEST decision
+    class NOT_READY error
+    class SAFE_OUTCOME success
+```
+
+## 项目架构图
+
+下图展示 Z2O 的顶层控制架构：用户只看到一个主 workflow，内部通过 Controller、Producer、Auditor、Workbench、合约层和测试层共同约束产物升级、导出和执行交接。
+
+```mermaid
+%% 本图覆盖：zero-to-one-product-discovery 顶层架构
+flowchart TD
+    USER["用户"]
+    HOST["Codex / Claude 宿主"]
+    OPENAI_METADATA["Codex 元数据"]
+
+    MAIN_SKILL["Skill 主工作流"]
+    STAGE_GATES{"阶段门禁规则"}
+    CONTROLLER{"Controller 路由权威"}
+    WORKBENCH[("Runtime Workbench")]
+
+    PRODUCERS["Producer 角色组"]
+    AUDITOR["Auditor 审查角色"]
+    CHILD_ADAPTERS["13 个 Child Adapters"]
+
+    ARTIFACT_EXPORT["Artifact Export"]
+    EXECUTION_BRIDGE["Execution Bridge"]
+    REVISION_TRACE["Revision Trace"]
+
+    EVAL_SCHEMAS["JSON Schema 合约层"]
+    CONTROLLER_ACTIONS["Controller Actions 注册表"]
+    SCRIPTS["Python 验证/写入脚本"]
+    UNIT_TESTS["Unit Tests"]
+    INTEGRATION_API["Integration API Layer"]
+    NEW_BENCHMARK["Codex 新 Benchmark Runner"]
+    OLD_BENCHMARK_ARCHIVE["Claude Code 旧 Benchmark 归档"]
+
+    DEEPSEEK_API(["DeepSeek API"])
+    MIMO_API(["Mimo API"])
+    GITHUB_JIRA(["GitHub / Jira"])
+    FILE_SYSTEM[("文件系统")]
+    STATE_STORE[(".z2o-state / .z2o-patterns")]
+    ARTIFACT_STORE[("z2o-artifacts")]
+    EVIDENCE_PACKAGE[("桌面证据包")]
+    VENDOR_SOURCES["Vendor Source Snapshots"]
+
+    subgraph INTERFACE["接入层"]
+      direction LR
+      USER
+      HOST
+      OPENAI_METADATA
+    end
+
+    subgraph CORE["核心控制层"]
+      direction LR
+      MAIN_SKILL
+      STAGE_GATES
+      CONTROLLER
+      WORKBENCH
+    end
+
+    subgraph CAPABILITY["产物能力层"]
+      direction LR
+      PRODUCERS
+      AUDITOR
+      CHILD_ADAPTERS
+    end
+
+    subgraph EXPORT_AUDIT["导出与审计层"]
+      direction LR
+      ARTIFACT_EXPORT
+      EXECUTION_BRIDGE
+      REVISION_TRACE
+    end
+
+    subgraph CONTRACT_TEST["合约与测试层"]
+      direction LR
+      EVAL_SCHEMAS
+      CONTROLLER_ACTIONS
+      SCRIPTS
+      UNIT_TESTS
+      INTEGRATION_API
+      NEW_BENCHMARK
+      OLD_BENCHMARK_ARCHIVE
+    end
+
+    subgraph EXTERNAL_STORAGE["外部与存储层"]
+      direction LR
+      DEEPSEEK_API
+      MIMO_API
+      GITHUB_JIRA
+      FILE_SYSTEM
+      STATE_STORE
+      ARTIFACT_STORE
+      EVIDENCE_PACKAGE
+      VENDOR_SOURCES
+    end
+
+    USER --> HOST
+    OPENAI_METADATA --> HOST
+    HOST --> MAIN_SKILL
+    MAIN_SKILL --> STAGE_GATES
+    STAGE_GATES --> CONTROLLER
+    CONTROLLER --> PRODUCERS
+    CONTROLLER --> AUDITOR
+    CONTROLLER --> CHILD_ADAPTERS
+    CONTROLLER -->|读写当前状态| WORKBENCH
+    PRODUCERS --> AUDITOR
+    AUDITOR --> CONTROLLER
+    CHILD_ADAPTERS --> ARTIFACT_EXPORT
+    CHILD_ADAPTERS --> EXECUTION_BRIDGE
+    CHILD_ADAPTERS --> REVISION_TRACE
+    ARTIFACT_EXPORT -->|风险：写入交付包| ARTIFACT_STORE
+    REVISION_TRACE -->|风险：写入变更账本| ARTIFACT_STORE
+    EXECUTION_BRIDGE -.->|风险：dry-run 边界| GITHUB_JIRA
+    WORKBENCH -->|风险：持久化| STATE_STORE
+    SCRIPTS -->|风险：写入校验| STATE_STORE
+    SCRIPTS -->|风险：写入校验| ARTIFACT_STORE
+    EVAL_SCHEMAS --> SCRIPTS
+    CONTROLLER_ACTIONS --> CONTROLLER
+    CONTROLLER_ACTIONS --> EVAL_SCHEMAS
+    UNIT_TESTS --> SCRIPTS
+    INTEGRATION_API -.->|风险：真实 API| DEEPSEEK_API
+    INTEGRATION_API -.->|风险：fallback| MIMO_API
+    NEW_BENCHMARK -.->|风险：真实 API| DEEPSEEK_API
+    NEW_BENCHMARK -.->|风险：fallback| MIMO_API
+    NEW_BENCHMARK -->|写入新证据| EVIDENCE_PACKAGE
+    OLD_BENCHMARK_ARCHIVE -->|仅归档| EVIDENCE_PACKAGE
+    VENDOR_SOURCES -.-> CHILD_ADAPTERS
+    FILE_SYSTEM --> STATE_STORE
+    FILE_SYSTEM --> ARTIFACT_STORE
+    FILE_SYSTEM --> EVIDENCE_PACKAGE
+
+    classDef core fill:#dbeafe,stroke:#3b82f6,color:#111827
+    classDef shared fill:#ede9fe,stroke:#8b5cf6,color:#111827,stroke-width:2px
+    classDef external fill:#fef3c7,stroke:#f59e0b,color:#111827
+    classDef storage fill:#dcfce7,stroke:#22c55e,color:#111827
+    classDef harness fill:#f1f5f9,stroke:#64748b,color:#111827
+    classDef risk fill:#fee2e2,stroke:#ef4444,color:#111827,stroke-width:2px
+
+    class USER,HOST,OPENAI_METADATA core
+    class MAIN_SKILL,STAGE_GATES,CONTROLLER core
+    class WORKBENCH shared
+    class PRODUCERS,AUDITOR,CHILD_ADAPTERS shared
+    class ARTIFACT_EXPORT,EXECUTION_BRIDGE,REVISION_TRACE risk
+    class EVAL_SCHEMAS,CONTROLLER_ACTIONS,SCRIPTS,UNIT_TESTS harness
+    class INTEGRATION_API,NEW_BENCHMARK risk
+    class OLD_BENCHMARK_ARCHIVE harness
+    class DEEPSEEK_API,MIMO_API,GITHUB_JIRA,VENDOR_SOURCES external
+    class FILE_SYSTEM,STATE_STORE,ARTIFACT_STORE,EVIDENCE_PACKAGE storage
+```
 
 ## Highlights
 
